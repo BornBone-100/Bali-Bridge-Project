@@ -19,6 +19,79 @@ let allAgents = [];
 let selectedRegionLabel = null;
 const KAKAO_JAVASCRIPT_KEY = "8a83bbb04eb282c6c694e95c969bbd36";
 
+function shouldShowKakaoDebugger() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("debug") === "1";
+  } catch (_) {
+    return false;
+  }
+}
+
+function maskKey(key) {
+  const s = String(key || "");
+  if (s.length <= 10) return s ? `${s.slice(0, 2)}…` : "";
+  return `${s.slice(0, 6)}…${s.slice(-4)}`;
+}
+
+function initKakaoDebuggerBox() {
+  if (!shouldShowKakaoDebugger()) return;
+  if (document.getElementById("kakao-debugger-box")) return;
+
+  const box = document.createElement("div");
+  box.id = "kakao-debugger-box";
+  box.style.position = "fixed";
+  box.style.bottom = "20px";
+  box.style.left = "20px";
+  box.style.backgroundColor = "rgba(0, 0, 0, 0.85)";
+  box.style.color = "#00ff00";
+  box.style.padding = "15px";
+  box.style.borderRadius = "8px";
+  box.style.fontSize = "12px";
+  box.style.zIndex = "9999";
+  box.style.fontFamily = "monospace";
+  box.style.border = "1px solid #444";
+  box.style.boxShadow = "0 4px 15px rgba(0,0,0,0.5)";
+  box.style.maxWidth = "320px";
+
+  const render = () => {
+    const key = KAKAO_JAVASCRIPT_KEY;
+    const keyExists = !!key && key !== "YOUR_JAVASCRIPT_KEY";
+    const initialized = !!window.Kakao?.isInitialized?.();
+    const currentUrl = window.location.origin;
+
+    box.innerHTML = `
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 10px 0; padding:0 0 6px 0; border-bottom:1px solid #444;">
+        <h4 style="margin:0; color:#fff;">🛠 Bali Bridge Debugger</h4>
+        <button type="button" aria-label="디버거 닫기" style="cursor:pointer; background:transparent; border:1px solid #444; color:#fff; border-radius:6px; padding:2px 8px; font-size:12px;">닫기</button>
+      </div>
+      <p style="margin:6px 0;"><strong>JS KEY 존재:</strong> ${
+        keyExists ? "✅ 있음" : "❌ 없음 (키 설정 확인)"
+      }</p>
+      <p style="margin:6px 0;"><strong>JS KEY(마스크):</strong> ${
+        keyExists ? maskKey(key) : "-"
+      }</p>
+      <p style="margin:6px 0;"><strong>Kakao 초기화:</strong> ${
+        initialized ? "✅ 성공" : "❌ 실패"
+      }</p>
+      <p style="margin:6px 0;"><strong>현재 도메인:</strong><br/>${currentUrl}</p>
+      <div style="margin-top:10px; font-size:10px; color:#aaa;">
+        * 도메인이 카카오 '플랫폼' 설정과<br/>완벽히 일치해야 KOE009가 안 뜹니다.
+      </div>
+    `;
+
+    const btn = box.querySelector("button");
+    if (btn) btn.onclick = () => box.remove();
+  };
+
+  document.body.appendChild(box);
+  render();
+
+  // 초기화는 페이지 로딩 타이밍/SDK 로딩에 따라 변할 수 있어 짧게 폴링합니다.
+  const timer = window.setInterval(render, 500);
+  window.setTimeout(() => window.clearInterval(timer), 15000);
+}
+
 function initKakaoSdk() {
   if (typeof Kakao === "undefined") return false;
   if (KAKAO_JAVASCRIPT_KEY === "YOUR_JAVASCRIPT_KEY") return false;
@@ -156,6 +229,7 @@ function renderGrid() {
 }
 
 function init() {
+  initKakaoDebuggerBox();
   initKakaoSdk();
   try {
     if (

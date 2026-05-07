@@ -30,8 +30,8 @@ function shouldShowKakaoDebugger() {
 
 function maskKey(key) {
   const s = String(key || "");
-  if (s.length <= 10) return s ? `${s.slice(0, 2)}…` : "";
-  return `${s.slice(0, 6)}…${s.slice(-4)}`;
+  if (!s) return "";
+  return s.length <= 5 ? `${s}***` : `${s.slice(0, 5)}***`;
 }
 
 function initKakaoDebuggerBox() {
@@ -41,18 +41,19 @@ function initKakaoDebuggerBox() {
   const box = document.createElement("div");
   box.id = "kakao-debugger-box";
   box.style.position = "fixed";
-  box.style.bottom = "20px";
-  box.style.left = "20px";
-  box.style.backgroundColor = "rgba(0, 0, 0, 0.85)";
+  box.style.bottom = "10px";
+  box.style.right = "10px";
+  box.style.width = "320px";
+  box.style.backgroundColor = "#000";
   box.style.color = "#00ff00";
   box.style.padding = "15px";
-  box.style.borderRadius = "8px";
-  box.style.fontSize = "12px";
-  box.style.zIndex = "9999";
+  box.style.fontSize = "11px";
+  box.style.zIndex = "10000";
   box.style.fontFamily = "monospace";
-  box.style.border = "1px solid #444";
+  box.style.border = "2px solid #333";
+  box.style.borderRadius = "5px";
+  box.style.opacity = "0.9";
   box.style.boxShadow = "0 4px 15px rgba(0,0,0,0.5)";
-  box.style.maxWidth = "320px";
 
   const render = () => {
     const key = KAKAO_JAVASCRIPT_KEY;
@@ -61,23 +62,24 @@ function initKakaoDebuggerBox() {
     const currentUrl = window.location.origin;
 
     box.innerHTML = `
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 10px 0; padding:0 0 6px 0; border-bottom:1px solid #444;">
-        <h4 style="margin:0; color:#fff;">🛠 Bali Bridge Debugger</h4>
-        <button type="button" aria-label="디버거 닫기" style="cursor:pointer; background:transparent; border:1px solid #444; color:#fff; border-radius:6px; padding:2px 8px; font-size:12px;">닫기</button>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 10px 0;">
+        <h5 style="margin:0; color:#fff;">[Bali Bridge Debug System]</h5>
+        <button type="button" aria-label="디버거 닫기" style="cursor:pointer; background:transparent; border:1px solid #333; color:#fff; border-radius:4px; padding:2px 8px; font-size:11px;">닫기</button>
       </div>
-      <p style="margin:6px 0;"><strong>JS KEY 존재:</strong> ${
-        keyExists ? "✅ 있음" : "❌ 없음 (키 설정 확인)"
+      <p style="margin:6px 0;">JS KEY:
+        <span style="color:${keyExists ? "#00ff00" : "red"};">${
+          keyExists ? maskKey(key) : "❌ 없음 (키 설정 확인 필요)"
+        }</span>
+      </p>
+      <p style="margin:6px 0;">INITIALIZED: ${
+        initialized ? "✅ TRUE" : "❌ FALSE"
       }</p>
-      <p style="margin:6px 0;"><strong>JS KEY(마스크):</strong> ${
-        keyExists ? maskKey(key) : "-"
-      }</p>
-      <p style="margin:6px 0;"><strong>Kakao 초기화:</strong> ${
-        initialized ? "✅ 성공" : "❌ 실패"
-      }</p>
-      <p style="margin:6px 0;"><strong>현재 도메인:</strong><br/>${currentUrl}</p>
-      <div style="margin-top:10px; font-size:10px; color:#aaa;">
-        * 도메인이 카카오 '플랫폼' 설정과<br/>완벽히 일치해야 KOE009가 안 뜹니다.
-      </div>
+      <p style="margin:6px 0;">CURRENT ORIGIN:<br/>${currentUrl}</p>
+      <hr style="border:0; border-top:1px solid #333; margin:10px 0;" />
+      <p style="color:#aaa; font-size:10px; margin:0;">
+        ※ KOE009 해결법: 위 ORIGIN 주소를 복사해서<br/>
+        카카오 [제품 링크 관리] &gt; [웹 도메인]에 넣으세요.
+      </p>
     `;
 
     const btn = box.querySelector("button");

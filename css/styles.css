@@ -3707,3 +3707,494 @@ body {
     padding: 16px 14px;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Due Diligence Dashboard (dd-report.html)                                    */
+/* -------------------------------------------------------------------------- */
+
+.dd-body {
+  background: radial-gradient(circle at 30% 10%, rgba(0, 184, 148, 0.08), transparent 35%),
+    radial-gradient(circle at 80% 30%, rgba(9, 132, 227, 0.08), transparent 40%),
+    var(--bg);
+}
+
+.dd-report-container {
+  width: min(1120px, calc(100% - 40px));
+  margin: 26px auto 56px;
+}
+
+.dd-back {
+  display: inline-flex;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.dd-back:hover {
+  color: var(--text);
+}
+
+.dd-header {
+  background: linear-gradient(135deg, rgba(30, 58, 95, 0.08), rgba(0, 184, 148, 0.08));
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
+  padding: 18px 18px 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.dd-header-main {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.dd-kicker {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.dd-title {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  letter-spacing: -0.03em;
+}
+
+.dd-sub {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.dd-trust-badge {
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
+  padding: 16px 16px 14px;
+  min-width: 180px;
+  text-align: center;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+.dd-trust-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.dd-trust-grade {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--navy);
+  margin-top: 6px;
+}
+
+.dd-trust-note {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--emerald);
+}
+
+.dd-exec {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.dd-metric {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  padding: 16px 16px 14px;
+  box-shadow: var(--shadow-card);
+}
+
+.dd-metric-label {
+  display: block;
+  color: var(--text-muted);
+  font-weight: 800;
+  font-size: 0.86rem;
+}
+
+.dd-metric-value {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--charcoal);
+}
+
+.dd-metric-sub {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.dd-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.dd-card {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.dd-card--financial {
+  grid-row: span 2;
+}
+
+.dd-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dd-card h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.dd-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border: 1px solid var(--border-soft);
+  color: var(--text-muted);
+  background: #fafbfb;
+}
+
+.dd-chip--good {
+  color: #0b7d67;
+  background: rgba(0, 184, 148, 0.1);
+  border-color: rgba(0, 184, 148, 0.24);
+}
+
+.dd-chip--warn {
+  color: #a05b00;
+  background: rgba(253, 203, 110, 0.18);
+  border-color: rgba(253, 203, 110, 0.3);
+}
+
+.dd-chip--info {
+  color: #0b5aa3;
+  background: rgba(9, 132, 227, 0.12);
+  border-color: rgba(9, 132, 227, 0.25);
+}
+
+.dd-list {
+  margin: 14px 0 0;
+  padding-left: 18px;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.dd-list li {
+  margin: 8px 0;
+}
+
+.dd-list--compact {
+  margin-top: 12px;
+}
+
+.dd-ok {
+  font-weight: 800;
+  color: #0b7d67;
+}
+
+.dd-warn {
+  font-weight: 800;
+  color: #b06b00;
+}
+
+.dd-card-footnote {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-soft);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.dd-chart-block {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border-soft);
+  background: #fbfcfc;
+  height: 220px;
+}
+
+.dd-chart-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--charcoal);
+  margin-bottom: 8px;
+}
+
+.dd-mini {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.dd-mini-item {
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  padding: 12px;
+  background: #fff;
+}
+
+.dd-mini-item span {
+  display: block;
+  color: var(--text-muted);
+  font-weight: 800;
+  font-size: 0.82rem;
+}
+
+.dd-mini-item strong {
+  display: block;
+  margin-top: 6px;
+  font-weight: 900;
+}
+
+.dd-mini-item small {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.dd-loc-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.dd-loc {
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  padding: 12px;
+  background: #fbfcfc;
+  text-align: center;
+}
+
+.dd-loc-label {
+  display: block;
+  color: var(--text-muted);
+  font-weight: 800;
+  font-size: 0.82rem;
+}
+
+.dd-loc strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.1rem;
+}
+
+.dd-docs {
+  margin-top: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+}
+
+.dd-docs-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.dd-docs-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.dd-docs-sub {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.dd-docs-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.dd-btn {
+  appearance: none;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 900;
+  cursor: pointer;
+  background: #fff;
+  color: var(--charcoal);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dd-btn--primary {
+  background: var(--navy);
+  color: #fff;
+  border-color: rgba(30, 58, 95, 0.3);
+}
+
+.dd-btn--ghost {
+  background: rgba(9, 132, 227, 0.1);
+  color: #0b5aa3;
+  border-color: rgba(9, 132, 227, 0.22);
+}
+
+.dd-btn:hover {
+  transform: translateY(-1px);
+}
+
+.dd-media {
+  margin-top: 16px;
+}
+
+.dd-media-title {
+  font-weight: 900;
+  color: var(--charcoal);
+  margin-bottom: 10px;
+}
+
+.dd-media-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(240px, 1fr);
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+}
+
+.dd-media-item {
+  margin: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  background: #fff;
+  scroll-snap-align: start;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+}
+
+.dd-media-item img {
+  display: block;
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.dd-media-item figcaption {
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.dd-quote {
+  margin: 16px 0 0;
+  padding: 14px 14px 12px;
+  border-radius: 16px;
+  border: 1px dashed rgba(30, 58, 95, 0.25);
+  background: rgba(30, 58, 95, 0.04);
+}
+
+.dd-quote p {
+  margin: 0;
+  color: var(--text);
+  font-weight: 650;
+  line-height: 1.7;
+}
+
+.dd-quote footer {
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.dd-footer {
+  margin-top: 18px;
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 920px) {
+  .dd-header-main {
+    grid-template-columns: 1fr;
+  }
+
+  .dd-trust-badge {
+    width: 100%;
+    text-align: left;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 10px 12px;
+  }
+
+  .dd-trust-grade {
+    margin: 0;
+  }
+}
+
+@media (max-width: 820px) {
+  .dd-exec {
+    grid-template-columns: 1fr;
+  }
+
+  .dd-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dd-card--financial {
+    grid-row: auto;
+  }
+
+  .dd-loc-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dd-docs-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dd-docs-actions {
+    justify-content: flex-start;
+  }
+}

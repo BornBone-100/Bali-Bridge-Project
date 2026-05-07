@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>발리 에이전트 디렉토리</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <div class="site-toolbar">
+        <a class="site-toolbar-link" href="./compare.html">매물 비교함</a>
+        <a class="site-toolbar-link" href="./vault.html">나의 투자 보관함</a>
+      </div>
+      <!-- 상단 필터/검색 영역 -->
+      <section class="filter-section">
+        <div class="search-wrapper">
+          <input
+            type="search"
+            id="agent-search"
+            class="search-input"
+            placeholder="지역 또는 에이전트 이름 검색..."
+            autocomplete="off"
+            enterkeyhint="search"
+            aria-label="지역 또는 에이전트 이름 검색"
+          />
+        </div>
+        <div
+          class="category-scroll"
+          role="tablist"
+          aria-label="지역 필터"
+        >
+          <button type="button" class="cat-btn active">전체</button>
+          <button type="button" class="cat-btn">짱구 (Canggu)</button>
+          <button type="button" class="cat-btn">우붓 (Ubud)</button>
+          <button type="button" class="cat-btn">울루와투 (Uluwatu)</button>
+          <button type="button" class="cat-btn">세미냑 (Seminyak)</button>
+        </div>
+        <p class="results-meta" id="results-count" aria-live="polite"></p>
+      </section>
+
+      <section id="survey-section" class="survey-container">
+        <h3>나의 발리 투자 성향은? 🏝️</h3>
+        <div id="question-box">
+          <p id="question-text">Q1. 가장 중시하는 투자 결과는 무엇인가요?</p>
+          <div class="option-group">
+            <button type="button" class="opt-btn" onclick="nextStep('yield')">
+              매달 들어오는 월세 수익
+            </button>
+            <button type="button" class="opt-btn" onclick="nextStep('capital')">
+              나중에 팔 때의 시세 차익
+            </button>
+          </div>
+        </div>
+
+        <!-- 인포그래픽 결과 (설문 완료 후 표시) -->
+        <div
+          id="infographic-result"
+          class="info-card"
+          hidden
+          aria-live="polite"
+        ></div>
+
+        <div
+          class="progress-bar"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          aria-label="설문 진행률"
+        >
+          <div id="progress-fill"></div>
+        </div>
+      </section>
+
+      <section id="simulator" class="calculator-section">
+        <h2>발리 빌라 수익 시뮬레이터 📈</h2>
+        <div class="calc-container">
+          <!-- 입력 영역 -->
+          <div class="input-group">
+            <label>총 투자금 (단위: 억 원)</label>
+            <input type="range" id="invest" min="1" max="10" step="0.5" value="3" oninput="updateCalc()" />
+            <span id="invest-val">3억</span>
+
+            <label>평균 1박 요금 (단위: 만 원)</label>
+            <input type="range" id="price" min="10" max="100" step="5" value="25" oninput="updateCalc()" />
+            <span id="price-val">25만</span>
+
+            <label>예상 점유율 (%)</label>
+            <input type="range" id="occupancy" min="30" max="95" step="5" value="70" oninput="updateCalc()" />
+            <span id="occ-val">70%</span>
+          </div>
+
+          <!-- 결과 영역 -->
+          <div class="result-display">
+            <div class="result-card">
+              <p>예상 월 순수익</p>
+              <h3 id="monthly-profit">0원</h3>
+            </div>
+            <div class="result-card">
+              <p>연간 수익률 (ROI)</p>
+              <h3 id="annual-roi">0%</h3>
+            </div>
+          </div>
+
+          <!-- AI 매칭 결과: 실시간 업데이트 -->
+          <div
+            id="match-result-area"
+            class="match-result-area"
+            aria-live="polite"
+          ></div>
+        </div>
+      </section>
+
+      <!-- 에이전트 그리드 영역 -->
+      <main class="agent-grid" id="agentGrid" aria-live="polite"></main>
+    </div>
+
+    <!-- 에이전트 상세 모달 -->
+    <div
+      id="agentModal"
+      class="modal-overlay"
+      aria-hidden="true"
+      role="dialog"
+      aria-modal="true"
+      aria-label="에이전트 상세"
+    >
+      <div class="modal-content">
+        <button type="button" class="close-modal" aria-label="닫기">
+          &times;
+        </button>
+        <div id="modalBody">
+          <!-- JS에서 동적으로 채워질 영역 -->
+        </div>
+      </div>
+    </div>
+
+    <script src="./js/data.js"></script>
+    <script src="./js/survey.js"></script>
+    <script src="./js/render.js"></script>
+    <script src="./js/vault-storage.js"></script>
+    <script src="./js/calculator.js"></script>
+    <script src="./js/script.js" defer></script>
+  </body>
+</html>

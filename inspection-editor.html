@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>실사 보고서 작성</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body class="admin-body">
+    <div id="editor-page" class="admin-page">
+      <header class="editor-header">
+        <button type="button" class="back-btn" id="editor-back">← 뒤로</button>
+        <h3>실사 보고서 작성</h3>
+        <button type="button" class="save-btn" id="editor-draft-btn">임시 저장</button>
+      </header>
+
+      <p id="editor-context" class="editor-context" aria-live="polite"></p>
+      <div id="editor-error" class="editor-error" hidden></div>
+
+      <form id="report-form">
+        <!-- 1. 미디어 업로드 섹션 -->
+        <div class="form-section">
+          <label for="media-input">현장 영상/사진 업로드</label>
+          <input
+            id="media-input"
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            class="visually-hidden-input"
+            aria-label="사진 및 동영상 파일 선택"
+          />
+          <button type="button" class="upload-zone" id="upload-zone-trigger">
+            <span>📷 사진 및 동영상 촬영 (최대 10개)</span>
+          </button>
+          <p id="media-summary" class="form-helper" aria-live="polite"></p>
+          <p class="form-hint">
+            <strong>인터넷:</strong> 현장 Wi-Fi Speedtest 결과 스크린샷을 위 업로드에 함께
+            넣어 주세요.
+          </p>
+          <ul id="media-preview" class="media-preview-list"></ul>
+        </div>
+
+        <!-- 정밀 진단 (수치 입력형 UI) -->
+        <div class="form-section standard-data">
+          <h4 class="standard-data-title">📊 정밀 진단 데이터 입력</h4>
+          <p class="standard-data-intro">
+            샤워기·세면대를 동시에 풀가동한 뒤 1분당 유량(L/min) 등 아래 항목을 현장에서
+            바로 기록합니다.
+          </p>
+
+          <h5 class="standard-data-heading">A. 유틸리티 성능</h5>
+
+          <div class="input-row">
+            <label for="water-flow">수압 (1분간 배수량)</label>
+            <div class="input-with-unit">
+              <input
+                id="water-flow"
+                type="number"
+                inputmode="decimal"
+                step="0.1"
+                min="0"
+                placeholder="00"
+              />
+              <span class="input-unit">L/min</span>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <label for="metric-ac-initial">냉방 · 에어컨 가동 전 실내 온도</label>
+            <div class="input-with-unit">
+              <input
+                id="metric-ac-initial"
+                type="number"
+                inputmode="decimal"
+                step="0.1"
+                placeholder="00"
+              />
+              <span class="input-unit">°C</span>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <label for="metric-ac-after">냉방 · 가동 10분 후 실내 온도</label>
+            <div class="input-with-unit">
+              <input
+                id="metric-ac-after"
+                type="number"
+                inputmode="decimal"
+                step="0.1"
+                placeholder="00"
+              />
+              <span class="input-unit">°C</span>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <label for="wifi-speed">인터넷 속도 (다운로드)</label>
+            <div class="input-with-unit">
+              <input
+                id="wifi-speed"
+                type="number"
+                inputmode="decimal"
+                step="0.1"
+                min="0"
+                placeholder="00"
+              />
+              <span class="input-unit">Mbps</span>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <label for="wifi-upload">인터넷 속도 (업로드)</label>
+            <div class="input-with-unit">
+              <input
+                id="wifi-upload"
+                type="number"
+                inputmode="decimal"
+                step="0.1"
+                min="0"
+                placeholder="00"
+              />
+              <span class="input-unit">Mbps</span>
+            </div>
+          </div>
+
+          <h5 class="standard-data-heading">B. 환경 및 소음</h5>
+
+          <div class="input-row">
+            <label for="noise-level">실내 평균 소음 (거실)</label>
+            <div class="input-with-unit">
+              <input
+                id="noise-level"
+                type="number"
+                inputmode="decimal"
+                step="0.1"
+                min="0"
+                placeholder="00"
+              />
+              <span class="input-unit">dB</span>
+            </div>
+            <small class="input-guide">가이드: 거실 중앙에서 30초간 측정하세요.</small>
+          </div>
+
+          <div class="input-row">
+            <label for="noise-bedroom">평균 소음 (침실)</label>
+            <div class="input-with-unit">
+              <input
+                id="noise-bedroom"
+                type="number"
+                inputmode="decimal"
+                step="0.1"
+                min="0"
+                placeholder="00"
+              />
+              <span class="input-unit">dB</span>
+            </div>
+            <small class="input-guide">침실 중앙 기준으로 동일하게 측정합니다.</small>
+          </div>
+
+          <div class="input-row">
+            <label for="metric-construction-count">반경 500m 내 진행 중 공사장</label>
+            <div class="input-with-unit">
+              <input
+                id="metric-construction-count"
+                type="number"
+                inputmode="numeric"
+                step="1"
+                min="0"
+                placeholder="00"
+              />
+              <span class="input-unit">곳</span>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <label for="metric-construction-distance">가장 가까운 공사장까지 직선거리</label>
+            <div class="input-with-unit">
+              <input
+                id="metric-construction-distance"
+                type="number"
+                inputmode="decimal"
+                step="1"
+                min="0"
+                placeholder="00"
+              />
+              <span class="input-unit">m</span>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <label for="metric-road-width">진입로·도로 폭</label>
+            <div class="input-with-unit">
+              <input
+                id="metric-road-width"
+                type="number"
+                inputmode="decimal"
+                step="0.1"
+                min="0"
+                placeholder="00"
+              />
+              <span class="input-unit">m</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 구조·건강 (정량 + 유무) -->
+        <div class="form-section">
+          <label>구조·건강 상태 (Structural Health)</label>
+          <div class="check-group">
+            <div class="check-item struct-row">
+              <label class="struct-label"
+                ><input type="checkbox" id="struct-wall-exists" /> 벽체 균열 있음</label
+              >
+              <label class="metric-field metric-field--inline">
+                심각도 (0–3)
+                <input
+                  id="struct-wall-severity"
+                  type="number"
+                  min="0"
+                  max="3"
+                  step="1"
+                  value="0"
+                />
+              </label>
+            </div>
+            <div class="check-item struct-row struct-row--stack">
+              <label class="struct-label"
+                ><input type="checkbox" id="struct-mold-exists" /> 곰팡이·결로 의심</label
+              >
+              <label class="metric-field">
+                위치
+                <input
+                  id="struct-mold-location"
+                  type="text"
+                  maxlength="120"
+                  placeholder="예: Bathroom Ceiling"
+                />
+              </label>
+              <label class="metric-field metric-field--inline">
+                심각도 (0–3)
+                <input
+                  id="struct-mold-severity"
+                  type="number"
+                  min="0"
+                  max="3"
+                  step="1"
+                  value="0"
+                />
+              </label>
+            </div>
+            <div class="check-item struct-row">
+              <label class="struct-label"
+                ><input type="checkbox" id="struct-roof-exists" /> 지붕·천장 누수 의심</label
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- C. 법적·규제 -->
+        <div class="form-section">
+          <label>C. 법적 및 규제 (Legal &amp; Zoning)</label>
+          <div class="metric-grid metric-grid--legal">
+            <label class="metric-field">
+              Pondok Wisata(숙박 가능) 면허
+              <select id="legal-pondok">
+                <option value="unknown">미확인</option>
+                <option value="yes">있음</option>
+                <option value="no">없음</option>
+              </select>
+            </label>
+            <label class="metric-field">
+              IMB(건축허가) 번호
+              <input id="legal-imb" type="text" maxlength="80" placeholder="번호 또는 미기재" />
+            </label>
+            <label class="metric-field">
+              잔여 임대 기간 (Leasehold, 개월)
+              <input
+                id="legal-lease-months"
+                type="number"
+                inputmode="numeric"
+                min="0"
+                step="1"
+                placeholder="해당 시만 입력"
+              />
+            </label>
+          </div>
+        </div>
+
+        <!-- 기능적 진단 (차트형 소견) -->
+        <div class="form-section form-section--functional">
+          <label for="field-functional">기능적 진단 (현장 관찰 요약)</label>
+          <p class="form-hint">
+            물리치료 차트처럼 관찰된 환경·시설 ‘기능’을 구조적으로 적습니다. (동선,
+            소음, 채광, 즉시 조치 필요 여부 등)
+          </p>
+          <textarea
+            id="field-functional"
+            name="functional"
+            rows="5"
+            placeholder="예: 생활 동선 양호 / 침실측 외부 공사 소음 관찰 → 주말 야간 소음 가능성 있음. 배수 역류 징후 없음."
+          ></textarea>
+        </div>
+
+        <!-- 3. 전문가 소견 -->
+        <div class="form-section">
+          <label for="field-comment">에이전트 한줄 평 (투자 포인트)</label>
+          <textarea
+            id="field-comment"
+            name="comment"
+            rows="4"
+            placeholder="투자자가 꼭 알아야 할 장단점을 적어주세요."
+          ></textarea>
+        </div>
+
+        <button type="submit" class="submit-report-btn" id="submit-report-btn">
+          보고서 최종 전송
+        </button>
+      </form>
+    </div>
+
+    <script src="./js/inspection-requests.js"></script>
+    <script src="./js/inspection-standard.js"></script>
+    <script src="./js/agent-report-flow.js"></script>
+    <script src="./js/inspection-editor.js"></script>
+  </body>
+</html>

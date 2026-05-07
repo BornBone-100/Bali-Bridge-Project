@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>에이전트 상세</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <style>
+      .detail-page {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 24px 20px 80px;
+      }
+      .detail-back {
+        display: inline-block;
+        margin-bottom: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-decoration: none;
+      }
+      .detail-back:hover {
+        color: var(--text);
+      }
+      .detail-hero {
+        aspect-ratio: 16/9;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(145deg, #e8e4dc 0%, #d4cfc4 100%);
+        margin-bottom: 24px;
+        border: 1px solid var(--border);
+      }
+      .detail-hero img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: inherit;
+      }
+      .detail-header h1 {
+        margin: 0 0 8px;
+        font-size: 1.75rem;
+      }
+      .detail-header .company {
+        color: var(--text-muted);
+        margin: 0 0 16px;
+      }
+      .portfolio-placeholder {
+        margin-top: 32px;
+        padding: 24px;
+        border-radius: var(--radius-lg);
+        border: 1px dashed var(--border);
+        background: var(--surface);
+        color: var(--text-muted);
+        font-size: 0.9375rem;
+      }
+      .detail-actions {
+        margin-top: 28px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 520px) {
+        .detail-actions {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="detail-page">
+      <a class="detail-back" href="./index.html">← 디렉토리로</a>
+      <div id="detail-root"></div>
+    </div>
+
+    <!-- 실사 신청 모달 (결제·안내 UI) -->
+    <div
+      id="inspection-modal"
+      class="modal-overlay inspection-modal-overlay"
+      aria-hidden="true"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="inspection-modal-title"
+    >
+      <div class="modal-content inspection-modal-content">
+        <button
+          type="button"
+          class="close-modal"
+          aria-label="닫기"
+          onclick="closeInspectionModal()"
+        >
+          &times;
+        </button>
+        <h2 id="inspection-modal-title" class="inspection-modal-title">
+          실사 보고서 신청
+        </h2>
+        <p class="inspection-modal-lead">
+          왓츠앱으로 신청 메시지가 준비되어 있습니다. 전송 전 필요한 매물 주소나 일정을 덧붙여 주세요.
+        </p>
+        <ul class="inspection-modal-list">
+          <li>상담 연결 시 보고서 비용은 <strong>무료</strong>로 안내됩니다.</li>
+          <li>별도 현장 비용이 발생할 경우 에이전트가 사전에 안내합니다.</li>
+        </ul>
+        <label class="inspection-modal-field" for="inspection-villa-input">
+          매물명 또는 주소 (선택)
+        </label>
+        <input
+          id="inspection-villa-input"
+          class="inspection-modal-input"
+          type="text"
+          maxlength="200"
+          placeholder="예: 창구 비치프런트 빌라"
+          autocomplete="off"
+        />
+        <div class="inspection-modal-actions">
+          <a
+            id="inspection-wa-btn"
+            class="btn btn--whatsapp inspection-modal-wa"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            >왓츠앱으로 신청하기</a
+          >
+          <button type="button" class="btn btn--secondary" onclick="demoSubmitInspectionRequest()">
+            데모: 시스템에 요청 등록
+          </button>
+          <button type="button" class="btn btn--secondary" onclick="closeInspectionModal()">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./js/data.js"></script>
+    <script src="./js/inspection-requests.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="./js/report-radar-chart.js"></script>
+    <script src="./js/report-main.js"></script>
+    <script>
+      const REGION_LABELS = {
+        canggu: "짱구",
+        ubud: "우붓",
+        uluwatu: "울루와투",
+        seminyak: "세미냑",
+        jimbaran: "짐바란",
+      };
+
+      function escapeHtml(s) {
+        const div = document.createElement("div");
+        div.textContent = s;
+        return div.innerHTML;
+      }
+
+      function init() {
+        window.detailAgentId = undefined;
+        window.detailInspectionWaLink = undefined;
+
+        const params = new URLSearchParams(location.search);
+        const id = params.get("id");
+        const root = document.getElementById("detail-root");
+
+        if (!id) {
+          root.innerHTML =
+            '<p class="empty-state">에이전트를 선택해 주세요.</p>';
+          return;
+        }
+
+        if (typeof agentData === "undefined" || typeof hydrateAgent !== "function") {
+          root.innerHTML =
+            '<p class="empty-state">데이터를 불러오지 못했습니다.</p>';
+          return;
+        }
+
+        const agents = agentData.map(hydrateAgent);
+        const agent = agents.find((a) => String(a.id) === String(id));
+
+        if (!agent) {
+          root.innerHTML =
+            '<p class="empty-state">해당 에이전트를 찾을 수 없습니다.</p>';
+          return;
+        }
+
+        if (typeof buildReportMainHTML !== "function") {
+          root.innerHTML =
+            '<p class="empty-state">보고서 레이아웃을 불러오지 못했습니다.</p>';
+          return;
+        }
+
+        const regions = agent.regions
+          .map((r) => REGION_LABELS[r] || r)
+          .join(" · ");
+        const tags = (agent.tags || [])
+          .map((t) => `<span class="tag">#${escapeHtml(t)}</span>`)
+          .join("");
+        const waLink = `https://wa.me/${encodeURIComponent(agent.whatsapp)}`;
+        const initials = agent.name
+          .split(" ")
+          .map((w) => w[0])
+          .join("")
+          .slice(0, 2)
+          .toUpperCase();
+
+        const hero = agent.image
+          ? `<img src="${escapeHtml(agent.image)}" alt="" />`
+          : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:3rem;font-weight:700;color:rgba(34,34,34,.2);">${escapeHtml(initials)}</div>`;
+
+        const detailReportRows = [
+          {
+            label: "수압",
+            valueMain: "12.5",
+            valueUnit: "L/min",
+            statusClass: "status-good",
+            statusText: "우수",
+          },
+          {
+            label: "소음(평균)",
+            valueMain: "52",
+            valueUnit: "dB",
+            statusClass: "status-warn",
+            statusText: "주의",
+          },
+          {
+            label: "인터넷",
+            valueMain: "65",
+            valueUnit: "Mbps",
+            statusClass: "status-good",
+            statusText: "안정",
+          },
+          {
+            label: "잔여임대",
+            valueMain: "288",
+            valueUnit: "개월",
+            statusClass: "status-good",
+            statusText: "안전",
+          },
+        ];
+
+        const reportMainHtml = buildReportMainHTML({
+          reportDateLabel: "실사 완료: 2026.05.07",
+          propertyTitle: "Canggu Private Oasis Villa",
+          locationTag: "📍 Jl. Pantai Batu Bolong, Canggu",
+          agentImgSrcTrusted: agent.image || "",
+          agentImgAlt: agent.name,
+          agentByLine: `By ${agent.name}`,
+          headline: '"수익과 안전의 완벽한 밸런스"',
+          analysisParagraph:
+            "이 매물은 법적 안전성과 수익성에서 압도적인 점수를 받았습니다. 환경 소음 수치가 다소 높으나, 이는 짱구 중심가라는 입지적 장점의 반작용입니다.",
+          scoreDisplay: "85",
+          scoreLabel: "Score",
+          dataRows: detailReportRows,
+          contractHrefTrusted: waLink,
+          contractTargetBlank: true,
+          pdfOnclickAttr: "window.print()",
+        });
+
+        root.innerHTML = `
+          ${reportMainHtml}
+
+          <p class="report-footnote">
+            위 화면은 <strong>완료 후 앱에서 보게 될 결과</strong>를 보여 주는 예시입니다. 실제 수치·코멘트는 현장 실사 후 제공됩니다.
+          </p>
+
+          <div class="inspection-request-card" aria-labelledby="inspection-card-title">
+            <div class="request-header">
+              <h3 id="inspection-card-title">🔍 안심 실사 보고서 요청</h3>
+              <p>현지에 계신 에이전트가 직접 방문하여 꼼꼼한 검증 보고서를 보내드립니다.</p>
+            </div>
+
+            <ul class="check-list">
+              <li>✅ 4K 고화질 실시간 내부 영상</li>
+              <li>✅ 소음 및 주변 환경 실사 (공사현장 확인)</li>
+              <li>✅ 수압, 배수, 냉방 등 시설물 점검</li>
+            </ul>
+
+            <div class="price-tag">
+              <span class="original-price">100,000원</span>
+              <span class="discount-price">무료 (에이전트 상담 시)</span>
+            </div>
+
+            <button type="button" class="request-btn" onclick="openInspectionForm()">
+              실사 보고서 신청하기
+            </button>
+          </div>
+
+          <section class="detail-agent-more" aria-label="에이전트 프로필">
+            <h3 class="detail-more-heading">에이전트 프로필</h3>
+            <div class="detail-more-card">
+              <div class="detail-hero detail-hero--compact">${hero}</div>
+              <div class="detail-more-body">
+                <p class="detail-more-name">${escapeHtml(agent.name)}</p>
+                <p class="detail-more-co">${escapeHtml(agent.company)}</p>
+                <p class="agent-card__regions">${escapeHtml(regions)} · ${escapeHtml(agent.specialty)}</p>
+                <div class="agent-card__tags" style="margin-top:12px">${tags}</div>
+                <div class="detail-actions">
+                  <a class="btn btn--secondary" href="./index.html">다른 에이전트 보기</a>
+                  <a class="btn btn--whatsapp" href="${waLink}" target="_blank" rel="noopener noreferrer">왓츠앱 상담</a>
+                </div>
+                <p class="detail-agent-dash">
+                  <a href="./agent-dashboard.html?id=${encodeURIComponent(agent.id)}">에이전트 워크스페이스</a>
+                </p>
+              </div>
+            </div>
+          </section>
+        `;
+
+        requestAnimationFrame(() => {
+          if (typeof initPropertyRadarChart === "function") {
+            initPropertyRadarChart({
+              scores: [88, 82, 85, 92, 78],
+            });
+          }
+        });
+
+        window.detailInspectionWaLink = `${waLink}?text=${encodeURIComponent(
+          `[안심 실사 보고서 신청]\n에이전트: ${agent.name}\n안녕하세요. 현지 실사 보고서를 신청하고 싶습니다.`
+        )}`;
+        window.detailAgentId = agent.id;
+      }
+
+      function demoSubmitInspectionRequest() {
+        const agentId = window.detailAgentId;
+        if (agentId == null || agentId === "") {
+          alert("에이전트 정보를 불러온 뒤 다시 시도해 주세요.");
+          return;
+        }
+        const input = document.getElementById("inspection-villa-input");
+        const villaName =
+          input && typeof input.value === "string" ? input.value.trim() : "";
+        submitInspectionRequest(agentId, villaName || "(미입력)");
+        closeInspectionModal();
+      }
+
+      function openInspectionForm() {
+        const modal = document.getElementById("inspection-modal");
+        const waBtn = document.getElementById("inspection-wa-btn");
+        if (waBtn && window.detailInspectionWaLink) {
+          waBtn.href = window.detailInspectionWaLink;
+        }
+        if (modal) {
+          modal.classList.add("is-open");
+          modal.setAttribute("aria-hidden", "false");
+        }
+      }
+
+      function closeInspectionModal() {
+        const modal = document.getElementById("inspection-modal");
+        if (modal) {
+          modal.classList.remove("is-open");
+          modal.setAttribute("aria-hidden", "true");
+        }
+      }
+
+      document.getElementById("inspection-modal")?.addEventListener("click", (e) => {
+        if (e.target.id === "inspection-modal") closeInspectionModal();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeInspectionModal();
+      });
+
+      init();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>매물 정밀 비교 · 발리 에이전트</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <div class="compare-page-wrap">
+      <nav class="compare-toolbar" aria-label="페이지 이동">
+        <a class="compare-back" href="./index.html">← 디렉토리로</a>
+        <a class="compare-toolbar-link" href="./vault.html">보관함</a>
+      </nav>
+
+      <div class="comparison-container">
+        <header class="comp-header">
+          <h2>매물 정밀 비교</h2>
+          <p id="comp-lead-text">
+            보관함 관심 목록에서 매물을 체크하면 여기서 비교합니다. (최대 3개)
+          </p>
+        </header>
+
+        <div id="comparison-root" aria-live="polite"></div>
+
+        <p class="comp-footnote" role="note">
+          데모: 관심 에이전트 1~3번은 각각 샘플 매물 데이터와 연결됩니다. 실제 서비스에서는 실사·Listing ID와
+          동기화하면 됩니다.
+        </p>
+      </div>
+    </div>
+
+    <script src="./js/compare-logic.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        loadCompareList();
+        renderComparison();
+      });
+    </script>
+  </body>
+</html>

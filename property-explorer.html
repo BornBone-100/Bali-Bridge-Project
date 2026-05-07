@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>[Bali Bridge] 신규 매물 탐색</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body class="bbdash-body">
+    <div class="bbdash-wrapper">
+      <aside class="bbdash-sidebar" aria-label="메인 내비게이션">
+        <div class="bbdash-brand">
+          <div class="bbdash-emblem" aria-hidden="true">
+            <svg width="34" height="34" viewBox="0 0 48 48" fill="none">
+              <path
+                d="M24 4C14.6 4 7 11.6 7 21c0 10.4 9.8 21.1 16 23 6.2-1.9 16-12.6 16-23C39 11.6 33.4 4 24 4Z"
+                stroke="rgba(255,255,255,0.65)"
+                stroke-width="2.2"
+              />
+              <path
+                d="M15.2 22.4c3.7-5.6 11.9-9 17.6-7.4-2.5 4.9-8.8 11.2-16.7 10.4"
+                stroke="rgba(5,150,105,0.95)"
+                stroke-width="2.2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div>
+            <p class="bbdash-brand-name">Bali Bridge</p>
+            <p class="bbdash-brand-sub">Property Explorer</p>
+          </div>
+        </div>
+
+        <nav class="bbdash-nav">
+          <a class="bbdash-link" href="./app.html">대시보드 홈</a>
+          <a class="bbdash-link" href="./vault.html">나의 투자 자산</a>
+          <a class="bbdash-link" href="./dd-report.html">실사 보고서(DD)</a>
+          <a class="bbdash-link is-active" href="./property-explorer.html">신규 매물 탐색</a>
+          <a class="bbdash-link" href="./agent-dashboard.html">설정(에이전트)</a>
+        </nav>
+
+        <div class="bbdash-sidebar-foot">
+          <div class="bbdash-mini-emblem" aria-label="브랜드 엠블럼">
+            <div class="bbdash-mini-dot"></div>
+            <span>BB</span>
+          </div>
+          <a class="bbdash-sideback" href="./index.html">← 디렉토리로</a>
+        </div>
+      </aside>
+
+      <main class="bbdash-main ppex-main">
+        <header class="ppex-header">
+          <h1>신규 매물 탐색</h1>
+          <p>Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.</p>
+        </header>
+
+        <section class="ppex-filters" aria-label="고급 필터">
+          <select id="filter-region">
+            <option value="all">모든 지역</option>
+            <option value="canggu">Canggu</option>
+            <option value="uluwatu">Uluwatu</option>
+            <option value="seminyak">Seminyak</option>
+          </select>
+          <select id="filter-roi">
+            <option value="all">예상 수익률(ROI)</option>
+            <option value="high">14% 이상</option>
+            <option value="mid">12% ~ 13.9%</option>
+            <option value="low">12% 미만</option>
+          </select>
+          <select id="filter-budget">
+            <option value="all">투자 금액대</option>
+            <option value="lt700">$700k 미만</option>
+            <option value="700to1000">$700k ~ $1M</option>
+            <option value="gt1000">$1M 이상</option>
+          </select>
+          <select id="filter-dd">
+            <option value="all">실사 상태</option>
+            <option value="done">실사 완료/법률 검토 완료</option>
+            <option value="progress">진행 중</option>
+            <option value="scheduled">실사 예정</option>
+          </select>
+          <button id="apply-filter" type="button">검색 적용</button>
+        </section>
+
+        <section id="property-list" class="ppex-grid" aria-live="polite"></section>
+      </main>
+    </div>
+
+    <script src="./js/property-explorer.js"></script>
+  </body>
+</html>
+

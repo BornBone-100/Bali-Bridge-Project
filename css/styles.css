@@ -4738,3 +4738,166 @@ body {
     padding-left: 16px;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Property Explorer (property-explorer.html)                                  */
+/* -------------------------------------------------------------------------- */
+.ppex-main {
+  padding-top: 34px;
+}
+
+.ppex-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+}
+
+.ppex-header p {
+  margin: 10px 0 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.ppex-filters {
+  margin-top: 26px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ppex-filters select {
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  font-weight: 700;
+  font-size: 0.86rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+.ppex-filters button {
+  margin-left: auto;
+  padding: 12px 24px;
+  background: #111827;
+  color: #fff;
+  border-radius: 999px;
+  border: 0;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ppex-grid {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.ppex-card {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f1f5f9;
+}
+
+.ppex-image {
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.ppex-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  backdrop-filter: blur(4px);
+}
+
+.ppex-body {
+  padding: 20px;
+}
+
+.ppex-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.ppex-tags span {
+  background: #ecfdf5;
+  color: #059669;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.ppex-body h3 {
+  margin: 0 0 8px;
+  font-size: 1.06rem;
+  font-weight: 900;
+  color: #1f2937;
+  line-height: 1.4;
+}
+
+.ppex-location {
+  margin: 0 0 18px;
+  color: #6b7280;
+  font-size: 0.88rem;
+}
+
+.ppex-metrics {
+  border-top: 1px solid #f3f4f6;
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ppex-metrics small {
+  display: block;
+  color: #9ca3af;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.ppex-metrics strong {
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.ppex-metrics div:first-child strong {
+  color: #059669;
+}
+
+.ppex-metrics div:last-child {
+  text-align: right;
+}
+
+.ppex-metrics div:last-child strong {
+  color: #111827;
+}
+
+.ppex-empty {
+  margin: 0;
+  padding: 30px;
+  border-radius: 14px;
+  border: 1px dashed #d1d5db;
+  background: #fff;
+  color: #6b7280;
+  text-align: center;
+  font-weight: 700;
+}

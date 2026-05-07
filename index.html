@@ -32,6 +32,7 @@
             <a
               id="kakao-login-btn"
               class="kakao-login-btn"
+              style="display: none;"
               href="#"
               onclick="loginWithKakao(); return false;"
               aria-label="카카오톡으로 로그인"
@@ -39,6 +40,13 @@
               <span class="kakao-login-icon" aria-hidden="true">K</span>
               <span class="kakao-login-text">카카오톡으로 시작하기</span>
             </a>
+            <button
+              type="button"
+              onclick="location.href='./agent-dashboard.html'"
+              style="padding: 10px 20px; background: #000; color: #fff; border-radius: 5px; cursor: pointer; border: 1px solid #333;"
+            >
+              서비스 대시보드 바로가기 (임시)
+            </button>
             <p class="auth-tip">3초 만에 시작하기</p>
           </div>
         </main>

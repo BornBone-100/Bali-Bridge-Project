@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>발리 에이전트 디렉토리</title>
+    <title>Bali Bridge · 발리 비즈니스 진단</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
@@ -12,7 +12,45 @@
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body>
-    <div class="app-container">
+    <div class="landing-hero" id="landingHero">
+      <div class="hero-overlay">
+        <header class="landing-header">
+          <h1 class="logo">Bali Bridge</h1>
+        </header>
+
+        <main class="hero-content">
+          <h2 class="hero-title">
+            데이터로 설계하는<br />
+            <span>나만의 발리 비즈니스</span>
+          </h2>
+          <p class="hero-copy">
+            7년 차 물리치료사의 정교한 진단 시스템을<br />
+            이제 발리 부동산 투자에 경험해 보세요.
+          </p>
+
+          <div class="auth-action">
+            <a
+              id="kakao-login-btn"
+              href="#"
+              onclick="loginWithKakao(); return false;"
+            >
+              <img
+                src="https://k.kakaocdn.net/14/dn/btroDszwNrM/OT7n9s0K3uLJBcv4SGoyUk/o.jpg"
+                width="222"
+                alt="카카오 로그인 버튼"
+              />
+            </a>
+            <p class="auth-tip">3초 만에 시작하기</p>
+          </div>
+        </main>
+
+        <footer class="landing-footer">
+          <p>© 2026 Bali Bridge. All rights reserved.</p>
+        </footer>
+      </div>
+    </div>
+
+    <div class="app-container" id="appRoot" hidden>
       <div class="site-toolbar">
         <a class="site-toolbar-link" href="./compare.html">매물 비교함</a>
         <a class="site-toolbar-link" href="./vault.html">나의 투자 보관함</a>
@@ -140,6 +178,7 @@
       </div>
     </div>
 
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="./js/data.js"></script>
     <script src="./js/survey.js"></script>
     <script src="./js/render.js"></script>

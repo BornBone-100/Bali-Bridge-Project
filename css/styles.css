@@ -34,6 +34,120 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.landing-hero {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(12, 18, 22, 0.18), rgba(12, 18, 22, 0.36)),
+    url("https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1800&q=85")
+      center/cover no-repeat;
+}
+
+.hero-overlay {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 28px clamp(20px, 5vw, 64px);
+  background:
+    radial-gradient(circle at center, rgba(0, 0, 0, 0.08), transparent 38%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.58));
+  color: #fff;
+}
+
+.landing-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  margin: 0;
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.24);
+}
+
+.hero-content {
+  align-self: center;
+  justify-self: center;
+  width: min(100%, 720px);
+  text-align: center;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(2.2rem, 8vw, 4.8rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.06em;
+  text-shadow: 0 6px 32px rgba(0, 0, 0, 0.34);
+}
+
+.hero-title span {
+  color: #dffaf4;
+}
+
+.hero-copy {
+  margin: 22px auto 0;
+  font-size: clamp(1rem, 2.8vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.28);
+}
+
+.auth-action {
+  margin-top: 42px;
+}
+
+#kakao-login-btn {
+  display: inline-flex;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.24);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.18s ease;
+}
+
+#kakao-login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.3);
+}
+
+#kakao-login-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+#kakao-login-btn:focus-visible {
+  outline: 3px solid rgba(255, 235, 0, 0.85);
+  outline-offset: 5px;
+}
+
+#kakao-login-btn img {
+  display: block;
+  height: auto;
+}
+
+.auth-tip {
+  margin: 12px 0 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.landing-footer {
+  text-align: center;
+}
+
+.landing-footer p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.62);
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

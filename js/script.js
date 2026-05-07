@@ -19,81 +19,6 @@ let allAgents = [];
 let selectedRegionLabel = null;
 const KAKAO_JAVASCRIPT_KEY = "8a83bbb04eb282c6c694e95c969bbd36";
 
-function shouldShowKakaoDebugger() {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("debug") === "1";
-  } catch (_) {
-    return false;
-  }
-}
-
-function maskKey(key) {
-  const s = String(key || "");
-  if (!s) return "";
-  return s.length <= 5 ? `${s}***` : `${s.slice(0, 5)}***`;
-}
-
-function initKakaoDebuggerBox() {
-  if (!shouldShowKakaoDebugger()) return;
-  if (document.getElementById("kakao-debugger-box")) return;
-
-  const box = document.createElement("div");
-  box.id = "kakao-debugger-box";
-  box.style.position = "fixed";
-  box.style.bottom = "10px";
-  box.style.right = "10px";
-  box.style.width = "320px";
-  box.style.backgroundColor = "#000";
-  box.style.color = "#00ff00";
-  box.style.padding = "15px";
-  box.style.fontSize = "11px";
-  box.style.zIndex = "10000";
-  box.style.fontFamily = "monospace";
-  box.style.border = "2px solid #333";
-  box.style.borderRadius = "5px";
-  box.style.opacity = "0.9";
-  box.style.boxShadow = "0 4px 15px rgba(0,0,0,0.5)";
-
-  const render = () => {
-    const key = KAKAO_JAVASCRIPT_KEY;
-    const keyExists = !!key && key !== "YOUR_JAVASCRIPT_KEY";
-    const initialized = !!window.Kakao?.isInitialized?.();
-    const currentUrl = window.location.origin;
-
-    box.innerHTML = `
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 10px 0;">
-        <h5 style="margin:0; color:#fff;">[Bali Bridge Debug System]</h5>
-        <button type="button" aria-label="디버거 닫기" style="cursor:pointer; background:transparent; border:1px solid #333; color:#fff; border-radius:4px; padding:2px 8px; font-size:11px;">닫기</button>
-      </div>
-      <p style="margin:6px 0;">JS KEY:
-        <span style="color:${keyExists ? "#00ff00" : "red"};">${
-          keyExists ? maskKey(key) : "❌ 없음 (키 설정 확인 필요)"
-        }</span>
-      </p>
-      <p style="margin:6px 0;">INITIALIZED: ${
-        initialized ? "✅ TRUE" : "❌ FALSE"
-      }</p>
-      <p style="margin:6px 0;">CURRENT ORIGIN:<br/>${currentUrl}</p>
-      <hr style="border:0; border-top:1px solid #333; margin:10px 0;" />
-      <p style="color:#aaa; font-size:10px; margin:0;">
-        ※ KOE009 해결법: 위 ORIGIN 주소를 복사해서<br/>
-        카카오 [제품 링크 관리] &gt; [웹 도메인]에 넣으세요.
-      </p>
-    `;
-
-    const btn = box.querySelector("button");
-    if (btn) btn.onclick = () => box.remove();
-  };
-
-  document.body.appendChild(box);
-  render();
-
-  // 초기화는 페이지 로딩 타이밍/SDK 로딩에 따라 변할 수 있어 짧게 폴링합니다.
-  const timer = window.setInterval(render, 500);
-  window.setTimeout(() => window.clearInterval(timer), 15000);
-}
-
 function initKakaoSdk() {
   if (typeof Kakao === "undefined") return false;
   if (KAKAO_JAVASCRIPT_KEY === "YOUR_JAVASCRIPT_KEY") return false;
@@ -231,7 +156,6 @@ function renderGrid() {
 }
 
 function init() {
-  initKakaoDebuggerBox();
   initKakaoSdk();
   try {
     if (

@@ -50,6 +50,68 @@ const DEMO_DATA = [
 
 let PROPERTY_DATA = [];
 let dataSource = "demo";
+let currentLang = "ko";
+
+const i18n = window.translations || {
+  ko: {
+    nav_home: "📊 대시보드 홈",
+    nav_assets: "💼 나의 투자 자산",
+    nav_reports: "📄 실사(DD) 보고서",
+    nav_search: "🌴 신규 매물 탐색",
+    search_title: "신규 매물 탐색",
+    search_desc:
+      "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
+    filter_all: "모든 지역",
+    filter_roi: "예상 수익률(ROI)",
+    filter_price: "투자 금액대",
+    filter_dd: "실사 상태",
+    btn_apply: "검색 적용",
+    card_roi: "예상 ROI",
+    card_price: "최소 투자 금액",
+    loading: "데이터 로딩 중...",
+    empty_results: "조건에 맞는 매물이 없습니다. 필터를 조정해 주세요.",
+    dd_done: "실사 완료/법률 검토 완료",
+    dd_progress: "진행 중",
+    dd_scheduled: "실사 예정",
+    dd_badge_done: "법률 검토 완료 (AAA)",
+    dd_badge_progress: "건축 허가 진행 중",
+    dd_badge_scheduled: "실사 예정",
+    source_supabase: "연동: Supabase `properties` 테이블 (실시간)",
+    source_demo:
+      "데모 데이터 표시 중 — `js/supabase-browser-env.js` 에 URL/키를 넣으면 Supabase를 불러옵니다.",
+  },
+  en: {
+    nav_home: "📊 Dashboard",
+    nav_assets: "💼 My Assets",
+    nav_reports: "📄 DD Reports",
+    nav_search: "🌴 Property Search",
+    search_title: "Property Search",
+    search_desc:
+      "Explore premium investment assets with strict due diligence by Bali Bridge.",
+    filter_all: "All Locations",
+    filter_roi: "Expected ROI",
+    filter_price: "Investment Range",
+    filter_dd: "DD Status",
+    btn_apply: "Apply Filter",
+    card_roi: "Expected ROI",
+    card_price: "Min. Investment",
+    loading: "Loading data...",
+    empty_results: "No properties match your filters. Please adjust your criteria.",
+    dd_done: "DD Complete / Legal Review Done",
+    dd_progress: "In Progress",
+    dd_scheduled: "Scheduled",
+    dd_badge_done: "Legal review completed (AAA)",
+    dd_badge_progress: "Building permit in progress",
+    dd_badge_scheduled: "DD scheduled",
+    source_supabase: "Source: Supabase `properties` table (live)",
+    source_demo:
+      "Showing demo data — set URL/key in `js/supabase-browser-env.js` to load Supabase.",
+  },
+};
+
+function t(key) {
+  return i18n[currentLang]?.[key] ?? i18n.ko?.[key] ?? key;
+}
 
 function getBrowserSupabaseConfig() {
   const url = typeof window !== "undefined" ? window.BB_SUPABASE_URL : "";
@@ -142,13 +204,19 @@ function filterByBudget(item, budgetFilter) {
   return true;
 }
 
+function getDdBadgeText(prop) {
+  if (prop.ddType === "done") return t("dd_badge_done");
+  if (prop.ddType === "progress") return t("dd_badge_progress");
+  if (prop.ddType === "scheduled") return t("dd_badge_scheduled");
+  return prop.ddStatus;
+}
+
 function renderProperties(list) {
   const root = document.getElementById("property-list");
   if (!root) return;
 
   if (!list.length) {
-    root.innerHTML =
-      '<p class="ppex-empty">조건에 맞는 매물이 없습니다. 필터를 조정해 주세요.</p>';
+    root.innerHTML = `<p class="ppex-empty">${escapeHtml(t("empty_results"))}</p>`;
     return;
   }
 
@@ -158,7 +226,7 @@ function renderProperties(list) {
       return `
       <article class="ppex-card">
         <div class="ppex-image" style="background-image:url('${bg.replace(/'/g, "%27")}')">
-          <span class="ppex-badge">${escapeHtml(prop.ddStatus)}</span>
+          <span class="ppex-badge">${escapeHtml(getDdBadgeText(prop))}</span>
         </div>
         <div class="ppex-body">
           <div class="ppex-tags">
@@ -168,17 +236,17 @@ function renderProperties(list) {
           <p class="ppex-location">📍 ${escapeHtml(prop.location)}</p>
           <div class="ppex-metrics">
             <div>
-              <small>예상 ROI</small>
+              <small>${escapeHtml(t("card_roi"))}</small>
               <strong>${escapeHtml(prop.roiLabel)}</strong>
             </div>
             <div>
-              <small>최소 투자 금액</small>
+              <small>${escapeHtml(t("card_price"))}</small>
               <strong>${escapeHtml(prop.priceLabel)}</strong>
             </div>
           </div>
         </div>
-      </article>`
-    )
+      </article>`;
+    })
     .join("");
 }
 
@@ -203,19 +271,80 @@ function setSourceNote() {
   const el = document.getElementById("ppex-source-note");
   if (!el) return;
   if (dataSource === "supabase") {
-    el.textContent = "연동: Supabase `properties` 테이블 (실시간)";
+    el.textContent = t("source_supabase");
     el.hidden = false;
   } else {
-    el.textContent =
-      "데모 데이터 표시 중 — `js/supabase-browser-env.js` 에 URL/키를 넣으면 Supabase를 불러옵니다.";
+    el.textContent = t("source_demo");
     el.hidden = false;
+  }
+}
+
+function setTextById(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function applyTranslations() {
+  setTextById("nav-home", t("nav_home"));
+  setTextById("nav-assets", t("nav_assets"));
+  setTextById("nav-reports", t("nav_reports"));
+  setTextById("nav-search", t("nav_search"));
+  setTextById("search-title", t("search_title"));
+  setTextById("search-desc", t("search_desc"));
+  setTextById("filter-all-label", t("filter_all"));
+  setTextById("filter-roi-label", t("filter_roi"));
+  setTextById("filter-price-label", t("filter_price"));
+  setTextById("filter-dd-label", t("filter_dd"));
+  setTextById("apply-filter", t("btn_apply"));
+  setTextById("roi-high-label", t("roi_high"));
+  setTextById("roi-mid-label", t("roi_mid"));
+  setTextById("roi-low-label", t("roi_low"));
+  setTextById("budget-lt700-label", t("budget_lt700"));
+  setTextById("budget-700to1000-label", t("budget_700to1000"));
+  setTextById("budget-gt1000-label", t("budget_gt1000"));
+  setTextById("dd-done-label", t("dd_done"));
+  setTextById("dd-progress-label", t("dd_progress"));
+  setTextById("dd-scheduled-label", t("dd_scheduled"));
+
+  const koBtn = document.getElementById("lang-ko");
+  const enBtn = document.getElementById("lang-en");
+  if (koBtn) {
+    koBtn.style.backgroundColor = currentLang === "ko" ? "#fff" : "transparent";
+    koBtn.style.color = currentLang === "ko" ? "#111827" : "#6B7280";
+    koBtn.setAttribute("aria-pressed", currentLang === "ko" ? "true" : "false");
+  }
+  if (enBtn) {
+    enBtn.style.backgroundColor = currentLang === "en" ? "#fff" : "transparent";
+    enBtn.style.color = currentLang === "en" ? "#111827" : "#6B7280";
+    enBtn.setAttribute("aria-pressed", currentLang === "en" ? "true" : "false");
+  }
+}
+
+function bindLanguageToggle() {
+  const koBtn = document.getElementById("lang-ko");
+  const enBtn = document.getElementById("lang-en");
+  if (koBtn) {
+    koBtn.addEventListener("click", () => {
+      currentLang = "ko";
+      applyTranslations();
+      setSourceNote();
+      applyFilters();
+    });
+  }
+  if (enBtn) {
+    enBtn.addEventListener("click", () => {
+      currentLang = "en";
+      applyTranslations();
+      setSourceNote();
+      applyFilters();
+    });
   }
 }
 
 async function loadProperties() {
   const root = document.getElementById("property-list");
   if (root) {
-    root.innerHTML = '<p class="ppex-loading">데이터 로딩 중...</p>';
+    root.innerHTML = `<p class="ppex-loading">${escapeHtml(t("loading"))}</p>`;
   }
 
   const cfg = getBrowserSupabaseConfig();
@@ -248,6 +377,8 @@ async function loadProperties() {
 }
 
 async function initPropertyExplorer() {
+  applyTranslations();
+  bindLanguageToggle();
   await loadProperties();
   setSourceNote();
   renderProperties(PROPERTY_DATA);

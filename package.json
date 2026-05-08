@@ -4,6 +4,9 @@
   "private": true,
   "description": "Bali Bridge static app + Supabase client",
   "license": "UNLICENSED",
+  "scripts": {
+    "dev": "npx --yes serve . -l 3000"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.3"
   }

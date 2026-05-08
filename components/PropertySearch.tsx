@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { translations } from '../lib/translations';
 
 export type PropertyRow = {
   id: string | number;
@@ -22,6 +23,12 @@ type ConsultForm = {
 const emptyForm: ConsultForm = { name: '', phone: '', message: '' };
 
 export default function PropertySearch() {
+  // 🌐 현재 언어 상태 관리 (기본값: 한국어)
+  const [lang, setLang] = useState<'ko' | 'en'>('ko');
+
+  // 🌐 번역 도우미 함수: t('키워드') 형태로 사용
+  const t = (key: keyof typeof translations.ko) => translations[lang][key];
+
   const [properties, setProperties] = useState<PropertyRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,7 +51,7 @@ export default function PropertySearch() {
   function handleDownload(url: string | null | undefined) {
     const u = url?.trim();
     if (!u) {
-      alert('현재 실사 보고서가 준비 중입니다.');
+      alert(t('alert_report_not_ready'));
       return;
     }
     window.open(u, '_blank', 'noopener,noreferrer');
@@ -65,12 +72,12 @@ export default function PropertySearch() {
     setSubmitting(false);
 
     if (error) {
-      alert('오류가 발생했습니다. 다시 시도해주세요.');
+      alert(t('alert_consult_error'));
       console.error(error);
       return;
     }
 
-    alert('상담 요청이 성공적으로 접수되었습니다. 곧 연락드리겠습니다!');
+    alert(t('alert_consult_success'));
     setIsModalOpen(false);
     setSelectedProperty(null);
     setFormData(emptyForm);
@@ -89,15 +96,58 @@ export default function PropertySearch() {
 
   if (loading) {
     return (
-      <div style={{ padding: '50px', textAlign: 'center' }}>데이터 로딩 중...</div>
+      <div style={{ padding: '50px', textAlign: 'center' }}>{t('loading')}</div>
     );
   }
 
   return (
     <div style={{ padding: '48px', backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
-      <h1 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '40px' }}>
-        🌴 실시간 매물 탐색 (Supabase 연동)
-      </h1>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          marginBottom: '40px',
+          gap: '16px',
+        }}
+      >
+        <h1 style={{ fontSize: '28px', fontWeight: '800', margin: 0, color: '#1F2937' }}>
+          {t('search_title')}
+        </h1>
+
+        <div style={{ display: 'flex', backgroundColor: '#E5E7EB', borderRadius: '30px', padding: '4px' }}>
+          <button
+            onClick={() => setLang('ko')}
+            style={{
+              padding: '8px 16px',
+              border: 'none',
+              borderRadius: '26px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              backgroundColor: lang === 'ko' ? '#fff' : 'transparent',
+              color: lang === 'ko' ? '#111827' : '#6B7280',
+              boxShadow: lang === 'ko' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none',
+            }}
+          >
+            KOR
+          </button>
+          <button
+            onClick={() => setLang('en')}
+            style={{
+              padding: '8px 16px',
+              border: 'none',
+              borderRadius: '26px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              backgroundColor: lang === 'en' ? '#fff' : 'transparent',
+              color: lang === 'en' ? '#111827' : '#6B7280',
+              boxShadow: lang === 'en' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none',
+            }}
+          >
+            ENG
+          </button>
+        </div>
+      </div>
 
       <div
         style={{
@@ -141,11 +191,11 @@ export default function PropertySearch() {
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '12px', color: '#9CA3AF' }}>예상 ROI</div>
+                  <div style={{ fontSize: '12px', color: '#9CA3AF' }}>{t('card_roi')}</div>
                   <div style={{ fontWeight: '800', color: '#059669' }}>{prop.roi}</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '12px', color: '#9CA3AF' }}>금액</div>
+                  <div style={{ fontSize: '12px', color: '#9CA3AF' }}>{t('card_price')}</div>
                   <div style={{ fontWeight: '800' }}>{prop.price}</div>
                 </div>
               </div>
@@ -165,7 +215,7 @@ export default function PropertySearch() {
                     cursor: 'pointer',
                   }}
                 >
-                  📄 보고서 보기
+                  {t('btn_report')}
                 </button>
                 <button
                   type="button"
@@ -181,7 +231,7 @@ export default function PropertySearch() {
                     cursor: 'pointer',
                   }}
                 >
-                  💬 상담 요청
+                  {t('btn_consult')}
                 </button>
               </div>
             </div>
@@ -225,7 +275,7 @@ export default function PropertySearch() {
               {selectedProperty?.title}
               <br />
               <span style={{ fontSize: '16px', color: '#059669', fontWeight: '700' }}>
-                상담 요청하기
+                {t('modal_consult_title')}
               </span>
             </h2>
 
@@ -235,7 +285,7 @@ export default function PropertySearch() {
             >
               <input
                 type="text"
-                placeholder="성함"
+                placeholder={t('form_name')}
                 required autoComplete="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -243,7 +293,7 @@ export default function PropertySearch() {
               />
               <input
                 type="tel"
-                placeholder="연락처 (예: 010-1234-5678)"
+                placeholder={t('form_phone_placeholder')}
                 required
                 autoComplete="tel"
                 value={formData.phone}
@@ -251,7 +301,7 @@ export default function PropertySearch() {
                 style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }}
               />
               <textarea
-                placeholder="궁금하신 점을 남겨주세요."
+                placeholder={t('form_message_placeholder')}
                 rows={4}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -277,7 +327,7 @@ export default function PropertySearch() {
                     cursor: submitting ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  취소
+                  {t('btn_cancel')}
                 </button>
                 <button
                   type="submit"
@@ -294,7 +344,7 @@ export default function PropertySearch() {
                     opacity: submitting ? 0.85 : 1,
                   }}
                 >
-                  {submitting ? '전송 중…' : '요청 완료'}
+                  {submitting ? t('btn_submitting') : t('btn_submit_success')}
                 </button>
               </div>
             </form>

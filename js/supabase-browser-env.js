@@ -1,7 +1,8 @@
 /**
- * 브라우저(정적 페이지)에서 Supabase 호출용 — Supabase Settings > API 값을 아래에 붙여넣으세요.
- * Next.js 는 .env.local + lib/supabaseClient.ts 를 사용하면 됩니다.
- * 이 파일에 실제 키를 넣은 뒤 커밋하지 마세요.
+ * 브라우저(정적 페이지)에서 Supabase 호출용.
+ *
+ * NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY 값과 동일하게 넣습니다.
  */
-window.BB_SUPABASE_URL = window.BB_SUPABASE_URL || '';
-window.BB_SUPABASE_ANON_KEY = window.BB_SUPABASE_ANON_KEY || '';
+window.BB_SUPABASE_URL = "https://vggpaeikmumrxklddntu.supabase.co";
+window.BB_SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZ3BrZWt0dWxtbXNua2xkb25mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzE3NDEsImV4cCI6MjA5MzcwNzc0MX0.Sg1BZWsstGiMfwmNXda0_FJCvTQxseW1vg0bHUQaxSU";

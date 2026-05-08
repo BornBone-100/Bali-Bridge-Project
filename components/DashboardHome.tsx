@@ -7,8 +7,9 @@ export default function DashboardHome() {
   // 📊 유저 이름과 DB에서 가져올 실제 수치 상태 관리
   const [dashboardData, setDashboardData] = useState({
     userName: '고객',
-    totalAsset: 0,
-    activeProjects: 0,
+    totalAsset: 0, // 총 투자 금액
+    activeProjects: 0, // 진행 중인 실사
+    totalProperties: 0, // 보유 매물 수
   });
 
   useEffect(() => {
@@ -17,49 +18,34 @@ export default function DashboardHome() {
 
   const fetchRealUserData = async () => {
     try {
-      // 1. 현재 로그인한 유저 확인
       const {
         data: { session },
-        error: authError,
       } = await supabase.auth.getSession();
-
-      if (authError || !session) {
-        window.location.href = '/login'; // 로그인 안 했으면 쫓아냄
-        return;
-      }
+      if (!session) return;
 
       const user = session.user;
       const name = user.user_metadata?.full_name || user.user_metadata?.name || '고객';
 
-      // 2. ⭐ [핵심] 로그인한 유저의 고유 ID(user.id)로 DB에서 수치값 조회하기
-      const { data: assetData, error: dbError } = await supabase
-        .from('user_assets') // 방금 만든 테이블 이름
-        .select('total_asset, active_projects')
-        .eq('user_id', user.id) // "내 아이디랑 똑같은 줄의 데이터만 가져와!"
-        .single(); // 데이터 1개만 딱 가져옴
+      // DB에서 데이터 가져오기
+      const { data: assetData } = await supabase
+        .from('user_assets')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
 
-      if (dbError) {
-        console.error('user_assets 조회 에러:', dbError);
-      }
-
-      // 3. 화면에 데이터 꽂아넣기
       if (assetData) {
-        // DB에 데이터가 있으면 그 수치를 화면에 적용
         setDashboardData({
           userName: name,
-          totalAsset: assetData.total_asset,
-          activeProjects: assetData.active_projects,
+          totalAsset: assetData.total_asset || 0,
+          activeProjects: assetData.active_projects || 0,
+          totalProperties: assetData.total_properties || 0,
         });
       } else {
-        // DB에 아직 데이터가 없으면 (가입 직후) 0으로 세팅
-        setDashboardData({
-          userName: name,
-          totalAsset: 0,
-          activeProjects: 0,
-        });
+        // ⭐ 핵심: 처음 가입해서 DB에 데이터가 아예 없으면 전부 0으로 세팅!
+        setDashboardData({ userName: name, totalAsset: 0, activeProjects: 0, totalProperties: 0 });
       }
     } catch (error) {
-      console.error('데이터 통신 에러:', error);
+      console.error('DB 연동 에러:', error);
     } finally {
       setLoading(false);
     }
@@ -144,7 +130,7 @@ export default function DashboardHome() {
         </header>
 
         {/* ⭐ DB에서 가져온 진짜 수치가 들어가는 곳 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '40px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px', marginBottom: '40px' }}>
           <div
             style={{
               backgroundColor: '#fff',
@@ -156,9 +142,7 @@ export default function DashboardHome() {
             <div style={{ color: '#6B7280', fontSize: '14px', marginBottom: '12px' }}>
               총 투자 자산 (예정)
             </div>
-            <div style={{ fontSize: '32px', fontWeight: '800' }}>
-              $ {dashboardData.totalAsset.toLocaleString()}
-            </div>
+            <div style={{ fontSize: '32px', fontWeight: '800' }}>${dashboardData.totalAsset.toLocaleString()}</div>
           </div>
           <div
             style={{
@@ -171,7 +155,18 @@ export default function DashboardHome() {
             <div style={{ color: '#6B7280', fontSize: '14px', marginBottom: '12px' }}>
               참여 중인 프로젝트
             </div>
-            <div style={{ fontSize: '32px', fontWeight: '800' }}>{dashboardData.activeProjects} 건</div>
+            <div style={{ fontSize: '32px', fontWeight: '800' }}>{dashboardData.activeProjects}건</div>
+          </div>
+          <div
+            style={{
+              backgroundColor: '#fff',
+              padding: '32px',
+              borderRadius: '20px',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
+            }}
+          >
+            <div style={{ color: '#6B7280', fontSize: '14px', marginBottom: '12px' }}>보유 매물 수</div>
+            <div style={{ fontSize: '32px', fontWeight: '800' }}>{dashboardData.totalProperties}개</div>
           </div>
         </div>
       </main>

@@ -57,6 +57,7 @@
         <header class="ppex-header">
           <h1>신규 매물 탐색</h1>
           <p>Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.</p>
+          <p id="ppex-source-note" class="ppex-source-note" hidden aria-live="polite"></p>
         </header>
 
         <section class="ppex-filters" aria-label="고급 필터">
@@ -91,7 +92,8 @@
       </main>
     </div>
 
-    <script src="./js/property-explorer.js"></script>
+    <script src="./js/supabase-browser-env.js"></script>
+    <script type="module" src="./js/property-explorer.js"></script>
   </body>
 </html>
 

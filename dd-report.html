@@ -14,14 +14,14 @@
   <body class="dd-body">
     <div class="dd-report-container">
       <header class="dd-header">
-        <a class="dd-back" href="./app.html#home">← 디렉토리로</a>
+        <a class="dd-back" href="./dashboard.html">← 디렉토리로</a>
         <div class="dd-header-main">
           <div>
             <p class="dd-kicker">투자 실사 보고서 대시보드</p>
-            <h1 class="dd-title">Canggu Luxury Villa Development A-1</h1>
+            <h1 class="dd-title" id="dd-title">Canggu Luxury Villa Development A-1</h1>
             <p class="dd-sub">
-              실사 완료일: <strong>2026.05.07</strong> · 토지 권리 형태:
-              <strong>HGB</strong> · 투자 기간: <strong>5년</strong>
+              실사 완료일: <strong id="dd-updated-at">2026.05.07</strong> · 토지 권리 형태:
+              <strong id="dd-land-rights">HGB</strong> · 투자 기간: <strong id="dd-investment-period">5년</strong>
             </p>
           </div>
           <div class="dd-trust-badge" aria-label="종합 신뢰 등급">
@@ -35,17 +35,17 @@
       <section class="dd-exec" aria-label="Executive Summary">
         <div class="dd-metric">
           <span class="dd-metric-label">예상 ROI (연)</span>
-          <strong class="dd-metric-value">12.5%</strong>
+          <strong class="dd-metric-value" id="dd-target-roi">12.5%</strong>
           <span class="dd-metric-sub">평균 시나리오 기준</span>
         </div>
         <div class="dd-metric">
           <span class="dd-metric-label">투자 기간</span>
-          <strong class="dd-metric-value">5년</strong>
+          <strong class="dd-metric-value" id="dd-investment-period-metric">5년</strong>
           <span class="dd-metric-sub">Exit 전략 포함</span>
         </div>
         <div class="dd-metric">
           <span class="dd-metric-label">토지 권리 형태</span>
-          <strong class="dd-metric-value">HGB</strong>
+          <strong class="dd-metric-value" id="dd-land-rights-metric">HGB</strong>
           <span class="dd-metric-sub">유효성 확인 완료</span>
         </div>
       </section>
@@ -59,15 +59,15 @@
           <ul class="dd-list">
             <li>
               <strong>토지 증명서(Sertifikat)</strong>:
-              <span class="dd-ok">유효성 확인 완료</span>
+              <span class="dd-ok" id="dd-legal-sertifikat">유효성 확인 완료</span>
             </li>
             <li>
               <strong>용도 확인(Zoning)</strong>:
-              <span class="dd-ok">관광 지구(Pink Zone) 확인 완료</span>
+              <span class="dd-ok" id="dd-legal-zoning">관광 지구(Pink Zone) 확인 완료</span>
             </li>
             <li>
               <strong>PBG(건축 허가)</strong>:
-              <span class="dd-warn">승인 대기</span>
+              <span class="dd-warn" id="dd-legal-pbg">승인 대기</span>
             </li>
           </ul>
           <div class="dd-card-footnote">
@@ -96,12 +96,12 @@
           <div class="dd-mini">
             <div class="dd-mini-item">
               <span>Exit 전략(5년)</span>
-              <strong>예상 매각가 1.45×</strong>
+              <strong id="dd-exit-multiple">예상 매각가 1.45×</strong>
               <small>시세 차익 + 운영수익 합산</small>
             </div>
             <div class="dd-mini-item">
               <span>리스크 메모</span>
-              <strong>PBG 승인 일정</strong>
+              <strong id="dd-risk-level">PBG 승인 일정</strong>
               <small>일정 지연 시 현금흐름 변동 가능</small>
             </div>
           </div>
@@ -116,19 +116,19 @@
           <div class="dd-loc-grid">
             <div class="dd-loc">
               <span class="dd-loc-label">비치클럽</span>
-              <strong>8분</strong>
+              <strong id="dd-loc-beach">8분</strong>
             </div>
             <div class="dd-loc">
               <span class="dd-loc-label">국제 학교</span>
-              <strong>14분</strong>
+              <strong id="dd-loc-school">14분</strong>
             </div>
             <div class="dd-loc">
               <span class="dd-loc-label">병원</span>
-              <strong>18분</strong>
+              <strong id="dd-loc-hospital">18분</strong>
             </div>
             <div class="dd-loc">
               <span class="dd-loc-label">공항</span>
-              <strong>45분</strong>
+              <strong id="dd-loc-airport">45분</strong>
             </div>
           </div>
 
@@ -204,11 +204,12 @@
       </footer>
     </div>
 
+    <script src="./js/supabase-browser-env.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
       crossorigin="anonymous"
     ></script>
-    <script src="./js/dd-report.js"></script>
+    <script type="module" src="./js/dd-report.js"></script>
   </body>
 </html>
 

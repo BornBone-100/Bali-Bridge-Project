@@ -1,3 +1,5 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
+
 let currentLang = localStorage.getItem("bbLang") || "ko";
 
 function t(key) {
@@ -87,19 +89,21 @@ function currencyUsd(v) {
   }
 }
 
-function initRegionGrowthChart() {
+function initRegionGrowthChart(regionalGrowth = null) {
   const el = document.getElementById("regionGrowthChart");
   if (!el || typeof Chart === "undefined") return null;
+
+  const growth = Array.isArray(regionalGrowth) ? regionalGrowth : [];
 
   const ctx = el.getContext("2d");
   return new Chart(ctx, {
     type: "bar",
     data: {
-      labels: ["짱구", "울루와투", "우붓", "세미냑"],
+      labels: growth.map((g) => g.region),
       datasets: [
         {
           label: "연간 지가 상승률(추정)",
-          data: [14.2, 11.1, 8.6, 9.4],
+          data: growth.map((g) => Number(g.rate) || 0),
           backgroundColor: [
             "rgba(0, 184, 148, 0.25)",
             "rgba(9, 132, 227, 0.22)",
@@ -136,19 +140,21 @@ function initRegionGrowthChart() {
   });
 }
 
-function initMonthlyDividendChart() {
+function initMonthlyDividendChart(monthlyDividend = null) {
   const el = document.getElementById("monthlyDividendChart");
   if (!el || typeof Chart === "undefined") return null;
+
+  const monthly = Array.isArray(monthlyDividend) ? monthlyDividend : [];
 
   const ctx = el.getContext("2d");
   return new Chart(ctx, {
     type: "line",
     data: {
-      labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+      labels: monthly.map((m) => m.month),
       datasets: [
         {
           label: "월별 예상 배당(순수익)",
-          data: [5200, 5000, 5600, 6100, 6400, 6800, 7200, 7600, 6900, 6300, 5800, 5400],
+          data: monthly.map((m) => Number(m.value) || 0),
           borderColor: "rgba(0, 184, 148, 0.95)",
           backgroundColor: "rgba(0, 184, 148, 0.18)",
           fill: true,
@@ -181,35 +187,41 @@ function initMonthlyDividendChart() {
   });
 }
 
-function renderDdTimeline() {
+function renderDdTimeline(timelineData = null) {
   const root = document.getElementById("dd-timeline");
   if (!root) return;
 
-  const items = [
-    {
-      date: "2026.05.07",
-      title: "Canggu A-1 법률 검토 완료",
-      detail: "Sertifikat 유효성/분쟁 여부 확인 완료",
-      status: "good",
-    },
-    {
-      date: "2026.05.06",
-      title: "Uluwatu B-3 현장 소음 측정 업데이트",
-      detail: "평균 48dB (야간), 주변 공사 1곳",
-      status: "info",
-    },
-    {
-      date: "2026.05.05",
-      title: "Canggu A-1 PBG 승인 대기",
-      detail: "예상 소요 2~3주(변동 가능)",
-      status: "warn",
-    },
-  ];
+  const items = Array.isArray(timelineData)
+    ? timelineData.map((it) => ({
+        date: String(it.event_date || "").replaceAll("-", "."),
+        title: it.title || "업데이트",
+        detail: it.description || "",
+        status: it.status || "pending",
+      }))
+    : [];
+
+  if (!items.length) {
+    root.innerHTML = `
+      <div class="bbdash-timeline-item">
+        <div class="bbdash-timeline-body">
+          <div class="bbdash-timeline-top">
+            <strong>표시할 실사 타임라인 데이터가 없습니다.</strong>
+          </div>
+          <p>dd_timeline 테이블 데이터를 추가하면 자동으로 표시됩니다.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
 
   root.innerHTML = items
     .map((it) => {
       const tone =
-        it.status === "good" ? "bbdash-dot--good" : it.status === "warn" ? "bbdash-dot--warn" : "bbdash-dot--info";
+        it.status === "completed"
+          ? "bbdash-dot--good"
+          : it.status === "in_progress"
+          ? "bbdash-dot--info"
+          : "bbdash-dot--warn";
       return `
         <div class="bbdash-timeline-item">
           <div class="bbdash-dot ${tone}" aria-hidden="true"></div>
@@ -226,30 +238,22 @@ function renderDdTimeline() {
     .join("");
 }
 
-function renderRecommendedProperties() {
+function renderRecommendedProperties(list = []) {
   const root = document.getElementById("property-grid");
   if (!root) return;
-
-  const list = [
-    {
-      name: "Canggu Luxury Villa A-1",
-      location: "📍 Canggu · Batu Bolong",
-      pricePerPyeong: "$4,800 /m²",
-      tag: "고수요",
-    },
-    {
-      name: "Uluwatu Cliffside Retreat B-3",
-      location: "📍 Uluwatu · Pecatu",
-      pricePerPyeong: "$4,100 /m²",
-      tag: "뷰 프리미엄",
-    },
-    {
-      name: "Ubud Eco Boutique C-2",
-      location: "📍 Ubud · Tegallalang",
-      pricePerPyeong: "$3,200 /m²",
-      tag: "장기수요",
-    },
-  ];
+  if (!Array.isArray(list) || !list.length) {
+    root.innerHTML = `
+      <article class="bbdash-prop">
+        <div class="bbdash-prop-body">
+          <div class="bbdash-prop-top">
+            <h3>추천 매물 데이터가 없습니다</h3>
+          </div>
+          <p class="bbdash-prop-loc">properties 테이블 데이터를 확인해 주세요.</p>
+        </div>
+      </article>
+    `;
+    return;
+  }
 
   root.innerHTML = list
     .map((p) => {
@@ -275,7 +279,7 @@ function renderRecommendedProperties() {
               <strong>${p.pricePerPyeong}</strong>
             </div>
             <div class="bbdash-prop-actions">
-              <a class="bbdash-mini-btn" href="./dd-report.html">DD 보기</a>
+              <a class="bbdash-mini-btn" href="./dd-report.html?propertyId=${encodeURIComponent(p.id)}">DD 보기</a>
               <a class="bbdash-mini-btn bbdash-mini-btn--primary" href="./index.html">매물 상세</a>
             </div>
           </div>
@@ -291,16 +295,125 @@ function bindPdfDownload() {
   btn.addEventListener("click", () => window.print());
 }
 
-function initDashboard() {
+async function fetchDashboardSummary() {
+  const titleEl = document.getElementById("dashboard-user-title");
+  const totalAssetEl = document.getElementById("stat-total-asset");
+  const activeProjectsEl = document.getElementById("stat-active-projects");
+  const totalPropertiesEl = document.getElementById("stat-total-properties");
+
+  const url = String(window.BB_SUPABASE_URL || "").trim();
+  const key = String(window.BB_SUPABASE_ANON_KEY || "").trim();
+
+  if (!url || !key) {
+    console.warn("Supabase browser env is missing.");
+    return { supabase: null, session: null };
+  }
+
+  const supabase = createClient(url, key);
+  const {
+    data: { session },
+    error: authError,
+  } = await supabase.auth.getSession();
+
+  if (authError || !session) {
+    // "서비스 대시보드 바로가기(임시)" 버튼으로 온 경우에만 비로그인 진입 허용
+    const allowGuest = sessionStorage.getItem("bb_guest_dashboard") === "1";
+    if (!allowGuest) {
+      window.location.href = "./index.html";
+      return { supabase, session: null };
+    }
+    if (titleEl) titleEl.textContent = "환영합니다, 고객님";
+    if (totalAssetEl) totalAssetEl.textContent = currencyUsd(0);
+    if (activeProjectsEl) activeProjectsEl.textContent = "0건";
+    if (totalPropertiesEl) totalPropertiesEl.textContent = "0개";
+    return { supabase, session: null };
+  }
+
+  const user = session.user;
+  sessionStorage.removeItem("bb_guest_dashboard");
+  const name = user.user_metadata?.full_name || user.user_metadata?.name || "고객";
+  if (titleEl) titleEl.textContent = `환영합니다, ${name}님`;
+
+  const { data: assetData, error: dbError } = await supabase
+    .from("user_assets")
+    .select("total_asset, active_projects, total_properties")
+    .eq("user_id", user.id)
+    .single();
+
+  if (dbError && dbError.code !== "PGRST116") {
+    console.error("user_assets 조회 에러:", dbError);
+  }
+
+  const totalAsset = assetData?.total_asset || 0;
+  const activeProjects = assetData?.active_projects || 0;
+  const totalProperties = assetData?.total_properties || 0;
+
+  if (totalAssetEl) totalAssetEl.textContent = currencyUsd(totalAsset);
+  if (activeProjectsEl) activeProjectsEl.textContent = `${activeProjects}건`;
+  if (totalPropertiesEl) totalPropertiesEl.textContent = `${totalProperties}개`;
+  return { supabase, session };
+}
+
+async function fetchDashboardWidgets(supabase) {
+  if (!supabase) return { timeline: [], marketData: null };
+  try {
+    const { data: timelineData } = await supabase
+      .from("dd_timeline")
+      .select("*")
+      .order("event_date", { ascending: false })
+      .limit(5);
+
+    const { data: metricsData } = await supabase.from("market_metrics").select("*").eq("id", 1).maybeSingle();
+
+    return { timeline: timelineData || [], marketData: metricsData || null };
+  } catch (error) {
+    console.error("위젯 데이터 로딩 에러:", error);
+    return { timeline: [], marketData: null };
+  }
+}
+
+async function fetchRecommendedProperties(supabase) {
+  if (!supabase) return [];
+  try {
+    const { data, error } = await supabase
+      .from("properties")
+      .select("id,title,location,price,roi,tags")
+      .order("roi", { ascending: false })
+      .limit(3);
+    if (error) {
+      console.error("추천 매물 조회 에러:", error);
+      return [];
+    }
+
+    return (data || []).map((row) => {
+      const title = String(row.title || "");
+      const location = `📍 ${String(row.location || "-")}`;
+      const price = row.price == null ? "-" : String(row.price);
+      const pricePerPyeong = /^\$/.test(price) ? price : `$${Number(String(price).replace(/[^0-9.]/g, "") || 0).toLocaleString("en-US")}`;
+      const tag = Array.isArray(row.tags) && row.tags.length ? String(row.tags[0]) : "매물";
+      return { id: row.id, name: title, location, pricePerPyeong, tag };
+    });
+  } catch (error) {
+    console.error("추천 매물 조회 에러:", error);
+    return [];
+  }
+}
+
+async function initDashboard() {
+  const { supabase } = await fetchDashboardSummary();
+  const { timeline, marketData } = await fetchDashboardWidgets(supabase);
+  const recommended = await fetchRecommendedProperties(supabase);
   applyDashboardTranslations();
   bindDashboardLanguageToggle();
   applyLangButtonState();
-  initRegionGrowthChart();
-  initMonthlyDividendChart();
-  renderDdTimeline();
-  renderRecommendedProperties();
+  initRegionGrowthChart(marketData?.regional_growth);
+  initMonthlyDividendChart(marketData?.monthly_dividend);
+  renderDdTimeline(timeline);
+  renderRecommendedProperties(recommended);
   bindPdfDownload();
 }
 
-document.addEventListener("DOMContentLoaded", initDashboard);
+document.addEventListener("DOMContentLoaded", () => {
+  void initDashboard();
+});
 

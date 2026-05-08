@@ -1,16 +1,23 @@
-function initDdRoiChart() {
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
+
+function initDdRoiChart(series = null) {
   const el = document.getElementById("roiChart");
   if (!el || typeof Chart === "undefined") return null;
+
+  const labels = Array.isArray(series) && series.length ? series.map((s) => s.label || "") : [];
+  const conservative = Array.isArray(series) && series.length ? series.map((s) => Number(s.conservative) || 0) : [];
+  const average = Array.isArray(series) && series.length ? series.map((s) => Number(s.average) || 0) : [];
+  const aggressive = Array.isArray(series) && series.length ? series.map((s) => Number(s.aggressive) || 0) : [];
 
   const ctx = el.getContext("2d");
   return new Chart(ctx, {
     type: "line",
     data: {
-      labels: ["Year 1", "Year 2", "Year 3", "Year 4", "Year 5"],
+      labels,
       datasets: [
         {
           label: "보수적",
-          data: [6.2, 7.1, 7.4, 7.8, 8.1],
+          data: conservative,
           borderColor: "rgba(99, 110, 114, 0.95)",
           backgroundColor: "rgba(99, 110, 114, 0.18)",
           tension: 0.35,
@@ -18,7 +25,7 @@ function initDdRoiChart() {
         },
         {
           label: "평균적",
-          data: [9.0, 10.4, 11.6, 12.0, 12.5],
+          data: average,
           borderColor: "rgba(9, 132, 227, 0.95)",
           backgroundColor: "rgba(9, 132, 227, 0.18)",
           tension: 0.35,
@@ -26,7 +33,7 @@ function initDdRoiChart() {
         },
         {
           label: "공격적",
-          data: [10.5, 12.2, 13.6, 14.3, 15.2],
+          data: aggressive,
           borderColor: "rgba(0, 184, 148, 0.95)",
           backgroundColor: "rgba(0, 184, 148, 0.18)",
           tension: 0.35,
@@ -57,19 +64,22 @@ function initDdRoiChart() {
   });
 }
 
-function initDdVacancyChart() {
+function initDdVacancyChart(vacancyTrend = null) {
   const el = document.getElementById("vacancyChart");
   if (!el || typeof Chart === "undefined") return null;
+
+  const labels = Array.isArray(vacancyTrend) && vacancyTrend.length ? vacancyTrend.map((v) => v.label || "") : [];
+  const values = Array.isArray(vacancyTrend) && vacancyTrend.length ? vacancyTrend.map((v) => Number(v.rate) || 0) : [];
 
   const ctx = el.getContext("2d");
   return new Chart(ctx, {
     type: "bar",
     data: {
-      labels: ["2024", "2025", "2026 (YTD)"],
+      labels,
       datasets: [
         {
           label: "평균 공실률",
-          data: [18, 14, 12],
+          data: values,
           backgroundColor: [
             "rgba(45, 52, 54, 0.25)",
             "rgba(9, 132, 227, 0.25)",
@@ -109,16 +119,108 @@ function bindDdPdfDownload() {
   const btn = document.getElementById("download-pdf");
   if (!btn) return;
   btn.addEventListener("click", () => {
-    // 데모에서는 print로 대체합니다. (실제 PDF 파일이 생기면 href 다운로드로 교체)
+    const pdfUrl = btn.getAttribute("data-pdf-url");
+    if (pdfUrl) {
+      window.open(pdfUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
     window.print();
   });
 }
 
-function initDdReport() {
-  initDdRoiChart();
-  initDdVacancyChart();
-  bindDdPdfDownload();
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el && value !== undefined && value !== null && value !== "") el.textContent = String(value);
 }
 
-document.addEventListener("DOMContentLoaded", initDdReport);
+function showNotice(message) {
+  const container = document.querySelector(".dd-report-container");
+  if (!container) return;
+  let el = document.getElementById("dd-runtime-notice");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "dd-runtime-notice";
+    el.style.marginBottom = "16px";
+    el.style.padding = "12px 14px";
+    el.style.borderRadius = "10px";
+    el.style.backgroundColor = "#FEF3C7";
+    el.style.color = "#92400E";
+    el.style.fontSize = "14px";
+    el.style.fontWeight = "600";
+    container.insertBefore(el, container.firstChild);
+  }
+  el.textContent = message;
+}
+
+function toDateText(v) {
+  if (!v) return "";
+  return String(v).slice(0, 10).replaceAll("-", ".");
+}
+
+async function bindDdReportData() {
+  const url = String(window.BB_SUPABASE_URL || "").trim();
+  const key = String(window.BB_SUPABASE_ANON_KEY || "").trim();
+  if (!url || !key) return null;
+
+  const supabase = createClient(url, key);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    showNotice("로그인이 필요한 실사보고서입니다. 로그인 후 다시 열어주세요.");
+    return null;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const propertyId = Number(params.get("propertyId") || 1);
+
+  const { data, error } = await supabase.from("dd_reports").select("*").eq("property_id", propertyId).maybeSingle();
+  if (error) {
+    console.error("dd_reports 조회 에러:", error);
+    showNotice("실사보고서 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+    return null;
+  }
+  if (!data) {
+    showNotice(`propertyId=${propertyId}에 해당하는 실사보고서가 아직 등록되지 않았습니다.`);
+    return null;
+  }
+
+  setText("dd-updated-at", toDateText(data.updated_at));
+  setText("dd-land-rights", data.land_rights || "HGB");
+  setText("dd-investment-period", data.investment_period || "-");
+  setText("dd-target-roi", `${data.target_roi}%`);
+  setText("dd-investment-period-metric", data.investment_period || "-");
+  setText("dd-land-rights-metric", data.land_rights || "-");
+
+  setText("dd-legal-sertifikat", data.legal_status?.sertifikat || "확인 중");
+  setText("dd-legal-zoning", data.legal_status?.zoning || "확인 중");
+  setText("dd-legal-pbg", data.legal_status?.pbg || "확인 중");
+
+  setText("dd-loc-beach", `${data.location_data?.beach_min ?? 0}분`);
+  setText("dd-loc-school", `${data.location_data?.school_min ?? 14}분`);
+  setText("dd-loc-hospital", `${data.location_data?.hospital_min ?? 0}분`);
+  setText("dd-loc-airport", `${data.location_data?.airport_min ?? 0}분`);
+
+  const exitMultiple = data.financial_data?.exit_multiple;
+  if (exitMultiple) setText("dd-exit-multiple", `예상 매각가 ${exitMultiple}×`);
+  if (data.financial_data?.risk_level) setText("dd-risk-level", data.financial_data.risk_level);
+
+  const downloadBtn = document.getElementById("download-pdf");
+  if (downloadBtn && data.pdf_url) {
+    downloadBtn.setAttribute("data-pdf-url", data.pdf_url);
+  }
+  return data;
+}
+
+async function initDdReport() {
+  bindDdPdfDownload();
+  const report = await bindDdReportData();
+  initDdRoiChart(report?.financial_data?.roi_projection || []);
+  initDdVacancyChart(report?.financial_data?.vacancy_trend || []);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  void initDdReport();
+});
 

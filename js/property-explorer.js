@@ -1,55 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
 
-const DEMO_DATA = [
-  {
-    id: 1,
-    title: "Canggu Luxury Pool Villa A-1",
-    location: "Canggu, Bali",
-    region: "canggu",
-    price: 500000,
-    priceLabel: "$500,000",
-    roi: 15.2,
-    roiLabel: "15.2%",
-    ddStatus: "법률 검토 완료 (AAA)",
-    ddType: "done",
-    tags: ["관광특구", "HGB 확보", "수익형"],
-    image:
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
-  },
-  {
-    id: 2,
-    title: "Uluwatu Cliff Resort Project",
-    location: "Uluwatu, Bali",
-    region: "uluwatu",
-    price: 1200000,
-    priceLabel: "$1,200,000",
-    roi: 11.8,
-    roiLabel: "11.8%",
-    ddStatus: "건축 허가 진행 중",
-    ddType: "progress",
-    tags: ["오션뷰", "장기 투자", "PMA 추천"],
-    image:
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80",
-  },
-  {
-    id: 3,
-    title: "Seminyak Boutique Hotel",
-    location: "Seminyak, Bali",
-    region: "seminyak",
-    price: 850000,
-    priceLabel: "$850,000",
-    roi: 13.5,
-    roiLabel: "13.5%",
-    ddStatus: "실사 예정",
-    ddType: "scheduled",
-    tags: ["리모델링", "상업지구", "급매"],
-    image:
-      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=1200&q=80",
-  },
-];
-
 let PROPERTY_DATA = [];
-let dataSource = "demo";
+let dataSource = "supabase";
 let currentLang = "ko";
 
 const i18n = window.translations || {
@@ -77,8 +29,7 @@ const i18n = window.translations || {
     dd_badge_progress: "건축 허가 진행 중",
     dd_badge_scheduled: "실사 예정",
     source_supabase: "연동: Supabase `properties` 테이블 (실시간)",
-    source_demo:
-      "데모 데이터 표시 중 — `js/supabase-browser-env.js` 에 URL/키를 넣으면 Supabase를 불러옵니다.",
+    source_demo: "데이터 연결이 비활성화되었습니다. Supabase 환경값을 확인해 주세요.",
   },
   en: {
     nav_home: "📊 Dashboard",
@@ -104,8 +55,7 @@ const i18n = window.translations || {
     dd_badge_progress: "Building permit in progress",
     dd_badge_scheduled: "DD scheduled",
     source_supabase: "Source: Supabase `properties` table (live)",
-    source_demo:
-      "Showing demo data — set URL/key in `js/supabase-browser-env.js` to load Supabase.",
+    source_demo: "Data connection is disabled. Please check Supabase env values.",
   },
 };
 
@@ -349,7 +299,7 @@ async function loadProperties() {
 
   const cfg = getBrowserSupabaseConfig();
   if (!cfg) {
-    PROPERTY_DATA = DEMO_DATA;
+    PROPERTY_DATA = [];
     dataSource = "demo";
     return;
   }
@@ -359,7 +309,7 @@ async function loadProperties() {
     const { data, error } = await supabase.from("properties").select("*");
     if (error) {
       console.error("Supabase:", error);
-      PROPERTY_DATA = DEMO_DATA;
+      PROPERTY_DATA = [];
       dataSource = "demo";
       return;
     }
@@ -372,7 +322,7 @@ async function loadProperties() {
     console.error(e);
   }
 
-  PROPERTY_DATA = DEMO_DATA;
+  PROPERTY_DATA = [];
   dataSource = "demo";
 }
 

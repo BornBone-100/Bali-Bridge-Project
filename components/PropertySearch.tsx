@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { translations } from '../lib/translations';
+import { useProperties } from '../lib/useProperties';
+import { useAuth } from '../lib/AuthContext';
 
 export type PropertyRow = {
   id: string | number;
@@ -14,39 +16,32 @@ export type PropertyRow = {
   dd_report_url?: string | null;
 };
 
-type ConsultForm = {
-  name: string;
-  phone: string;
-  message: string;
-};
-
-const emptyForm: ConsultForm = { name: '', phone: '', message: '' };
-
 export default function PropertySearch() {
   // 🌐 현재 언어 상태 관리 (기본값: 한국어)
   const [lang, setLang] = useState<'ko' | 'en'>('ko');
+  const { user } = useAuth();
 
   // 🌐 번역 도우미 함수: t('키워드') 형태로 사용
   const t = (key: keyof typeof translations.ko) => translations[lang][key];
 
-  const [properties, setProperties] = useState<PropertyRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState<PropertyRow | null>(null);
-  const [formData, setFormData] = useState<ConsultForm>(emptyForm);
-  const [submitting, setSubmitting] = useState(false);
+  const { properties, loading } = useProperties();
 
-  useEffect(() => {
-    async function fetchProperties() {
-      const { data, error } = await supabase.from('properties').select('*');
+  const typedProperties = (properties as PropertyRow[]) || [];
 
-      if (error) console.error('Error loading properties:', error);
-      else setProperties((data as PropertyRow[]) || []);
-      setLoading(false);
-    }
+  function formatRoi(value: PropertyRow['roi']) {
+    if (value == null) return '-';
+    const raw = String(value).trim();
+    if (!raw) return '-';
+    return raw.includes('%') ? raw : `${raw}%`;
+  }
 
-    fetchProperties();
-  }, []);
+  function formatPrice(value: PropertyRow['price']) {
+    if (value == null) return '-';
+    if (typeof value === 'number') return `$${value.toLocaleString()}`;
+    const numeric = Number(String(value).replace(/[^0-9.]/g, ''));
+    if (Number.isFinite(numeric) && numeric > 0) return `$${numeric.toLocaleString()}`;
+    return String(value);
+  }
 
   function handleDownload(url: string | null | undefined) {
     const u = url?.trim();
@@ -57,42 +52,39 @@ export default function PropertySearch() {
     window.open(u, '_blank', 'noopener,noreferrer');
   }
 
-  async function handleSubmitConsultation(e: React.FormEvent) {
-    e.preventDefault();
-    if (!selectedProperty) return;
-
-    setSubmitting(true);
-    const { error } = await supabase.from('consultations').insert({
-      property_id: selectedProperty.id,
-      user_name: formData.name,
-      user_phone: formData.phone,
-      message: formData.message,
-    });
-
-    setSubmitting(false);
-
-    if (error) {
-      alert(t('alert_consult_error'));
-      console.error(error);
+  // 🎯 상담 요청 버튼 클릭 시 실행되는 마스터 함수
+  const handleConsultRequest = async (propertyId: string | number, propertyTitle: string) => {
+    // 1. 로그인 확인
+    if (!user) {
+      alert('상담을 요청하려면 로그인이 필요합니다. 🔒');
+      window.location.href = '/login';
       return;
     }
 
-    alert(t('alert_consult_success'));
-    setIsModalOpen(false);
-    setSelectedProperty(null);
-    setFormData(emptyForm);
-  }
+    try {
+      // 2. DB의 consultation_requests 테이블에 데이터 저장
+      const { error } = await supabase.from('consultation_requests').insert({
+        user_id: user.id,
+        property_id: String(propertyId),
+      });
 
-  function openConsultModal(prop: PropertyRow) {
-    setSelectedProperty(prop);
-    setIsModalOpen(true);
-  }
-
-  function closeModal() {
-    if (submitting) return;
-    setIsModalOpen(false);
-    setSelectedProperty(null);
-  }
+      // 3. 결과에 따른 메시지 처리
+      if (error) {
+        if (error.code === '23505') {
+          alert('이미 상담이 접수된 매물입니다. 담당자의 연락을 기다려주세요! ⏳');
+        } else {
+          throw error;
+        }
+      } else {
+        alert(
+          `✅ [${propertyTitle}] 상담 요청이 성공적으로 접수되었습니다!\n빠른 시일 내에 이메일로 연락드리겠습니다.`
+        );
+      }
+    } catch (error) {
+      console.error('요청 실패:', error);
+      alert('오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    }
+  };
 
   if (loading) {
     return (
@@ -156,7 +148,7 @@ export default function PropertySearch() {
           gap: '32px',
         }}
       >
-        {properties.map((prop) => (
+        {typedProperties.map((prop) => (
           <div
             key={String(prop.id)}
             style={{
@@ -192,11 +184,11 @@ export default function PropertySearch() {
               >
                 <div>
                   <div style={{ fontSize: '12px', color: '#9CA3AF' }}>{t('card_roi')}</div>
-                  <div style={{ fontWeight: '800', color: '#059669' }}>{prop.roi}</div>
+                  <div style={{ fontWeight: '800', color: '#059669' }}>{formatRoi(prop.roi)}</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '12px', color: '#9CA3AF' }}>{t('card_price')}</div>
-                  <div style={{ fontWeight: '800' }}>{prop.price}</div>
+                  <div style={{ fontWeight: '800' }}>{formatPrice(prop.price)}</div>
                 </div>
               </div>
 
@@ -219,7 +211,7 @@ export default function PropertySearch() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => openConsultModal(prop)}
+                  onClick={() => void handleConsultRequest(prop.id, prop.title)}
                   style={{
                     flex: 1,
                     padding: '10px',
@@ -238,119 +230,6 @@ export default function PropertySearch() {
           </div>
         ))}
       </div>
-
-      {isModalOpen && (
-        <div
-          role="presentation"
-          onClick={closeModal}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '16px',
-            zIndex: 50,
-          }}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="consult-modal-title"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              backgroundColor: '#fff',
-              padding: '32px',
-              borderRadius: '16px',
-              width: '100%',
-              maxWidth: '400px',
-              boxSizing: 'border-box',
-            }}
-          >
-            <h2 id="consult-modal-title" style={{ margin: '0 0 20px 0', fontSize: '18px' }}>
-              {selectedProperty?.title}
-              <br />
-              <span style={{ fontSize: '16px', color: '#059669', fontWeight: '700' }}>
-                {t('modal_consult_title')}
-              </span>
-            </h2>
-
-            <form
-              onSubmit={handleSubmitConsultation}
-              style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}
-            >
-              <input
-                type="text"
-                placeholder={t('form_name')}
-                required autoComplete="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }}
-              />
-              <input
-                type="tel"
-                placeholder={t('form_phone_placeholder')}
-                required
-                autoComplete="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }}
-              />
-              <textarea
-                placeholder={t('form_message_placeholder')}
-                rows={4}
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                style={{
-                  padding: '12px',
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  resize: 'none',
-                }}
-              />
-
-              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                <button
-                  type="button"
-                  disabled={submitting}
-                  onClick={closeModal}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    backgroundColor: '#eee',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: submitting ? 'not-allowed' : 'pointer',
-                  }}
-                >
-                  {t('btn_cancel')}
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  style={{
-                    flex: 2,
-                    padding: '12px',
-                    backgroundColor: '#111827',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontWeight: 'bold',
-                    cursor: submitting ? 'not-allowed' : 'pointer',
-                    opacity: submitting ? 0.85 : 1,
-                  }}
-                >
-                  {submitting ? t('btn_submitting') : t('btn_submit_success')}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -18,10 +18,8 @@ let allAgents = [];
 /** null이면 전체, 아니면 선택된 `.cat-btn`의 라벨 텍스트 (예: "짱구 (Canggu)") */
 let selectedRegionLabel = null;
 function showAppAfterAuth() {
-  const landing = document.getElementById("landingHero");
-  const app = document.getElementById("appRoot");
-  if (landing) landing.hidden = true;
-  if (app) app.hidden = false;
+  // 로그인 성공 후 대시보드 홈으로 이동
+  window.location.href = "./dashboard.html";
 }
 
 function loginWithKakao() {

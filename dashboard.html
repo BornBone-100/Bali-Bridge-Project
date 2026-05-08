@@ -49,14 +49,14 @@
             <div class="bbdash-mini-dot"></div>
             <span>BB</span>
           </div>
-          <a class="bbdash-sideback" href="./app.html#home">← 디렉토리로</a>
+          <a class="bbdash-sideback" href="./index.html">← 디렉토리로</a>
         </div>
       </aside>
 
       <main class="bbdash-main" aria-label="대시보드 콘텐츠">
         <header class="bbdash-topbar">
           <div>
-            <h1 class="bbdash-h1">환영합니다, 김성준님</h1>
+            <h1 class="bbdash-h1" id="dashboard-user-title">환영합니다, 고객님</h1>
             <p class="bbdash-topbar-sub">
               오늘의 핵심 지표와 실사 진행 상황을 한 화면에서 확인하세요.
             </p>
@@ -73,7 +73,7 @@
         <section class="bbdash-stats" aria-label="Quick Stats">
           <div class="bbdash-stat">
             <span class="bbdash-stat-label">총 투자 금액</span>
-            <strong class="bbdash-stat-value">$150,000</strong>
+            <strong class="bbdash-stat-value" id="stat-total-asset">$0</strong>
             <span class="bbdash-stat-sub">누적 투자</span>
           </div>
           <div class="bbdash-stat">
@@ -83,12 +83,12 @@
           </div>
           <div class="bbdash-stat">
             <span class="bbdash-stat-label">진행 중인 실사</span>
-            <strong class="bbdash-stat-value">2건</strong>
+            <strong class="bbdash-stat-value" id="stat-active-projects">0건</strong>
             <span class="bbdash-stat-sub">업데이트 있음</span>
           </div>
           <div class="bbdash-stat">
             <span class="bbdash-stat-label">보유 매물 수</span>
-            <strong class="bbdash-stat-value">3개</strong>
+            <strong class="bbdash-stat-value" id="stat-total-properties">0개</strong>
             <span class="bbdash-stat-sub">현재 포트폴리오</span>
           </div>
         </section>
@@ -153,11 +153,12 @@
       </main>
     </div>
 
+    <script src="./js/supabase-browser-env.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
       crossorigin="anonymous"
     ></script>
-    <script src="./js/dashboard.js"></script>
+    <script type="module" src="./js/dashboard.js"></script>
   </body>
 </html>
 

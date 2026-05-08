@@ -1,3 +1,80 @@
+let currentLang = localStorage.getItem("bbLang") || "ko";
+
+function t(key) {
+  const dict = window.translations || {};
+  return dict[currentLang]?.[key] ?? dict.ko?.[key] ?? key;
+}
+
+function setTextById(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function applyDashboardTranslations() {
+  setTextById("dash-nav-home", t("nav_home"));
+  setTextById("dash-nav-assets", t("nav_assets"));
+  setTextById("dash-nav-reports", t("nav_reports"));
+  setTextById("dash-nav-search", t("nav_search"));
+  setTextById("dash-title", t("dash_title"));
+  setTextById("dash-subtitle", t("dash_subtitle"));
+  setTextById("dash-stat1-label", t("dash_stat1_label"));
+  setTextById("dash-stat1-sub", t("dash_stat1_sub"));
+  setTextById("dash-stat2-label", t("dash_stat2_label"));
+  setTextById("dash-stat2-sub", t("dash_stat2_sub"));
+  setTextById("dash-stat3-label", t("dash_stat3_label"));
+  setTextById("dash-stat3-sub", t("dash_stat3_sub"));
+  setTextById("dash-stat4-label", t("dash_stat4_label"));
+  setTextById("dash-stat4-sub", t("dash_stat4_sub"));
+  setTextById("dash-chart-title", t("dash_chart_title"));
+  setTextById("dash-chart-desc", t("dash_chart_desc"));
+  setTextById("dash-dd-link", t("dash_dd_link"));
+  setTextById("dash-chart-region-title", t("dash_chart_region_title"));
+  setTextById("dash-chart-monthly-title", t("dash_chart_monthly_title"));
+  setTextById("dash-timeline-title", t("dash_timeline_title"));
+  setTextById("dash-timeline-desc", t("dash_timeline_desc"));
+  setTextById("dash-open-dd-btn", t("dash_open_dd_btn"));
+  setTextById("dd-download", t("dash_pdf_download"));
+  setTextById("dash-reco-title", t("dash_reco_title"));
+  setTextById("dash-reco-desc", t("dash_reco_desc"));
+  setTextById("dash-more-props-link", t("dash_more_props"));
+}
+
+function applyLangButtonState() {
+  const koBtn = document.getElementById("dash-lang-ko");
+  const enBtn = document.getElementById("dash-lang-en");
+  if (koBtn) {
+    koBtn.style.backgroundColor = currentLang === "ko" ? "#fff" : "transparent";
+    koBtn.style.color = currentLang === "ko" ? "#111827" : "#6B7280";
+    koBtn.setAttribute("aria-pressed", currentLang === "ko" ? "true" : "false");
+  }
+  if (enBtn) {
+    enBtn.style.backgroundColor = currentLang === "en" ? "#fff" : "transparent";
+    enBtn.style.color = currentLang === "en" ? "#111827" : "#6B7280";
+    enBtn.setAttribute("aria-pressed", currentLang === "en" ? "true" : "false");
+  }
+}
+
+function bindDashboardLanguageToggle() {
+  const koBtn = document.getElementById("dash-lang-ko");
+  const enBtn = document.getElementById("dash-lang-en");
+  if (koBtn) {
+    koBtn.addEventListener("click", () => {
+      currentLang = "ko";
+      localStorage.setItem("bbLang", currentLang);
+      applyDashboardTranslations();
+      applyLangButtonState();
+    });
+  }
+  if (enBtn) {
+    enBtn.addEventListener("click", () => {
+      currentLang = "en";
+      localStorage.setItem("bbLang", currentLang);
+      applyDashboardTranslations();
+      applyLangButtonState();
+    });
+  }
+}
+
 function currencyUsd(v) {
   try {
     return new Intl.NumberFormat("en-US", {
@@ -215,6 +292,9 @@ function bindPdfDownload() {
 }
 
 function initDashboard() {
+  applyDashboardTranslations();
+  bindDashboardLanguageToggle();
+  applyLangButtonState();
   initRegionGrowthChart();
   initMonthlyDividendChart();
   renderDdTimeline();

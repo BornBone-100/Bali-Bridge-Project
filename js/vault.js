@@ -274,7 +274,7 @@ function renderVaultLikes() {
         <p class="vault-empty-text">
           관심 있는 에이전트를 저장하면 이곳에서 한눈에 볼 수 있습니다.
         </p>
-        <a class="btn btn--secondary vault-panel-cta" href="./app.html">디렉토리 둘러보기</a>
+        <a class="btn btn--secondary vault-panel-cta" href="./app.html#home">디렉토리 둘러보기</a>
       </section>
     `;
   }

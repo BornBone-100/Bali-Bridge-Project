@@ -131,7 +131,7 @@
                 <div class="bbdash-mini-dot"></div>
                 <span>BB</span>
               </div>
-              <a class="bbdash-sideback" href="./app.html">← 디렉토리로</a>
+              <a class="bbdash-sideback" href="./app.html#home">← 디렉토리로</a>
             </div>
           </aside>
 
@@ -256,9 +256,25 @@
           } catch (_) {}
         }
 
+        /** 서브 페이지 « 디렉토리로 » 등에서 app.html#home 으로 올 때 로그인 없이 홈 표시 */
+        function applyHomeHash() {
+          const h = (location.hash || "").toLowerCase();
+          if (h === "#home" || h === "#dashboard") {
+            showDashboard();
+            try {
+              history.replaceState(null, "", location.pathname + location.search);
+            } catch (_) {}
+            return true;
+          }
+          return false;
+        }
+
         try {
-          const isLogged = localStorage.getItem(AUTH_KEY) === "true";
-          if (isLogged) showDashboard();
+          const fromHash = applyHomeHash();
+          if (!fromHash) {
+            const isLogged = localStorage.getItem(AUTH_KEY) === "true";
+            if (isLogged) showDashboard();
+          }
         } catch (_) {}
 
         if (startBtn) startBtn.addEventListener("click", showDashboard);

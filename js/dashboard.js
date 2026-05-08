@@ -295,6 +295,23 @@ function bindPdfDownload() {
   btn.addEventListener("click", () => window.print());
 }
 
+function bindDashboardLogout(supabase) {
+  const btn = document.getElementById("dashboard-logout-btn");
+  if (!btn) return;
+  btn.addEventListener("click", async () => {
+    try {
+      if (supabase) {
+        await supabase.auth.signOut();
+      }
+    } catch (error) {
+      console.error("로그아웃 에러:", error);
+    } finally {
+      sessionStorage.removeItem("bb_guest_dashboard");
+      window.location.href = "./index.html";
+    }
+  });
+}
+
 async function fetchDashboardSummary() {
   const titleEl = document.getElementById("dashboard-user-title");
   const totalAssetEl = document.getElementById("stat-total-asset");
@@ -411,6 +428,7 @@ async function initDashboard() {
   renderDdTimeline(timeline);
   renderRecommendedProperties(recommended);
   bindPdfDownload();
+  bindDashboardLogout(supabase);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

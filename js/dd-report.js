@@ -133,6 +133,25 @@ function setText(id, value) {
   if (el && value !== undefined && value !== null && value !== "") el.textContent = String(value);
 }
 
+function clearReportFields() {
+  setText("dd-title", "실사보고서 데이터 없음");
+  setText("dd-updated-at", "-");
+  setText("dd-land-rights", "-");
+  setText("dd-investment-period", "-");
+  setText("dd-target-roi", "-");
+  setText("dd-investment-period-metric", "-");
+  setText("dd-land-rights-metric", "-");
+  setText("dd-legal-sertifikat", "-");
+  setText("dd-legal-zoning", "-");
+  setText("dd-legal-pbg", "-");
+  setText("dd-loc-beach", "-");
+  setText("dd-loc-school", "-");
+  setText("dd-loc-hospital", "-");
+  setText("dd-loc-airport", "-");
+  setText("dd-exit-multiple", "-");
+  setText("dd-risk-level", "-");
+}
+
 function showNotice(message) {
   const container = document.querySelector(".dd-report-container");
   if (!container) return;
@@ -158,6 +177,8 @@ function toDateText(v) {
 }
 
 async function bindDdReportData() {
+  clearReportFields();
+
   const url = String(window.BB_SUPABASE_URL || "").trim();
   const key = String(window.BB_SUPABASE_ANON_KEY || "").trim();
   if (!url || !key) return null;
@@ -175,6 +196,12 @@ async function bindDdReportData() {
   const params = new URLSearchParams(window.location.search);
   const propertyId = Number(params.get("propertyId") || 1);
 
+  const { data: propertyData } = await supabase
+    .from("properties")
+    .select("id,title,location")
+    .eq("id", propertyId)
+    .maybeSingle();
+
   const { data, error } = await supabase.from("dd_reports").select("*").eq("property_id", propertyId).maybeSingle();
   if (error) {
     console.error("dd_reports 조회 에러:", error);
@@ -186,21 +213,25 @@ async function bindDdReportData() {
     return null;
   }
 
+  if (propertyData?.title) {
+    setText("dd-title", propertyData.title);
+  }
+
   setText("dd-updated-at", toDateText(data.updated_at));
-  setText("dd-land-rights", data.land_rights || "HGB");
+  setText("dd-land-rights", data.land_rights || "-");
   setText("dd-investment-period", data.investment_period || "-");
-  setText("dd-target-roi", `${data.target_roi}%`);
+  setText("dd-target-roi", data.target_roi != null ? `${data.target_roi}%` : "-");
   setText("dd-investment-period-metric", data.investment_period || "-");
   setText("dd-land-rights-metric", data.land_rights || "-");
 
-  setText("dd-legal-sertifikat", data.legal_status?.sertifikat || "확인 중");
-  setText("dd-legal-zoning", data.legal_status?.zoning || "확인 중");
-  setText("dd-legal-pbg", data.legal_status?.pbg || "확인 중");
+  setText("dd-legal-sertifikat", data.legal_status?.sertifikat || "-");
+  setText("dd-legal-zoning", data.legal_status?.zoning || "-");
+  setText("dd-legal-pbg", data.legal_status?.pbg || "-");
 
-  setText("dd-loc-beach", `${data.location_data?.beach_min ?? 0}분`);
-  setText("dd-loc-school", `${data.location_data?.school_min ?? 14}분`);
-  setText("dd-loc-hospital", `${data.location_data?.hospital_min ?? 0}분`);
-  setText("dd-loc-airport", `${data.location_data?.airport_min ?? 0}분`);
+  setText("dd-loc-beach", data.location_data?.beach_min != null ? `${data.location_data.beach_min}분` : "-");
+  setText("dd-loc-school", data.location_data?.school_min != null ? `${data.location_data.school_min}분` : "-");
+  setText("dd-loc-hospital", data.location_data?.hospital_min != null ? `${data.location_data.hospital_min}분` : "-");
+  setText("dd-loc-airport", data.location_data?.airport_min != null ? `${data.location_data.airport_min}분` : "-");
 
   const exitMultiple = data.financial_data?.exit_multiple;
   if (exitMultiple) setText("dd-exit-multiple", `예상 매각가 ${exitMultiple}×`);

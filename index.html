@@ -28,7 +28,7 @@
             나에게 맞는 발리 부동산 투자를 시작해 보세요.
           </p>
 
-          <div class="auth-action">
+          <div class="auth-action auth-action--stack">
             <a
               id="kakao-login-btn"
               class="kakao-login-btn"
@@ -39,6 +39,15 @@
               <span class="kakao-login-icon" aria-hidden="true">K</span>
               <span class="kakao-login-text">카카오톡으로 시작하기</span>
             </a>
+            <button
+              type="button"
+              class="google-login-btn"
+              data-google-signin
+              aria-label="구글로 로그인"
+            >
+              <span class="google-login-btn__g" aria-hidden="true">G</span>
+              구글로 시작하기
+            </button>
             <button
               type="button"
               onclick="location.href='./app.html'"
@@ -184,6 +193,7 @@
       </div>
     </div>
 
+    <script src="./js/supabase-browser-env.js"></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
     <script src="./js/kakao-auth.js"></script>
     <script src="./js/data.js"></script>
@@ -192,5 +202,6 @@
     <script src="./js/vault-storage.js"></script>
     <script src="./js/calculator.js"></script>
     <script src="./js/script.js" defer></script>
+    <script type="module" src="./js/bind-google-login.js"></script>
   </body>
 </html>

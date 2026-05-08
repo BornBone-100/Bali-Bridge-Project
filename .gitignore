@@ -1,5 +1,7 @@
 .DS_Store
 
+node_modules/
+
 # 로컬 환경 변수 (Supabase 키 등 — 커밋하지 마세요)
 .env.local
 .env*.local

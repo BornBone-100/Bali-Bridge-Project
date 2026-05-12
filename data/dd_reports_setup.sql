@@ -1,49 +1,90 @@
--- 1) DD 실사보고서 테이블 생성 (Master 구조)
+-- 투자 실사보고서 테이블 (최초 1회) + RLS
+-- 시드 INSERT는 넣지 않습니다. 관리자 화면에서 입력 후 is_public=true 로 공개하세요.
+
 CREATE TABLE IF NOT EXISTS dd_reports (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  property_id bigint REFERENCES properties(id) UNIQUE NOT NULL, -- 1개 매물당 1개 보고서
+  property_id bigint REFERENCES properties(id) UNIQUE NOT NULL,
 
-  -- 핵심 요약 데이터
-  target_roi numeric NOT NULL,             -- 예상 ROI (예: 12.5)
-  investment_period text,                  -- 투자 기간 (예: '5년')
-  land_rights text,                        -- 토지 권리 형태 (예: 'HGB')
+  target_roi numeric DEFAULT 0,
+  investment_period text,
+  land_rights text,
 
-  -- 세부 심사 데이터 (jsonb로 유연 저장)
-  legal_status jsonb DEFAULT '{}'::jsonb,  -- 법률 심사
-  location_data jsonb DEFAULT '{}'::jsonb, -- 입지 정보
-  financial_data jsonb DEFAULT '{}'::jsonb,-- 재무 정보
+  legal_status jsonb DEFAULT '{}'::jsonb,
+  location_data jsonb DEFAULT '{}'::jsonb,
+  financial_data jsonb DEFAULT '{}'::jsonb,
 
-  pdf_url text,                            -- 원본 PDF 링크
-  updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+  pdf_url text,
+  updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+
+  is_public boolean NOT NULL DEFAULT false,
+
+  trust_grade text,
+  trust_note text,
+  legal_chip text,
+  financial_chip text,
+  location_chip text,
+  location_bullet_1 text,
+  location_bullet_2 text,
+  expert_quote text,
+  expert_footer text,
+  image_drone_url text,
+  image_site_url text,
+  image_boundary_url text,
+  metric_sub_roi text,
+  metric_sub_period text,
+  metric_sub_land text,
+  legal_footnote text,
+  exit_strategy_sub text,
+  risk_memo_sub text
 );
 
--- 2) 보안 설정 (로그인 회원만 열람)
+-- 이미 예전 DDL로 테이블만 만든 경우: dd_reports_upgrade.sql 실행
+
 ALTER TABLE dd_reports ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "로그인한 유저만 보고서 열람 가능" ON dd_reports;
-CREATE POLICY "로그인한 유저만 보고서 열람 가능"
+DROP POLICY IF EXISTS "dd_reports_read_published" ON dd_reports;
+DROP POLICY IF EXISTS "dd_reports_admin_read" ON dd_reports;
+DROP POLICY IF EXISTS "dd_reports_admin_insert" ON dd_reports;
+DROP POLICY IF EXISTS "dd_reports_admin_update" ON dd_reports;
+DROP POLICY IF EXISTS "dd_reports_admin_delete" ON dd_reports;
+
+CREATE POLICY "dd_reports_read_published"
 ON dd_reports
 FOR SELECT
-USING (auth.role() = 'authenticated');
+USING (is_public = true);
 
--- 3) 테스트용 데이터 1건
--- 주의: property_id 1은 실제 properties.id에 맞게 바꾸는 것이 안전합니다.
-INSERT INTO dd_reports (
-  property_id,
-  target_roi,
-  investment_period,
-  land_rights,
-  legal_status,
-  location_data,
-  financial_data
+CREATE POLICY "dd_reports_admin_read"
+ON dd_reports
+FOR SELECT
+TO authenticated
+USING (
+  EXISTS (SELECT 1 FROM public.admin_users WHERE user_id = (SELECT auth.uid()))
+);
+
+CREATE POLICY "dd_reports_admin_insert"
+ON dd_reports
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  EXISTS (SELECT 1 FROM public.admin_users WHERE user_id = (SELECT auth.uid()))
+);
+
+CREATE POLICY "dd_reports_admin_update"
+ON dd_reports
+FOR UPDATE
+TO authenticated
+USING (
+  EXISTS (SELECT 1 FROM public.admin_users WHERE user_id = (SELECT auth.uid()))
 )
-VALUES (
-  1,
-  12.5,
-  '5년',
-  'HGB (Hak Guna Bangunan)',
-  '{"sertifikat": "유효성 확인 완료", "zoning": "관광 지구 (Pink Zone) 확인 완료", "pbg": "승인 대기중"}',
-  '{"beach_min": 8, "hospital_min": 14, "airport_min": 45}',
-  '{"exit_multiple": 1.45, "risk_level": "안정형"}'
-)
-ON CONFLICT (property_id) DO NOTHING;
+WITH CHECK (
+  EXISTS (SELECT 1 FROM public.admin_users WHERE user_id = (SELECT auth.uid()))
+);
+
+CREATE POLICY "dd_reports_admin_delete"
+ON dd_reports
+FOR DELETE
+TO authenticated
+USING (
+  EXISTS (SELECT 1 FROM public.admin_users WHERE user_id = (SELECT auth.uid()))
+);

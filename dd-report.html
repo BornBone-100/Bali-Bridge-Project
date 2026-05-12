@@ -18,16 +18,16 @@
         <div class="dd-header-main">
           <div>
             <p class="dd-kicker">투자 실사 보고서 대시보드</p>
-            <h1 class="dd-title" id="dd-title">Canggu Luxury Villa Development A-1</h1>
+            <h1 class="dd-title" id="dd-title">불러오는 중…</h1>
             <p class="dd-sub">
-              실사 완료일: <strong id="dd-updated-at">2026.05.07</strong> · 토지 권리 형태:
-              <strong id="dd-land-rights">HGB</strong> · 투자 기간: <strong id="dd-investment-period">5년</strong>
+              실사 완료일: <strong id="dd-updated-at">—</strong> · 토지 권리 형태:
+              <strong id="dd-land-rights">—</strong> · 투자 기간: <strong id="dd-investment-period">—</strong>
             </p>
           </div>
           <div class="dd-trust-badge" aria-label="종합 신뢰 등급">
             <span class="dd-trust-label">Trust Level</span>
-            <span class="dd-trust-grade">AAA</span>
-            <span class="dd-trust-note">안전함</span>
+            <span class="dd-trust-grade" id="dd-trust-grade">—</span>
+            <span class="dd-trust-note" id="dd-trust-note">—</span>
           </div>
         </div>
       </header>
@@ -35,18 +35,18 @@
       <section class="dd-exec" aria-label="Executive Summary">
         <div class="dd-metric">
           <span class="dd-metric-label">예상 ROI (연)</span>
-          <strong class="dd-metric-value" id="dd-target-roi">12.5%</strong>
-          <span class="dd-metric-sub">평균 시나리오 기준</span>
+          <strong class="dd-metric-value" id="dd-target-roi">—</strong>
+          <span class="dd-metric-sub" id="dd-metric-sub-roi">—</span>
         </div>
         <div class="dd-metric">
           <span class="dd-metric-label">투자 기간</span>
-          <strong class="dd-metric-value" id="dd-investment-period-metric">5년</strong>
-          <span class="dd-metric-sub">Exit 전략 포함</span>
+          <strong class="dd-metric-value" id="dd-investment-period-metric">—</strong>
+          <span class="dd-metric-sub" id="dd-metric-sub-period">—</span>
         </div>
         <div class="dd-metric">
           <span class="dd-metric-label">토지 권리 형태</span>
-          <strong class="dd-metric-value" id="dd-land-rights-metric">HGB</strong>
-          <span class="dd-metric-sub">유효성 확인 완료</span>
+          <strong class="dd-metric-value" id="dd-land-rights-metric">—</strong>
+          <span class="dd-metric-sub" id="dd-metric-sub-land">—</span>
         </div>
       </section>
 
@@ -54,23 +54,23 @@
         <article class="dd-card dd-card--legal">
           <header class="dd-card-header">
             <h2>⚖️ 법률 실사 (Legal Verification)</h2>
-            <span class="dd-chip dd-chip--good">완료</span>
+            <span class="dd-chip dd-chip--good" id="dd-legal-chip">—</span>
           </header>
           <ul class="dd-list">
             <li>
               <strong>토지 증명서(Sertifikat)</strong>:
-              <span class="dd-ok" id="dd-legal-sertifikat">유효성 확인 완료</span>
+              <span class="dd-ok" id="dd-legal-sertifikat">—</span>
             </li>
             <li>
               <strong>용도 확인(Zoning)</strong>:
-              <span class="dd-ok" id="dd-legal-zoning">관광 지구(Pink Zone) 확인 완료</span>
+              <span class="dd-ok" id="dd-legal-zoning">—</span>
             </li>
             <li>
               <strong>PBG(건축 허가)</strong>:
-              <span class="dd-warn" id="dd-legal-pbg">승인 대기</span>
+              <span class="dd-warn" id="dd-legal-pbg">—</span>
             </li>
           </ul>
-          <div class="dd-card-footnote">
+          <div class="dd-card-footnote" id="dd-legal-footnote">
             * 발리 투자 리스크의 핵심(소유권/용도/허가)을 우선 검토합니다.
           </div>
         </article>
@@ -78,7 +78,7 @@
         <article class="dd-card dd-card--financial">
           <header class="dd-card-header">
             <h2>📊 재무 및 수익성 (Financial Analysis)</h2>
-            <span class="dd-chip dd-chip--info">시뮬레이션</span>
+            <span class="dd-chip dd-chip--info" id="dd-financial-chip">—</span>
           </header>
 
           <div class="dd-chart-block">
@@ -96,13 +96,13 @@
           <div class="dd-mini">
             <div class="dd-mini-item">
               <span>Exit 전략(5년)</span>
-              <strong id="dd-exit-multiple">예상 매각가 1.45×</strong>
-              <small>시세 차익 + 운영수익 합산</small>
+              <strong id="dd-exit-multiple">—</strong>
+              <small id="dd-exit-sub">—</small>
             </div>
             <div class="dd-mini-item">
               <span>리스크 메모</span>
-              <strong id="dd-risk-level">PBG 승인 일정</strong>
-              <small>일정 지연 시 현금흐름 변동 가능</small>
+              <strong id="dd-risk-level">—</strong>
+              <small id="dd-risk-sub">—</small>
             </div>
           </div>
         </article>
@@ -110,36 +110,31 @@
         <article class="dd-card dd-card--location">
           <header class="dd-card-header">
             <h2>📍 입지 및 인프라 (Location Intelligence)</h2>
-            <span class="dd-chip dd-chip--good">우수</span>
+            <span class="dd-chip dd-chip--good" id="dd-location-chip">—</span>
           </header>
 
           <div class="dd-loc-grid">
             <div class="dd-loc">
               <span class="dd-loc-label">비치클럽</span>
-              <strong id="dd-loc-beach">8분</strong>
+              <strong id="dd-loc-beach">—</strong>
             </div>
             <div class="dd-loc">
               <span class="dd-loc-label">국제 학교</span>
-              <strong id="dd-loc-school">14분</strong>
+              <strong id="dd-loc-school">—</strong>
             </div>
             <div class="dd-loc">
               <span class="dd-loc-label">병원</span>
-              <strong id="dd-loc-hospital">18분</strong>
+              <strong id="dd-loc-hospital">—</strong>
             </div>
             <div class="dd-loc">
               <span class="dd-loc-label">공항</span>
-              <strong id="dd-loc-airport">45분</strong>
+              <strong id="dd-loc-airport">—</strong>
             </div>
           </div>
 
           <ul class="dd-list dd-list--compact">
-            <li>
-              <strong>인근 개발 호재</strong>: 도로 확장 계획(예정) · 복합시설 입점
-              루머(확인 중)
-            </li>
-            <li>
-              <strong>소음/환경</strong>: 주변 공사 2곳 관측 · 일조권 양호(오전 우세)
-            </li>
+            <li id="dd-loc-bullet-1"><strong>인근 개발 호재</strong>: —</li>
+            <li id="dd-loc-bullet-2"><strong>소음/환경</strong>: —</li>
           </ul>
         </article>
       </section>
@@ -164,43 +159,28 @@
           <div class="dd-media-title">현장 실사 사진 (드론/경계/현장)</div>
           <div class="dd-media-strip" role="region" aria-label="현장 사진 슬라이드">
             <figure class="dd-media-item">
-              <img
-                src="https://images.unsplash.com/photo-1501117716987-c8e1ecb2109f?auto=format&fit=crop&w=1200&q=80"
-                alt="드론 촬영 예시"
-                loading="lazy"
-              />
-              <figcaption>드론 촬영(예시)</figcaption>
+              <img id="dd-img-drone" src="" alt="" loading="lazy" />
+              <figcaption id="dd-cap-drone">드론 촬영</figcaption>
             </figure>
             <figure class="dd-media-item">
-              <img
-                src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80"
-                alt="현장 실사 사진 예시"
-                loading="lazy"
-              />
-              <figcaption>현장 실사(예시)</figcaption>
+              <img id="dd-img-site" src="" alt="" loading="lazy" />
+              <figcaption id="dd-cap-site">현장 실사</figcaption>
             </figure>
             <figure class="dd-media-item">
-              <img
-                src="https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=1200&q=80"
-                alt="토지 경계 사진 예시"
-                loading="lazy"
-              />
-              <figcaption>토지 경계(예시)</figcaption>
+              <img id="dd-img-boundary" src="" alt="" loading="lazy" />
+              <figcaption id="dd-cap-boundary">토지 경계</figcaption>
             </figure>
           </div>
         </div>
 
         <blockquote class="dd-quote" aria-label="전문가 코멘트">
-          <p>
-            “본 매물은 짱구 지역의 관광 수요 확대에 따라 임대 수익보다는
-            <strong>지가 상승</strong>에 초점을 맞춘 투자가 유리함.”
-          </p>
-          <footer>— 현지 실사 에이전트 코멘트</footer>
+          <p id="dd-expert-quote">—</p>
+          <footer id="dd-expert-footer">—</footer>
         </blockquote>
       </section>
 
       <footer class="dd-footer">
-        <p>© 2026 Bali Bridge. Due Diligence Dashboard (Demo).</p>
+        <p>© 2026 Bali Bridge. Due Diligence Dashboard.</p>
       </footer>
     </div>
 
@@ -212,4 +192,3 @@
     <script type="module" src="./js/dd-report.js"></script>
   </body>
 </html>
-

@@ -162,19 +162,31 @@ export default function AdminDashboard() {
                     {formatPrice(prop)} | ROI: {prop.roi != null ? `${prop.roi}%` : '—'}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#EF4444',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  수정/삭제
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
+                  <a
+                    href={`./admin.html?propertyId=${encodeURIComponent(String(prop.id))}`}
+                    style={{
+                      padding: '8px 14px',
+                      backgroundColor: '#0EA5E9',
+                      color: '#fff',
+                      borderRadius: '6px',
+                      fontWeight: 600,
+                      textAlign: 'center',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                    }}
+                  >
+                    실사보고서 입력 (관리자)
+                  </a>
+                  <a
+                    href={`./dd-report.html?propertyId=${encodeURIComponent(String(prop.id))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ textAlign: 'center', color: '#38BDF8', fontSize: '13px' }}
+                  >
+                    실사보고서 미리보기 ↗
+                  </a>
+                </div>
               </div>
             ))}
           </div>

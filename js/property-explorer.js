@@ -1,8 +1,8 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
-
 let PROPERTY_DATA = [];
 let dataSource = "supabase";
-let currentLang = "ko";
+let currentLang = localStorage.getItem("bbLang") || "ko";
+let ppexLangToggleBound = false;
+let ppexApplyFilterBound = false;
 
 const i18n = window.translations || {
   ko: {
@@ -271,11 +271,14 @@ function applyTranslations() {
 }
 
 function bindLanguageToggle() {
+  if (ppexLangToggleBound) return;
+  ppexLangToggleBound = true;
   const koBtn = document.getElementById("lang-ko");
   const enBtn = document.getElementById("lang-en");
   if (koBtn) {
     koBtn.addEventListener("click", () => {
       currentLang = "ko";
+      localStorage.setItem("bbLang", currentLang);
       applyTranslations();
       setSourceNote();
       applyFilters();
@@ -284,6 +287,7 @@ function bindLanguageToggle() {
   if (enBtn) {
     enBtn.addEventListener("click", () => {
       currentLang = "en";
+      localStorage.setItem("bbLang", currentLang);
       applyTranslations();
       setSourceNote();
       applyFilters();
@@ -305,6 +309,7 @@ async function loadProperties() {
   }
 
   try {
+    const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.3/+esm");
     const supabase = createClient(cfg.url, cfg.key);
     const { data, error } = await supabase.from("properties").select("*");
     if (error) {
@@ -327,13 +332,23 @@ async function loadProperties() {
 }
 
 async function initPropertyExplorer() {
-  applyTranslations();
+  currentLang = localStorage.getItem("bbLang") || "ko";
   bindLanguageToggle();
-  await loadProperties();
-  setSourceNote();
-  renderProperties(PROPERTY_DATA);
-  const btn = document.getElementById("apply-filter");
-  if (btn) btn.addEventListener("click", applyFilters);
+  applyTranslations();
+  try {
+    await loadProperties();
+    setSourceNote();
+    renderProperties(PROPERTY_DATA);
+    const btn = document.getElementById("apply-filter");
+    if (btn && !ppexApplyFilterBound) {
+      ppexApplyFilterBound = true;
+      btn.addEventListener("click", applyFilters);
+    }
+  } catch (e) {
+    console.error("Property explorer 초기화 오류:", e);
+    setSourceNote();
+    renderProperties(PROPERTY_DATA);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", initPropertyExplorer);

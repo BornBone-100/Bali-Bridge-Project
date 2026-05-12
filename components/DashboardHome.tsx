@@ -3,11 +3,13 @@ import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../lib/AuthContext';
 import { useDashboard } from '../lib/useDashboard';
 import { useDashboardWidgets } from '../lib/useDashboardWidgets';
+import { useAdmin } from '../lib/useAdmin';
 
 export default function DashboardHome() {
   const { user, profile } = useAuth();
   const { stats, loading: statsLoading } = useDashboard();
   const { timeline, marketData, loading: widgetsLoading } = useDashboardWidgets();
+  const { isAdmin, loading: adminLoading } = useAdmin();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -67,6 +69,29 @@ export default function DashboardHome() {
           <li style={{ padding: '16px 20px', color: '#9CA3AF' }}>💼 나의 투자 자산</li>
         </ul>
 
+        {isAdmin && !adminLoading && (
+          <div style={{ marginBottom: '16px' }}>
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = '/admin';
+              }}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                backgroundColor: '#0EA5E9',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '10px',
+                fontWeight: '700',
+                cursor: 'pointer',
+              }}
+            >
+              👑 관리자 페이지로 이동
+            </button>
+          </div>
+        )}
+
         <div style={{ position: 'absolute', bottom: '40px', left: '24px' }}>
           <button
             onClick={() => void handleLogout()}
@@ -86,13 +111,35 @@ export default function DashboardHome() {
 
       {/* 메인 화면 */}
       <main style={{ flex: 1, padding: '48px', overflowY: 'auto' }}>
-        <header style={{ marginBottom: '40px' }}>
-          <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#1F2937', marginBottom: '8px' }}>
-            환영합니다, <span style={{ color: '#059669' }}>{stats.userName}</span>님! 👋
-          </h1>
-          <p style={{ color: '#6B7280', fontSize: '15px' }}>
-            로그인한 계정의 실제 DB 데이터가 연동된 화면입니다. ({profile?.name ? '프로필 연동' : '기본 프로필'})
-          </p>
+        <header style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+          <div>
+            <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#1F2937', marginBottom: '8px' }}>
+              환영합니다, <span style={{ color: '#059669' }}>{stats.userName}</span>님! 👋
+            </h1>
+            <p style={{ color: '#6B7280', fontSize: '15px' }}>
+              로그인한 계정의 실제 DB 데이터가 연동된 화면입니다. ({profile?.name ? '프로필 연동' : '기본 프로필'})
+            </p>
+          </div>
+          {isAdmin && !adminLoading && (
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = '/admin';
+              }}
+              style={{
+                padding: '10px 18px',
+                backgroundColor: '#0F172A',
+                color: '#38BDF8',
+                border: '1px solid #334155',
+                borderRadius: '10px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              👑 관리자 페이지
+            </button>
+          )}
         </header>
 
         {/* ⭐ DB에서 가져온 진짜 수치가 들어가는 곳 */}

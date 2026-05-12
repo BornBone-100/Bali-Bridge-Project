@@ -1,4 +1,12 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
+let cachedCreateClient = null;
+
+async function getCreateClient() {
+  if (!cachedCreateClient) {
+    const mod = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.3/+esm");
+    cachedCreateClient = mod.createClient;
+  }
+  return cachedCreateClient;
+}
 
 function getRedirectUrl() {
   const { origin, pathname, search } = window.location;
@@ -15,16 +23,24 @@ export async function signInWithGoogle() {
     return;
   }
 
-  const supabase = createClient(url, key);
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: getRedirectUrl(),
-    },
-  });
+  try {
+    const createClient = await getCreateClient();
+    const supabase = createClient(url, key);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: getRedirectUrl(),
+      },
+    });
 
-  if (error) {
-    console.error("구글 로그인 에러:", error.message);
-    alert("로그인 중 문제가 발생했습니다.");
+    if (error) {
+      console.error("구글 로그인 에러:", error.message);
+      alert(`로그인 중 문제가 발생했습니다.\n${error.message}`);
+    }
+  } catch (err) {
+    console.error("구글 로그인 모듈/네트워크 오류:", err);
+    alert(
+      "로그인을 시작할 수 없습니다. 브라우저 콘솔을 확인하거나, Supabase 대시보드에 이 사이트 URL을 Redirect URLs에 등록했는지 확인해 주세요."
+    );
   }
 }

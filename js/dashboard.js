@@ -333,8 +333,8 @@ function renderRecommendedProperties(list = []) {
               <strong>${p.pricePerPyeong}</strong>
             </div>
             <div class="bbdash-prop-actions">
-              <a class="bbdash-mini-btn" href="./dd-report.html?propertyId=${encodeURIComponent(p.id)}">${t("dash_prop_dd_view")}</a>
-              <a class="bbdash-mini-btn bbdash-mini-btn--primary" href="./index.html">${t("dash_prop_detail")}</a>
+              <a class="bbdash-mini-btn" href="/dd-report.html?propertyId=${encodeURIComponent(p.id)}">${t("dash_prop_dd_view")}</a>
+              <a class="bbdash-mini-btn bbdash-mini-btn--primary" href="/index.html">${t("dash_prop_detail")}</a>
             </div>
           </div>
         </article>
@@ -365,7 +365,7 @@ function bindDashboardLogout(supabase) {
       console.error("로그아웃 에러:", error);
     } finally {
       sessionStorage.removeItem("bb_guest_dashboard");
-      window.location.href = "./index.html";
+      window.location.href = "/index.html";
     }
   });
 }
@@ -395,7 +395,7 @@ async function fetchDashboardSummary() {
     // "서비스 대시보드 바로가기(임시)" 버튼으로 온 경우에만 비로그인 진입 허용
     const allowGuest = sessionStorage.getItem("bb_guest_dashboard") === "1";
     if (!allowGuest) {
-      window.location.href = "./index.html";
+      window.location.href = "/index.html";
       return { supabase, session: null };
     }
     dashboardState.userName = currentLang === "en" ? "Guest" : "고객";

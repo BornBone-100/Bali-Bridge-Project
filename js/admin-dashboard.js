@@ -79,7 +79,7 @@ async function openDdEditor(supabase, propertyId, listP) {
     <div style="background-color:#1E293B;padding:28px;border-radius:16px;border:1px solid #334155">
       <h2 style="font-size:22px;margin:0 0 8px;color:#38BDF8">📋 투자 실사보고서 — ${escapeHtml(propTitle)}</h2>
       <p style="color:#94A3B8;margin:0 0 20px;font-size:14px">
-        저장 후 「투자자에게 공개」를 켜야 <a href="./dd-report.html?propertyId=${propertyId}" target="_blank" rel="noopener" style="color:#38BDF8">dd-report.html?propertyId=${propertyId}</a> 에서 열람됩니다.
+        저장 후 「투자자에게 공개」를 켜야 <a href="/dd-report.html?propertyId=${propertyId}" target="_blank" rel="noopener" style="color:#38BDF8">dd-report.html?propertyId=${propertyId}</a> 에서 열람됩니다.
       </p>
       <form id="dd-admin-form" style="display:grid;gap:14px">
         <input type="hidden" name="property_id" value="${propertyId}" />
@@ -252,7 +252,7 @@ async function init() {
 
   if (!session?.user) {
     root.innerHTML =
-      '<p style="padding:48px;text-align:center">로그인이 필요합니다. <a href="./index.html">로그인</a></p>';
+      '<p style="padding:48px;text-align:center">로그인이 필요합니다. <a href="/index.html">로그인</a></p>';
     return;
   }
 
@@ -285,7 +285,7 @@ async function init() {
       <header style="border-bottom:1px solid #334155;padding-bottom:20px;margin-bottom:40px">
         <h1 style="font-size:28px;font-weight:800;color:#38BDF8">👑 마스터 컨트롤 타워 (Admin Only)</h1>
         <p style="color:#94A3B8">플랫폼 전체 거래 및 매물 현황을 실시간으로 관리합니다.</p>
-        <p style="margin-top:12px"><a href="./dashboard.html" style="color:#38BDF8">← 대시보드로</a></p>
+        <p style="margin-top:12px"><a href="/dashboard.html" style="color:#38BDF8">← 대시보드로</a></p>
       </header>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
         <div style="background-color:#1E293B;padding:24px;border-radius:16px">
@@ -335,7 +335,7 @@ async function init() {
                   <button type="button" class="js-dd-open" data-property-id="${pid}" style="padding:8px 14px;background-color:#0EA5E9;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">
                     실사보고서 입력
                   </button>
-                  <a href="./dd-report.html?propertyId=${pid}" target="_blank" rel="noopener" style="text-align:center;color:#38BDF8;font-size:13px">미리보기 ↗</a>
+                  <a href="/dd-report.html?propertyId=${pid}" target="_blank" rel="noopener" style="text-align:center;color:#38BDF8;font-size:13px">미리보기 ↗</a>
                 </div>
               </div>
             `;

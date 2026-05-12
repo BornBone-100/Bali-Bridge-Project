@@ -132,7 +132,7 @@ function setFormDisabled(disabled) {
 
 function initInspectionEditor() {
   const { requestId, agentId } = getEditorParams();
-  const backHref = `./agent-dashboard.html?id=${encodeURIComponent(agentId)}`;
+  const backHref = `/agent-dashboard.html?id=${encodeURIComponent(agentId)}`;
 
   document.getElementById("editor-back")?.addEventListener("click", () => {
     window.location.href = backHref;

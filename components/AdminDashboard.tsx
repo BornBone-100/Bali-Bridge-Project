@@ -164,7 +164,7 @@ export default function AdminDashboard() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
                   <a
-                    href={`./admin.html?propertyId=${encodeURIComponent(String(prop.id))}`}
+                    href={`/admin.html?propertyId=${encodeURIComponent(String(prop.id))}`}
                     style={{
                       padding: '8px 14px',
                       backgroundColor: '#0EA5E9',
@@ -179,7 +179,7 @@ export default function AdminDashboard() {
                     실사보고서 입력 (관리자)
                   </a>
                   <a
-                    href={`./dd-report.html?propertyId=${encodeURIComponent(String(prop.id))}`}
+                    href={`/dd-report.html?propertyId=${encodeURIComponent(String(prop.id))}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ textAlign: 'center', color: '#38BDF8', fontSize: '13px' }}

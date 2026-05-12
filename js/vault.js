@@ -121,10 +121,9 @@ const VAULT_DEFAULT_REPORT_ROWS = [
 function renderVaultCompletedReportMain(completedRequest) {
   if (typeof buildReportMainHTML !== "function") return "";
   const agent = resolveVaultAgent(completedRequest.agentId);
-  const wa =
-    agent ?
-      `https://wa.me/${encodeURIComponent(agent.whatsapp)}`
-    : "./index.html";
+  const wa = agent
+    ? `https://wa.me/${encodeURIComponent(agent.whatsapp)}`
+    : "";
   const img = agent?.image || "";
   const byLine =
     agent ? `By ${agent.name}` : "By 에이전트";
@@ -191,7 +190,7 @@ function renderVaultSimulation() {
       <p class="vault-panel-lead">
         메인 화면 시뮬레이터에서 조건을 바꿀 때마다 최근 결과가 localStorage에 저장됩니다.
       </p>
-      <a class="btn btn--secondary vault-panel-cta vault-panel-cta--inline" href="./index.html#simulator">시뮬레이터 열기</a>
+      <a class="btn btn--secondary vault-panel-cta vault-panel-cta--inline" href="/index.html#simulator">시뮬레이터 열기</a>
       <div class="vault-sim-stack">${cards}</div>
     </section>
   `;
@@ -205,7 +204,7 @@ function renderVaultReports() {
       <section class="vault-panel vault-empty" aria-labelledby="vault-rep-empty">
         <h2 id="vault-rep-empty" class="vault-panel-title">실사 보고서</h2>
         <p class="vault-empty-text">등록된 실사 요청이 없습니다.</p>
-        <a class="btn btn--secondary vault-panel-cta" href="./index.html">에이전트 찾기</a>
+        <a class="btn btn--secondary vault-panel-cta" href="/index.html">에이전트 찾기</a>
       </section>
     `;
   }
@@ -274,7 +273,7 @@ function renderVaultLikes() {
         <p class="vault-empty-text">
           관심 있는 에이전트를 저장하면 이곳에서 한눈에 볼 수 있습니다.
         </p>
-        <a class="btn btn--secondary vault-panel-cta" href="./app.html#home">디렉토리 둘러보기</a>
+        <a class="btn btn--secondary vault-panel-cta" href="/index.html">디렉토리 둘러보기</a>
       </section>
     `;
   }
@@ -299,7 +298,7 @@ function renderVaultLikes() {
             aria-label="비교 목록에 넣기"
           />
         </label>
-        <a href="./detail.html?id=${id}" class="vault-like-link">${name}</a>
+        <a href="/detail.html?id=${id}" class="vault-like-link">${name}</a>
       </li>`;
     })
     .join("");

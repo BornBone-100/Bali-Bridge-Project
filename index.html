@@ -9,7 +9,7 @@
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
       crossorigin
     />
-    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
     <div class="landing-hero" id="landingHero">
@@ -40,7 +40,7 @@
             </button>
             <button
               type="button"
-              onclick="sessionStorage.setItem('bb_guest_dashboard', '1'); location.href='./dashboard.html'"
+              onclick="sessionStorage.setItem('bb_guest_dashboard', '1'); location.href='/dashboard.html'"
               style="padding: 10px 20px; background: #000; color: #fff; border-radius: 5px; cursor: pointer; border: 1px solid #333;"
             >
               서비스 대시보드 바로가기 (임시)
@@ -57,8 +57,8 @@
 
     <div class="app-container" id="appRoot" hidden>
       <div class="site-toolbar">
-        <a class="site-toolbar-link" href="./compare.html">매물 비교함</a>
-        <a class="site-toolbar-link" href="./vault.html">나의 투자 보관함</a>
+        <a class="site-toolbar-link" href="/compare.html">매물 비교함</a>
+        <a class="site-toolbar-link" href="/vault.html">나의 투자 보관함</a>
       </div>
       <!-- 상단 필터/검색 영역 -->
       <section class="filter-section">
@@ -183,15 +183,15 @@
       </div>
     </div>
 
-    <script src="./js/supabase-browser-env.js"></script>
+    <script src="/js/supabase-browser-env.js"></script>
     <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
-    <script src="./js/kakao-auth.js"></script>
-    <script src="./js/data.js"></script>
-    <script src="./js/survey.js"></script>
-    <script src="./js/render.js"></script>
-    <script src="./js/vault-storage.js"></script>
-    <script src="./js/calculator.js"></script>
-    <script src="./js/script.js" defer></script>
-    <script type="module" src="./js/bind-google-login.js"></script>
+    <script src="/js/kakao-auth.js"></script>
+    <script src="/js/data.js"></script>
+    <script src="/js/survey.js"></script>
+    <script src="/js/render.js"></script>
+    <script src="/js/vault-storage.js"></script>
+    <script src="/js/calculator.js"></script>
+    <script src="/js/script.js" defer></script>
+    <script type="module" src="/js/bind-google-login.js"></script>
   </body>
 </html>

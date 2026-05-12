@@ -19,7 +19,7 @@ let allAgents = [];
 let selectedRegionLabel = null;
 function showAppAfterAuth() {
   // 로그인 성공 후 대시보드 홈으로 이동
-  window.location.href = "./dashboard.html";
+  window.location.href = "/dashboard.html";
 }
 
 function loginWithKakao() {

@@ -85,7 +85,7 @@ async function init() {
       if (error) throw error;
 
       alert("🎉 매물이 성공적으로 등록되었습니다!");
-      window.location.href = "./property-explorer.html";
+      window.location.href = "/property-explorer.html";
     } catch (error) {
       console.error("등록 에러:", error);
       alert("매물 등록에 실패했습니다. 빈 칸이 없는지 확인해 주세요.");

@@ -46,7 +46,7 @@ function hoursRemainingMs(requestId) {
 
 function openEditor(requestId) {
   const agentId = getDashboardAgentId();
-  window.location.href = `./inspection-editor.html?requestId=${encodeURIComponent(requestId)}&id=${encodeURIComponent(agentId)}`;
+  window.location.href = `/inspection-editor.html?requestId=${encodeURIComponent(requestId)}&id=${encodeURIComponent(agentId)}`;
 }
 
 function renderAgentDashboard() {

@@ -202,7 +202,7 @@ function renderComparison() {
         <p class="comp-empty-text">
           보관함 <strong>관심 목록</strong>에서 비교할 매물을 체크해 주세요. 최대 3개까지 담을 수 있습니다.
         </p>
-        <a class="btn btn--secondary comp-empty-cta" href="./vault.html">보관함으로 이동</a>
+        <a class="btn btn--secondary comp-empty-cta" href="/vault.html">보관함으로 이동</a>
       </div>`;
     return;
   }

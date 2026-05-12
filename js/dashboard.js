@@ -1,6 +1,17 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
 
 let currentLang = localStorage.getItem("bbLang") || "ko";
+const dashboardState = {
+  userName: "고객",
+  totalAsset: 0,
+  activeProjects: 0,
+  totalProperties: 0,
+  timeline: [],
+  marketData: null,
+  recommended: [],
+};
+let regionGrowthChartInstance = null;
+let monthlyDividendChartInstance = null;
 
 function t(key) {
   const dict = window.translations || {};
@@ -17,7 +28,8 @@ function applyDashboardTranslations() {
   setTextById("dash-nav-assets", t("nav_assets"));
   setTextById("dash-nav-reports", t("nav_reports"));
   setTextById("dash-nav-search", t("nav_search"));
-  setTextById("dash-title", t("dash_title"));
+  setTextById("dash-nav-agent", t("nav_agent"));
+  setTextById("dash-title", getWelcomeTitle(dashboardState.userName));
   setTextById("dash-subtitle", t("dash_subtitle"));
   setTextById("dash-stat1-label", t("dash_stat1_label"));
   setTextById("dash-stat1-sub", t("dash_stat1_sub"));
@@ -39,6 +51,9 @@ function applyDashboardTranslations() {
   setTextById("dash-reco-title", t("dash_reco_title"));
   setTextById("dash-reco-desc", t("dash_reco_desc"));
   setTextById("dash-more-props-link", t("dash_more_props"));
+  setTextById("dash-register-btn", t("dash_register_btn"));
+  setTextById("dashboard-logout-btn", t("dash_logout"));
+  setTextById("dash-sideback", t("dash_sideback"));
 }
 
 function applyLangButtonState() {
@@ -64,6 +79,7 @@ function bindDashboardLanguageToggle() {
       currentLang = "ko";
       localStorage.setItem("bbLang", currentLang);
       applyDashboardTranslations();
+      renderLocalizedSections();
       applyLangButtonState();
     });
   }
@@ -72,9 +88,28 @@ function bindDashboardLanguageToggle() {
       currentLang = "en";
       localStorage.setItem("bbLang", currentLang);
       applyDashboardTranslations();
+      renderLocalizedSections();
       applyLangButtonState();
     });
   }
+}
+
+function getWelcomeTitle(name) {
+  return currentLang === "en" ? `Welcome back, ${name}` : `환영합니다, ${name}님`;
+}
+
+function formatCount(value, suffixKey) {
+  return `${value}${t(suffixKey)}`;
+}
+
+function renderLocalizedSections() {
+  setTextById("stat-total-asset", currencyUsd(dashboardState.totalAsset));
+  setTextById("stat-active-projects", formatCount(dashboardState.activeProjects, "dash_cases_suffix"));
+  setTextById("stat-total-properties", formatCount(dashboardState.totalProperties, "dash_props_suffix"));
+  initRegionGrowthChart(dashboardState.marketData?.regional_growth);
+  initMonthlyDividendChart(dashboardState.marketData?.monthly_dividend);
+  renderDdTimeline(dashboardState.timeline);
+  renderRecommendedProperties(dashboardState.recommended);
 }
 
 function currencyUsd(v) {
@@ -96,13 +131,16 @@ function initRegionGrowthChart(regionalGrowth = null) {
   const growth = Array.isArray(regionalGrowth) ? regionalGrowth : [];
 
   const ctx = el.getContext("2d");
-  return new Chart(ctx, {
+  if (regionGrowthChartInstance) {
+    regionGrowthChartInstance.destroy();
+  }
+  regionGrowthChartInstance = new Chart(ctx, {
     type: "bar",
     data: {
       labels: growth.map((g) => g.region),
       datasets: [
         {
-          label: "연간 지가 상승률(추정)",
+          label: t("dash_chart_label_growth"),
           data: growth.map((g) => Number(g.rate) || 0),
           backgroundColor: [
             "rgba(0, 184, 148, 0.25)",
@@ -138,6 +176,7 @@ function initRegionGrowthChart(regionalGrowth = null) {
       },
     },
   });
+  return regionGrowthChartInstance;
 }
 
 function initMonthlyDividendChart(monthlyDividend = null) {
@@ -147,13 +186,16 @@ function initMonthlyDividendChart(monthlyDividend = null) {
   const monthly = Array.isArray(monthlyDividend) ? monthlyDividend : [];
 
   const ctx = el.getContext("2d");
-  return new Chart(ctx, {
+  if (monthlyDividendChartInstance) {
+    monthlyDividendChartInstance.destroy();
+  }
+  monthlyDividendChartInstance = new Chart(ctx, {
     type: "line",
     data: {
       labels: monthly.map((m) => m.month),
       datasets: [
         {
-          label: "월별 예상 배당(순수익)",
+          label: t("dash_chart_label_dividend"),
           data: monthly.map((m) => Number(m.value) || 0),
           borderColor: "rgba(0, 184, 148, 0.95)",
           backgroundColor: "rgba(0, 184, 148, 0.18)",
@@ -185,6 +227,7 @@ function initMonthlyDividendChart(monthlyDividend = null) {
       },
     },
   });
+  return monthlyDividendChartInstance;
 }
 
 function renderDdTimeline(timelineData = null) {
@@ -205,9 +248,9 @@ function renderDdTimeline(timelineData = null) {
       <div class="bbdash-timeline-item">
         <div class="bbdash-timeline-body">
           <div class="bbdash-timeline-top">
-            <strong>표시할 실사 타임라인 데이터가 없습니다.</strong>
+            <strong>${t("dash_timeline_empty_title")}</strong>
           </div>
-          <p>dd_timeline 테이블 데이터를 추가하면 자동으로 표시됩니다.</p>
+          <p>${t("dash_timeline_empty_desc")}</p>
         </div>
       </div>
     `;
@@ -246,9 +289,9 @@ function renderRecommendedProperties(list = []) {
       <article class="bbdash-prop">
         <div class="bbdash-prop-body">
           <div class="bbdash-prop-top">
-            <h3>추천 매물 데이터가 없습니다</h3>
+            <h3>${t("dash_reco_empty_title")}</h3>
           </div>
-          <p class="bbdash-prop-loc">properties 테이블 데이터를 확인해 주세요.</p>
+          <p class="bbdash-prop-loc">${t("dash_reco_empty_desc")}</p>
         </div>
       </article>
     `;
@@ -275,12 +318,12 @@ function renderRecommendedProperties(list = []) {
             </div>
             <p class="bbdash-prop-loc">${p.location}</p>
             <div class="bbdash-prop-meta">
-              <span>평단가</span>
+              <span>${t("dash_prop_avg_price")}</span>
               <strong>${p.pricePerPyeong}</strong>
             </div>
             <div class="bbdash-prop-actions">
-              <a class="bbdash-mini-btn" href="./dd-report.html?propertyId=${encodeURIComponent(p.id)}">DD 보기</a>
-              <a class="bbdash-mini-btn bbdash-mini-btn--primary" href="./index.html">매물 상세</a>
+              <a class="bbdash-mini-btn" href="./dd-report.html?propertyId=${encodeURIComponent(p.id)}">${t("dash_prop_dd_view")}</a>
+              <a class="bbdash-mini-btn bbdash-mini-btn--primary" href="./index.html">${t("dash_prop_detail")}</a>
             </div>
           </div>
         </article>
@@ -339,17 +382,22 @@ async function fetchDashboardSummary() {
       window.location.href = "./index.html";
       return { supabase, session: null };
     }
-    if (titleEl) titleEl.textContent = "환영합니다, 고객님";
+    dashboardState.userName = currentLang === "en" ? "Guest" : "고객";
+    dashboardState.totalAsset = 0;
+    dashboardState.activeProjects = 0;
+    dashboardState.totalProperties = 0;
+    if (titleEl) titleEl.textContent = getWelcomeTitle(dashboardState.userName);
     if (totalAssetEl) totalAssetEl.textContent = currencyUsd(0);
-    if (activeProjectsEl) activeProjectsEl.textContent = "0건";
-    if (totalPropertiesEl) totalPropertiesEl.textContent = "0개";
+    if (activeProjectsEl) activeProjectsEl.textContent = formatCount(0, "dash_cases_suffix");
+    if (totalPropertiesEl) totalPropertiesEl.textContent = formatCount(0, "dash_props_suffix");
     return { supabase, session: null };
   }
 
   const user = session.user;
   sessionStorage.removeItem("bb_guest_dashboard");
   const name = user.user_metadata?.full_name || user.user_metadata?.name || "고객";
-  if (titleEl) titleEl.textContent = `환영합니다, ${name}님`;
+  dashboardState.userName = name;
+  if (titleEl) titleEl.textContent = getWelcomeTitle(name);
 
   const { data: assetData, error: dbError } = await supabase
     .from("user_assets")
@@ -364,10 +412,13 @@ async function fetchDashboardSummary() {
   const totalAsset = assetData?.total_asset || 0;
   const activeProjects = assetData?.active_projects || 0;
   const totalProperties = assetData?.total_properties || 0;
+  dashboardState.totalAsset = totalAsset;
+  dashboardState.activeProjects = activeProjects;
+  dashboardState.totalProperties = totalProperties;
 
   if (totalAssetEl) totalAssetEl.textContent = currencyUsd(totalAsset);
-  if (activeProjectsEl) activeProjectsEl.textContent = `${activeProjects}건`;
-  if (totalPropertiesEl) totalPropertiesEl.textContent = `${totalProperties}개`;
+  if (activeProjectsEl) activeProjectsEl.textContent = formatCount(activeProjects, "dash_cases_suffix");
+  if (totalPropertiesEl) totalPropertiesEl.textContent = formatCount(totalProperties, "dash_props_suffix");
   return { supabase, session };
 }
 
@@ -420,13 +471,13 @@ async function initDashboard() {
   const { supabase } = await fetchDashboardSummary();
   const { timeline, marketData } = await fetchDashboardWidgets(supabase);
   const recommended = await fetchRecommendedProperties(supabase);
+  dashboardState.timeline = timeline;
+  dashboardState.marketData = marketData;
+  dashboardState.recommended = recommended;
   applyDashboardTranslations();
   bindDashboardLanguageToggle();
   applyLangButtonState();
-  initRegionGrowthChart(marketData?.regional_growth);
-  initMonthlyDividendChart(marketData?.monthly_dividend);
-  renderDdTimeline(timeline);
-  renderRecommendedProperties(recommended);
+  renderLocalizedSections();
   bindPdfDownload();
   bindDashboardLogout(supabase);
 }

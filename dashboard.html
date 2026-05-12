@@ -41,7 +41,7 @@
           <a class="bbdash-link" id="dash-nav-assets" href="./vault.html">나의 투자 자산</a>
           <a class="bbdash-link" id="dash-nav-reports" href="./dd-report.html">실사 보고서(DD)</a>
           <a class="bbdash-link" id="dash-nav-search" href="./property-explorer.html">신규 매물 탐색</a>
-          <a class="bbdash-link" href="./agent-dashboard.html">설정(에이전트)</a>
+          <a class="bbdash-link" id="dash-nav-agent" href="./agent-dashboard.html">설정(에이전트)</a>
         </nav>
 
         <div class="bbdash-sidebar-foot">
@@ -49,15 +49,7 @@
             <div class="bbdash-mini-dot"></div>
             <span>BB</span>
           </div>
-          <button
-            type="button"
-            id="dashboard-logout-btn"
-            class="bbdash-btn"
-            style="width: 100%; margin-bottom: 10px"
-          >
-            로그아웃
-          </button>
-          <a class="bbdash-sideback" href="./index.html">← 디렉토리로</a>
+          <a class="bbdash-sideback" id="dash-sideback" href="./index.html">← 디렉토리로</a>
         </div>
       </aside>
 
@@ -71,51 +63,68 @@
               오늘의 핵심 지표와 실사 진행 상황을 한 화면에서 확인하세요.
             </p>
           </div>
-          <div
-            style="
-              display: flex;
-              background-color: #e5e7eb;
-              border-radius: 30px;
-              padding: 4px;
-              align-self: center;
-            "
-          >
-            <button
-              id="dash-lang-ko"
-              type="button"
+          <div style="display: flex; align-items: center; gap: 12px; margin-left: auto">
+            <div
               style="
-                padding: 8px 16px;
-                border: none;
-                border-radius: 26px;
-                cursor: pointer;
-                font-weight: bold;
+                display: flex;
+                background-color: #e5e7eb;
+                border-radius: 30px;
+                padding: 4px;
+              "
+            >
+              <button
+                id="dash-lang-ko"
+                type="button"
+                style="
+                  padding: 8px 16px;
+                  border: none;
+                  border-radius: 26px;
+                  cursor: pointer;
+                  font-weight: bold;
+                  background-color: #fff;
+                  color: #111827;
+                "
+              >
+                KOR
+              </button>
+              <button
+                id="dash-lang-en"
+                type="button"
+                style="
+                  padding: 8px 16px;
+                  border: none;
+                  border-radius: 26px;
+                  cursor: pointer;
+                  font-weight: bold;
+                  background-color: transparent;
+                  color: #6b7280;
+                "
+              >
+                ENG
+              </button>
+            </div>
+            <button
+              type="button"
+              id="dashboard-logout-btn"
+              aria-label="로그아웃"
+              style="
+                padding: 10px 14px;
+                border: 1px solid #d1d5db;
+                border-radius: 10px;
                 background-color: #fff;
                 color: #111827;
-              "
-            >
-              KOR
-            </button>
-            <button
-              id="dash-lang-en"
-              type="button"
-              style="
-                padding: 8px 16px;
-                border: none;
-                border-radius: 26px;
+                font-weight: 700;
                 cursor: pointer;
-                font-weight: bold;
-                background-color: transparent;
-                color: #6b7280;
               "
             >
-              ENG
+              로그아웃
             </button>
-          </div>
-          <div class="bbdash-profile">
-            <div class="bbdash-avatar" aria-hidden="true">KS</div>
-            <div>
-              <p class="bbdash-profile-name">Kim Seongjun</p>
-              <p class="bbdash-profile-sub">Investor</p>
+            <div class="bbdash-profile">
+              <div class="bbdash-avatar" aria-hidden="true">KS</div>
+              <div>
+                <p class="bbdash-profile-name">Kim Seongjun</p>
+                <p class="bbdash-profile-sub">Investor</p>
+              </div>
             </div>
           </div>
         </header>
@@ -145,7 +154,8 @@
 
         <button
           type="button"
-          onclick="window.location.href = '/property-register'"
+          id="dash-register-btn"
+          onclick="window.location.href = './property-register.html'"
           style="
             width: 100%;
             padding: 12px;

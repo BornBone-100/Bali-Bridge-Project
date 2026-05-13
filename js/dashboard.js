@@ -11,14 +11,96 @@ let currentLang =
 const dashboardState = {
   userName: "고객",
   totalAsset: 0,
+  avgRoi: null,
   activeProjects: 0,
   totalProperties: 0,
   timeline: [],
   marketData: null,
   recommended: [],
+  sims: [],
 };
 let regionGrowthChartInstance = null;
 let monthlyDividendChartInstance = null;
+
+function parseRoi(value) {
+  if (value == null) return 0;
+  const n = parseFloat(String(value).replace(/[^0-9.]/g, ""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function initialsFromName(name) {
+  const parts = String(name || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (!parts.length) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function formatAvgRoi(avgRoi) {
+  if (avgRoi == null || !Number.isFinite(avgRoi) || avgRoi <= 0) return "-";
+  return `${Number(avgRoi.toFixed(1))}%`;
+}
+
+function renderUserProfile(user) {
+  const name =
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.email?.split("@")[0] ||
+    (currentLang === "en" ? "Investor" : "투자자");
+  setTextById("dash-profile-name", name);
+  const avatar = document.getElementById("dash-profile-avatar");
+  if (avatar) avatar.textContent = initialsFromName(name);
+}
+
+function buildRegionalFromProperties(properties) {
+  if (!Array.isArray(properties) || !properties.length) return [];
+  return properties
+    .slice(0, 6)
+    .map((p) => ({
+      region: String(p.location || p.title || "-")
+        .split(",")[0]
+        .trim(),
+      rate: parseRoi(p.roi),
+    }))
+    .filter((g) => g.rate > 0);
+}
+
+function buildMonthlyFromSimulations(sims) {
+  if (!Array.isArray(sims) || !sims.length) return [];
+  const locale = currentLang === "en" ? "en-US" : "ko-KR";
+  return [...sims]
+    .sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0))
+    .map((s) => ({
+      month: s.created_at
+        ? new Date(s.created_at).toLocaleDateString(locale, { month: "short", day: "numeric" })
+        : "-",
+      value: Number(s.investment_amount) || 0,
+    }));
+}
+
+function normalizeMonthlySeries(marketRow, sims) {
+  const raw = marketRow?.monthly_dividend ?? marketRow?.monthly_revenue;
+  if (Array.isArray(raw) && raw.length) {
+    return raw.map((value, i) => ({
+      month: currentLang === "en" ? `M${i + 1}` : `${i + 1}월`,
+      value: Number(value) || 0,
+    }));
+  }
+  return buildMonthlyFromSimulations(sims);
+}
+
+function buildChartMarketData(userMetrics, ownedProperties, sims) {
+  const regionalFromDb = userMetrics?.regional_growth;
+  const regional_growth =
+    Array.isArray(regionalFromDb) && regionalFromDb.length
+      ? regionalFromDb
+      : buildRegionalFromProperties(ownedProperties);
+  const monthly_dividend = normalizeMonthlySeries(userMetrics, sims);
+  if (!regional_growth.length && !monthly_dividend.length) return null;
+  return { regional_growth, monthly_dividend };
+}
 
 function t(key) {
   const dict = window.translations || {};
@@ -34,7 +116,7 @@ function applyDashboardTranslations() {
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.getAttribute("data-i18n");
     if (!key) return;
-    if (el.id === "dash-title") return;
+    if (el.id === "dash-title" || el.id === "dash-profile-name") return;
     el.textContent = t(key);
   });
   setTextById("dash-title", getWelcomeTitle(dashboardState.userName));
@@ -83,6 +165,7 @@ function formatCount(value, suffixKey) {
 
 function renderLocalizedSections() {
   setTextById("stat-total-asset", currencyUsd(dashboardState.totalAsset));
+  setTextById("stat-avg-roi", formatAvgRoi(dashboardState.avgRoi));
   setTextById("stat-active-projects", formatCount(dashboardState.activeProjects, "dash_cases_suffix"));
   setTextById("stat-total-properties", formatCount(dashboardState.totalProperties, "dash_props_suffix"));
   initRegionGrowthChart(dashboardState.marketData?.regional_growth);
@@ -351,6 +434,7 @@ function bindDashboardLogout(supabase) {
 
 async function fetchDashboardSummary() {
   const totalAssetEl = document.getElementById("stat-total-asset");
+  const avgRoiEl = document.getElementById("stat-avg-roi");
   const activeProjectsEl = document.getElementById("stat-active-projects");
   const totalPropertiesEl = document.getElementById("stat-total-properties");
 
@@ -359,13 +443,13 @@ async function fetchDashboardSummary() {
 
   if (!url || !key) {
     console.warn("Supabase browser env is missing.");
-    return { supabase: null, session: null };
+    return { supabase: null, session: null, userId: null };
   }
 
   const createClient = resolveSupabaseCreateClient();
   if (!createClient) {
     console.warn("Supabase JS CDN이 로드되지 않았습니다. dashboard.html의 @supabase/supabase-js 스크립트 순서를 확인하세요.");
-    return { supabase: null, session: null };
+    return { supabase: null, session: null, userId: null };
   }
 
   const supabase = createClient(url, key);
@@ -375,21 +459,25 @@ async function fetchDashboardSummary() {
   } = await supabase.auth.getSession();
 
   if (authError || !session) {
-    // "서비스 대시보드 바로가기(임시)" 버튼으로 온 경우에만 비로그인 진입 허용
     const allowGuest = sessionStorage.getItem("bb_guest_dashboard") === "1";
     if (!allowGuest) {
       window.location.href = "./index.html#login";
-      return { supabase, session: null };
+      return { supabase, session: null, userId: null };
     }
     dashboardState.userName = currentLang === "en" ? "Guest" : "고객";
     dashboardState.totalAsset = 0;
+    dashboardState.avgRoi = null;
     dashboardState.activeProjects = 0;
     dashboardState.totalProperties = 0;
     setTextById("dash-title", getWelcomeTitle(dashboardState.userName));
+    setTextById("dash-profile-name", dashboardState.userName);
+    const avatar = document.getElementById("dash-profile-avatar");
+    if (avatar) avatar.textContent = initialsFromName(dashboardState.userName);
     if (totalAssetEl) totalAssetEl.textContent = currencyUsd(0);
+    if (avgRoiEl) avgRoiEl.textContent = "-";
     if (activeProjectsEl) activeProjectsEl.textContent = formatCount(0, "dash_cases_suffix");
     if (totalPropertiesEl) totalPropertiesEl.textContent = formatCount(0, "dash_props_suffix");
-    return { supabase, session: null };
+    return { supabase, session: null, userId: null };
   }
 
   const user = session.user;
@@ -397,73 +485,113 @@ async function fetchDashboardSummary() {
   const name = user.user_metadata?.full_name || user.user_metadata?.name || "고객";
   dashboardState.userName = name;
   setTextById("dash-title", getWelcomeTitle(name));
+  renderUserProfile(user);
+
+  const { data: sims, error: simsError } = await supabase
+    .from("profit_simulations")
+    .select("investment_amount,calculated_roi,created_at")
+    .eq("user_id", user.id);
+
+  if (simsError) console.error("profit_simulations 조회 에러:", simsError);
+
+  const simRows = sims || [];
+  dashboardState.sims = simRows;
+
+  let totalFromSims = 0;
+  let roiSum = 0;
+  let roiCount = 0;
+  simRows.forEach((s) => {
+    totalFromSims += Number(s.investment_amount) || 0;
+    const r = parseRoi(s.calculated_roi);
+    if (r > 0) {
+      roiSum += r;
+      roiCount += 1;
+    }
+  });
 
   const { data: assetData, error: dbError } = await supabase
     .from("user_assets")
     .select("total_asset, active_projects, total_properties")
     .eq("user_id", user.id)
-    .single();
+    .maybeSingle();
 
   if (dbError && dbError.code !== "PGRST116") {
     console.error("user_assets 조회 에러:", dbError);
   }
 
-  const totalAsset = assetData?.total_asset || 0;
-  const activeProjects = assetData?.active_projects || 0;
-  const totalProperties = assetData?.total_properties || 0;
+  const totalAsset = totalFromSims > 0 ? totalFromSims : assetData?.total_asset || 0;
+  const avgRoi = roiCount > 0 ? roiSum / roiCount : null;
+
   dashboardState.totalAsset = totalAsset;
-  dashboardState.activeProjects = activeProjects;
-  dashboardState.totalProperties = totalProperties;
+  dashboardState.avgRoi = avgRoi;
 
   if (totalAssetEl) totalAssetEl.textContent = currencyUsd(totalAsset);
-  if (activeProjectsEl) activeProjectsEl.textContent = formatCount(activeProjects, "dash_cases_suffix");
-  if (totalPropertiesEl) totalPropertiesEl.textContent = formatCount(totalProperties, "dash_props_suffix");
-  return { supabase, session };
+  if (avgRoiEl) avgRoiEl.textContent = formatAvgRoi(avgRoi);
+
+  return { supabase, session, userId: user.id };
 }
 
-async function fetchDashboardWidgets(supabase) {
-  if (!supabase) return { timeline: [], marketData: null };
-  try {
-    const { data: timelineData } = await supabase
+async function fetchDashboardWidgets(supabase, userId) {
+  if (!supabase || !userId) return { timeline: [], marketData: null, ownedProperties: [] };
+
+  const { data: ownedProperties, error: propsError } = await supabase
+    .from("properties")
+    .select("id,title,location,price,price_usd,roi,tags,created_at")
+    .eq("owner_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (propsError) console.error("내 매물 조회 에러:", propsError);
+
+  const props = ownedProperties || [];
+  const propertyIds = props.map((p) => p.id).filter((id) => id != null);
+
+  let timeline = [];
+  if (propertyIds.length) {
+    const { data: timelineData, error: timelineError } = await supabase
       .from("dd_timeline")
       .select("*")
+      .in("property_id", propertyIds)
       .order("event_date", { ascending: false })
       .limit(5);
-
-    const { data: metricsData } = await supabase.from("market_metrics").select("*").eq("id", 1).maybeSingle();
-
-    return { timeline: timelineData || [], marketData: metricsData || null };
-  } catch (error) {
-    console.error("위젯 데이터 로딩 에러:", error);
-    return { timeline: [], marketData: null };
+    if (timelineError) console.error("dd_timeline 조회 에러:", timelineError);
+    timeline = timelineData || [];
   }
+
+  let userMetrics = null;
+  const { data: metricsByUser, error: metricsUserError } = await supabase
+    .from("market_metrics")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!metricsUserError && metricsByUser) {
+    userMetrics = metricsByUser;
+  }
+
+  const ongoingCount = timeline.filter((t) => t.status !== "completed").length;
+  dashboardState.activeProjects = ongoingCount;
+  dashboardState.totalProperties = props.length;
+
+  const marketData = buildChartMarketData(userMetrics, props, dashboardState.sims);
+
+  return { timeline, marketData, ownedProperties: props };
 }
 
-async function fetchRecommendedProperties(supabase) {
-  if (!supabase) return [];
-  try {
-    const { data, error } = await supabase
-      .from("properties")
-      .select("id,title,location,price,roi,tags")
-      .order("roi", { ascending: false })
-      .limit(3);
-    if (error) {
-      console.error("추천 매물 조회 에러:", error);
-      return [];
-    }
+async function fetchRecommendedProperties(ownedProperties) {
+  if (!Array.isArray(ownedProperties) || !ownedProperties.length) return [];
 
-    return (data || []).map((row) => {
-      const title = String(row.title || "");
-      const location = `📍 ${String(row.location || "-")}`;
-      const price = row.price == null ? "-" : String(row.price);
-      const pricePerPyeong = /^\$/.test(price) ? price : `$${Number(String(price).replace(/[^0-9.]/g, "") || 0).toLocaleString("en-US")}`;
-      const tag = Array.isArray(row.tags) && row.tags.length ? String(row.tags[0]) : "매물";
-      return { id: row.id, name: title, location, pricePerPyeong, tag };
-    });
-  } catch (error) {
-    console.error("추천 매물 조회 에러:", error);
-    return [];
-  }
+  return ownedProperties.slice(0, 3).map((row) => {
+    const title = String(row.title || "");
+    const location = `📍 ${String(row.location || "-")}`;
+    const price = row.price_usd ?? row.price;
+    const pricePerPyeong =
+      price == null
+        ? "-"
+        : /^\$/.test(String(price))
+          ? String(price)
+          : `$${Number(String(price).replace(/[^0-9.]/g, "") || 0).toLocaleString("en-US")}`;
+    const tag = Array.isArray(row.tags) && row.tags.length ? String(row.tags[0]) : t("dash_prop_tag_own");
+    return { id: row.id, name: title, location, pricePerPyeong, tag };
+  });
 }
 
 async function initDashboard() {
@@ -472,9 +600,9 @@ async function initDashboard() {
   applyLangButtonState();
   applyDashboardTranslations();
 
-  const { supabase } = await fetchDashboardSummary();
-  const { timeline, marketData } = await fetchDashboardWidgets(supabase);
-  const recommended = await fetchRecommendedProperties(supabase);
+  const { supabase, userId } = await fetchDashboardSummary();
+  const { timeline, marketData, ownedProperties } = await fetchDashboardWidgets(supabase, userId);
+  const recommended = await fetchRecommendedProperties(ownedProperties);
   dashboardState.timeline = timeline;
   dashboardState.marketData = marketData;
   dashboardState.recommended = recommended;

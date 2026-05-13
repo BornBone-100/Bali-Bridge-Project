@@ -16,7 +16,11 @@ export default function DashboardHome() {
   const chartHint =
     marketMetrics != null
       ? '차트 데이터 준비 중... (market_metrics 연동됨)'
-      : '차트 데이터 준비 중...';
+      : '시뮬레이션·내 매물 데이터가 있으면 차트가 표시됩니다.';
+
+  const displayName =
+    user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || '투자자';
+  const avgRoiLabel = stats.avgRoi != null && stats.avgRoi > 0 ? `${stats.avgRoi}%` : '-';
 
   return (
     <div
@@ -29,7 +33,7 @@ export default function DashboardHome() {
     >
       {/* 1. 상단 환영 메시지 */}
       <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1F2937' }}>환영합니다, 투자자 님 👋</h1>
+        <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1F2937' }}>환영합니다, {displayName}님 👋</h1>
         <p style={{ color: '#6B7280' }}>오늘의 핵심 지표와 실사 진행 상황을 한 화면에서 확인하세요.</p>
       </div>
 
@@ -37,7 +41,7 @@ export default function DashboardHome() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '24px' }}>
         {[
           { title: '총 투자 금액', value: `$${stats.totalInvestment.toLocaleString()}`, sub: '누적 투자' },
-          { title: '평균 예상 수익률(ROI)', value: `${stats.avgRoi}%`, sub: '완료 시나리오' },
+          { title: '평균 예상 수익률(ROI)', value: avgRoiLabel, sub: '내 시뮬레이션 평균' },
           { title: '진행 중인 실사', value: `${stats.ongoingDd}건`, sub: '전체 진행 중' },
           { title: '보유 매물 수', value: `${stats.ownedProperties}개`, sub: '현재 호스트/에이전트' },
         ].map((card, i) => (
@@ -145,7 +149,7 @@ export default function DashboardHome() {
       {/* 4. 하단 추천 매물 영역 */}
       <div style={{ backgroundColor: '#fff', padding: '24px', borderRadius: '16px', border: '1px solid #E5E7EB' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 'bold' }}>💡 실시간 추천 매물</h3>
+          <h3 style={{ fontSize: '16px', fontWeight: 'bold' }}>💡 내 등록 매물</h3>
           <button
             type="button"
             style={{
@@ -175,7 +179,7 @@ export default function DashboardHome() {
               borderRadius: '12px',
             }}
           >
-            현재 추천 가능한 매물이 없습니다.
+            현재 등록한 매물이 없습니다.
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>

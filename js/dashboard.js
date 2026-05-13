@@ -307,13 +307,10 @@ function renderDdTimeline(timelineData = null) {
 
   if (!items.length) {
     root.innerHTML = `
-      <div class="bbdash-timeline-item">
-        <div class="bbdash-timeline-body">
-          <div class="bbdash-timeline-top">
-            <strong>${t("dash_timeline_empty_title")}</strong>
-          </div>
-          <p>${t("dash_timeline_empty_desc")}</p>
-        </div>
+      <div class="bbdash-timeline-empty" role="status">
+        <span class="bbdash-timeline-empty-title">${t("dash_timeline_empty_title")}</span>
+        <span class="bbdash-timeline-empty-sep" aria-hidden="true">·</span>
+        <span class="bbdash-timeline-empty-desc">${t("dash_timeline_empty_desc")}</span>
       </div>
     `;
     return;

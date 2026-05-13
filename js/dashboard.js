@@ -317,6 +317,16 @@ function bindPdfDownload() {
   btn.addEventListener("click", () => window.print());
 }
 
+/** index/script.js 가 보는 레거시 로그인 플래그 — Supabase signOut 만으로는 지워지지 않아 루프 유발 방지 */
+function clearLegacyClientAuth() {
+  try {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userData");
+    sessionStorage.removeItem("baliBridgeAuth");
+    sessionStorage.removeItem("baliInvestorName");
+  } catch (_) {}
+}
+
 function bindDashboardLogout(supabase) {
   const btn = document.getElementById("btn-logout");
   if (!btn) return;
@@ -330,9 +340,11 @@ function bindDashboardLogout(supabase) {
       console.error("로그아웃 에러:", error);
       alert(currentLang === "en" ? "A problem occurred while signing out." : "로그아웃 중 문제가 발생했습니다.");
       return;
-    } finally {
-      sessionStorage.removeItem("bb_guest_dashboard");
     }
+    try {
+      sessionStorage.removeItem("bb_guest_dashboard");
+    } catch (_) {}
+    clearLegacyClientAuth();
     window.location.href = "./index.html#login";
   });
 }

@@ -19,7 +19,7 @@ let allAgents = [];
 let selectedRegionLabel = null;
 function showAppAfterAuth() {
   // 로그인 성공 후 대시보드 홈으로 이동
-  window.location.href = "/dashboard.html";
+  window.location.href = "./dashboard.html";
 }
 
 function loginWithKakao() {
@@ -97,9 +97,11 @@ function init() {
     console.log("Kakao initialized:", Kakao.isInitialized());
   }
   try {
+    const hash = (location.hash || "").toLowerCase();
+    const fromLogout = hash === "#login" || hash === "#reauth";
     if (
-      localStorage.getItem("isLoggedIn") === "true" ||
-      sessionStorage.getItem("baliBridgeAuth")
+      !fromLogout &&
+      (localStorage.getItem("isLoggedIn") === "true" || sessionStorage.getItem("baliBridgeAuth"))
     ) {
       const raw = localStorage.getItem("userData");
       if (raw) {
@@ -150,18 +152,4 @@ function init() {
   renderGrid();
 }
 
-try {
-  init();
-} catch (err) {
-  console.error("index 초기화 오류:", err);
-  const hero = document.getElementById("landingHero");
-  if (hero) {
-    const note = document.createElement("p");
-    note.setAttribute("role", "alert");
-    note.style.cssText =
-      "margin:0 auto 16px;max-width:520px;padding:12px 14px;border-radius:10px;background:rgba(127,29,29,0.85);color:#fecaca;font-weight:600;text-align:center";
-    note.textContent =
-      "화면을 불러오는 중 문제가 발생했습니다. 새로고침하거나 /dashboard.html 로 이동해 주세요.";
-    hero.insertBefore(note, hero.firstChild);
-  }
-}
+init();

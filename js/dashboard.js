@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
 
-let currentLang = localStorage.getItem("bbLang") || "ko";
+let currentLang =
+  localStorage.getItem("preferred_language") || localStorage.getItem("bbLang") || "ko";
 const dashboardState = {
   userName: "고객",
   totalAsset: 0,
@@ -24,42 +25,18 @@ function setTextById(id, value) {
 }
 
 function applyDashboardTranslations() {
-  setTextById("dash-nav-home", t("nav_home"));
-  setTextById("dash-nav-assets", t("nav_assets"));
-  setTextById("dash-nav-reports", t("nav_reports"));
-  setTextById("dash-nav-search", t("nav_search"));
-  setTextById("dash-nav-agent", t("nav_agent"));
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n");
+    if (!key) return;
+    if (el.id === "dash-title") return;
+    el.textContent = t(key);
+  });
   setTextById("dash-title", getWelcomeTitle(dashboardState.userName));
-  setTextById("dash-subtitle", t("dash_subtitle"));
-  setTextById("dash-stat1-label", t("dash_stat1_label"));
-  setTextById("dash-stat1-sub", t("dash_stat1_sub"));
-  setTextById("dash-stat2-label", t("dash_stat2_label"));
-  setTextById("dash-stat2-sub", t("dash_stat2_sub"));
-  setTextById("dash-stat3-label", t("dash_stat3_label"));
-  setTextById("dash-stat3-sub", t("dash_stat3_sub"));
-  setTextById("dash-stat4-label", t("dash_stat4_label"));
-  setTextById("dash-stat4-sub", t("dash_stat4_sub"));
-  setTextById("dash-chart-title", t("dash_chart_title"));
-  setTextById("dash-chart-desc", t("dash_chart_desc"));
-  setTextById("dash-sim-link", t("dash_sim_link"));
-  setTextById("dash-dd-link", t("dash_dd_link"));
-  setTextById("dash-chart-region-title", t("dash_chart_region_title"));
-  setTextById("dash-chart-monthly-title", t("dash_chart_monthly_title"));
-  setTextById("dash-timeline-title", t("dash_timeline_title"));
-  setTextById("dash-timeline-desc", t("dash_timeline_desc"));
-  setTextById("dash-open-dd-btn", t("dash_open_dd_btn"));
-  setTextById("dd-download", t("dash_pdf_download"));
-  setTextById("dash-reco-title", t("dash_reco_title"));
-  setTextById("dash-reco-desc", t("dash_reco_desc"));
-  setTextById("dash-more-props-link", t("dash_more_props"));
-  setTextById("dash-register-btn", t("dash_register_btn"));
-  setTextById("dashboard-logout-btn", t("dash_logout"));
-  setTextById("dash-sideback", t("dash_sideback"));
 }
 
 function applyLangButtonState() {
-  const koBtn = document.getElementById("dash-lang-ko");
-  const enBtn = document.getElementById("dash-lang-en");
+  const koBtn = document.getElementById("btn-kor");
+  const enBtn = document.getElementById("btn-eng");
   if (koBtn) {
     koBtn.style.backgroundColor = currentLang === "ko" ? "#fff" : "transparent";
     koBtn.style.color = currentLang === "ko" ? "#111827" : "#6B7280";
@@ -72,27 +49,22 @@ function applyLangButtonState() {
   }
 }
 
+/** preferred_language(마스터 스펙) ↔ bbLang(기존) 동기 */
+function setLanguage(lang) {
+  const normalized = lang === "en" ? "en" : "ko";
+  localStorage.setItem("preferred_language", normalized);
+  localStorage.setItem("bbLang", normalized);
+  currentLang = normalized;
+  applyDashboardTranslations();
+  renderLocalizedSections();
+  applyLangButtonState();
+}
+
 function bindDashboardLanguageToggle() {
-  const koBtn = document.getElementById("dash-lang-ko");
-  const enBtn = document.getElementById("dash-lang-en");
-  if (koBtn) {
-    koBtn.addEventListener("click", () => {
-      currentLang = "ko";
-      localStorage.setItem("bbLang", currentLang);
-      applyDashboardTranslations();
-      renderLocalizedSections();
-      applyLangButtonState();
-    });
-  }
-  if (enBtn) {
-    enBtn.addEventListener("click", () => {
-      currentLang = "en";
-      localStorage.setItem("bbLang", currentLang);
-      applyDashboardTranslations();
-      renderLocalizedSections();
-      applyLangButtonState();
-    });
-  }
+  const koBtn = document.getElementById("btn-kor");
+  const enBtn = document.getElementById("btn-eng");
+  if (koBtn) koBtn.addEventListener("click", () => setLanguage("ko"));
+  if (enBtn) enBtn.addEventListener("click", () => setLanguage("en"));
 }
 
 function getWelcomeTitle(name) {
@@ -340,24 +312,27 @@ function bindPdfDownload() {
 }
 
 function bindDashboardLogout(supabase) {
-  const btn = document.getElementById("dashboard-logout-btn");
+  const btn = document.getElementById("btn-logout");
   if (!btn) return;
   btn.addEventListener("click", async () => {
     try {
       if (supabase) {
-        await supabase.auth.signOut();
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
       }
+      alert(currentLang === "en" ? "You have been signed out securely." : "안전하게 로그아웃 되었습니다.");
     } catch (error) {
       console.error("로그아웃 에러:", error);
+      alert(currentLang === "en" ? "A problem occurred while signing out." : "로그아웃 중 문제가 발생했습니다.");
+      return;
     } finally {
       sessionStorage.removeItem("bb_guest_dashboard");
-      window.location.href = "./index.html";
     }
+    window.location.href = "./index.html";
   });
 }
 
 async function fetchDashboardSummary() {
-  const titleEl = document.getElementById("dashboard-user-title");
   const totalAssetEl = document.getElementById("stat-total-asset");
   const activeProjectsEl = document.getElementById("stat-active-projects");
   const totalPropertiesEl = document.getElementById("stat-total-properties");
@@ -387,7 +362,7 @@ async function fetchDashboardSummary() {
     dashboardState.totalAsset = 0;
     dashboardState.activeProjects = 0;
     dashboardState.totalProperties = 0;
-    if (titleEl) titleEl.textContent = getWelcomeTitle(dashboardState.userName);
+    setTextById("dash-title", getWelcomeTitle(dashboardState.userName));
     if (totalAssetEl) totalAssetEl.textContent = currencyUsd(0);
     if (activeProjectsEl) activeProjectsEl.textContent = formatCount(0, "dash_cases_suffix");
     if (totalPropertiesEl) totalPropertiesEl.textContent = formatCount(0, "dash_props_suffix");
@@ -398,7 +373,7 @@ async function fetchDashboardSummary() {
   sessionStorage.removeItem("bb_guest_dashboard");
   const name = user.user_metadata?.full_name || user.user_metadata?.name || "고객";
   dashboardState.userName = name;
-  if (titleEl) titleEl.textContent = getWelcomeTitle(name);
+  setTextById("dash-title", getWelcomeTitle(name));
 
   const { data: assetData, error: dbError } = await supabase
     .from("user_assets")
@@ -487,3 +462,10 @@ document.addEventListener("DOMContentLoaded", () => {
   void initDashboard();
 });
 
+/*
+ * 2단계 마스터(로그아웃·i18n) 통합 안내
+ * - 별도 `const translations` / 두 번째 DOMContentLoaded는 넣지 않음(기존 translations.js·initDashboard와 충돌).
+ * - 언어: setLanguage()가 preferred_language + bbLang을 동기화하고 applyDashboardTranslations·차트·타임라인을 갱신.
+ * - 로그아웃: bindDashboardLogout(supabase)에서 signOut → 알림 → ./index.html (마스터의 /login.html 대신).
+ * - 마스터 키 welcome, subtitle, total_investment, ongoing_dd, logout_btn 은 translations.js에 별칭으로 추가됨.
+ */

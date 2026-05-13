@@ -83,6 +83,13 @@ const translations = {
     dash_chart_label_dividend: "월별 예상 배당(순수익)",
     dash_cases_suffix: "건",
     dash_props_suffix: "개",
+
+    /* 마스터 i18n 예시 키(별칭) — data-i18n="welcome" 등으로 사용 가능 */
+    welcome: "환영합니다, 고객님",
+    subtitle: "오늘의 핵심 지표와 실사 진행 상황을 한 화면에서 확인하세요.",
+    total_investment: "총 투자 금액",
+    ongoing_dd: "진행 중인 실사",
+    logout_btn: "로그아웃",
   },
   en: {
     nav_home: "📊 Dashboard",
@@ -168,6 +175,12 @@ const translations = {
     dash_chart_label_dividend: "Expected Monthly Dividend (Net)",
     dash_cases_suffix: " cases",
     dash_props_suffix: " props",
+
+    welcome: "Welcome, Client",
+    subtitle: "Check today's key metrics and DD progress on one screen.",
+    total_investment: "Total Investment",
+    ongoing_dd: "Ongoing DD",
+    logout_btn: "Logout",
   },
 };
 

@@ -9,7 +9,7 @@
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
       crossorigin
     />
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
     <style>
       .detail-page {
         max-width: 720px;
@@ -72,7 +72,7 @@
   </head>
   <body>
     <div class="detail-page">
-      <a class="detail-back" href="/index.html">← 디렉토리로</a>
+      <a class="detail-back" href="./index.html">← 홈으로</a>
       <div id="detail-root"></div>
     </div>
 
@@ -134,14 +134,14 @@
       </div>
     </div>
 
-    <script src="/js/data.js"></script>
-    <script src="/js/inspection-requests.js"></script>
+    <script src="./js/data.js"></script>
+    <script src="./js/inspection-requests.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
       crossorigin="anonymous"
     ></script>
-    <script src="/js/report-radar-chart.js"></script>
-    <script src="/js/report-main.js"></script>
+    <script src="./js/report-radar-chart.js"></script>
+    <script src="./js/report-main.js"></script>
     <script>
       const REGION_LABELS = {
         canggu: "짱구",
@@ -298,11 +298,11 @@
                 <p class="agent-card__regions">${escapeHtml(regions)} · ${escapeHtml(agent.specialty)}</p>
                 <div class="agent-card__tags" style="margin-top:12px">${tags}</div>
                 <div class="detail-actions">
-                  <a class="btn btn--secondary" href="/index.html">다른 에이전트 보기</a>
+                  <a class="btn btn--secondary" href="./index.html">다른 에이전트 보기</a>
                   <a class="btn btn--whatsapp" href="${waLink}" target="_blank" rel="noopener noreferrer">왓츠앱 상담</a>
                 </div>
                 <p class="detail-agent-dash">
-                  <a href="/agent-dashboard.html?id=${encodeURIComponent(agent.id)}">에이전트 워크스페이스</a>
+                  <a href="./agent-dashboard.html?id=${encodeURIComponent(agent.id)}">에이전트 워크스페이스</a>
                 </p>
               </div>
             </div>

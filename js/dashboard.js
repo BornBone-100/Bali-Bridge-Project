@@ -1,4 +1,10 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
+/** dashboard.html에서 `@supabase/supabase-js` CDN을 먼저 로드합니다. (esm.sh 의존 제거 — Vercel/기업망에서 모듈 전체 실패 방지) */
+function resolveSupabaseCreateClient() {
+  const mod = window.supabase;
+  if (mod && typeof mod.createClient === "function") return mod.createClient;
+  if (mod && mod.default && typeof mod.default.createClient === "function") return mod.default.createClient;
+  return null;
+}
 
 let currentLang =
   localStorage.getItem("preferred_language") || localStorage.getItem("bbLang") || "ko";
@@ -345,6 +351,12 @@ async function fetchDashboardSummary() {
     return { supabase: null, session: null };
   }
 
+  const createClient = resolveSupabaseCreateClient();
+  if (!createClient) {
+    console.warn("Supabase JS CDN이 로드되지 않았습니다. dashboard.html의 @supabase/supabase-js 스크립트 순서를 확인하세요.");
+    return { supabase: null, session: null };
+  }
+
   const supabase = createClient(url, key);
   const {
     data: { session },
@@ -444,6 +456,11 @@ async function fetchRecommendedProperties(supabase) {
 }
 
 async function initDashboard() {
+  // 데이터 로딩 전에 언어 UI를 먼저 바인딩 (await 중 예외·리다이렉트 지연 시에도 KOR/ENG 동작)
+  bindDashboardLanguageToggle();
+  applyLangButtonState();
+  applyDashboardTranslations();
+
   const { supabase } = await fetchDashboardSummary();
   const { timeline, marketData } = await fetchDashboardWidgets(supabase);
   const recommended = await fetchRecommendedProperties(supabase);
@@ -451,7 +468,6 @@ async function initDashboard() {
   dashboardState.marketData = marketData;
   dashboardState.recommended = recommended;
   applyDashboardTranslations();
-  bindDashboardLanguageToggle();
   applyLangButtonState();
   renderLocalizedSections();
   bindPdfDownload();

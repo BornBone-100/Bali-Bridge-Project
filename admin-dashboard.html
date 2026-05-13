@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-i18n-title="admin_doc_title">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,23 +13,29 @@
   </head>
   <body class="admin-body">
     <div class="admin-page-wrap">
-
       <div class="admin-container">
         <header class="admin-header">
-          <h2>관리자 · 법률 서류 인증</h2>
-          <p id="admin-master-hint">
-            등록된 매물 중 서류가 올라온 항목을 검토한 뒤 <strong>승인하기</strong>를 누르면 <code>is_verified</code>가
-            활성화됩니다.
-          </p>
+          <div class="admin-header-top">
+            <div class="admin-header-copy">
+              <h2 data-i18n="admin_title">관리자 · 법률 서류 인증</h2>
+              <p id="admin-master-hint" data-i18n="admin_hint">
+                등록된 매물 중 서류가 올라온 항목을 검토한 뒤 승인하기를 누르면 인증 상태가 활성화됩니다.
+              </p>
+            </div>
+            <div class="admin-lang-toggle" role="group" aria-label="Language">
+              <button id="btn-kor" type="button" class="admin-lang-btn is-active" aria-pressed="true">KOR</button>
+              <button id="btn-eng" type="button" class="admin-lang-btn" aria-pressed="false">ENG</button>
+            </div>
+          </div>
         </header>
 
-        <h3 class="admin-section-title">매물 인증 대기 목록</h3>
+        <h3 class="admin-section-title" data-i18n="admin_section_pending">매물 인증 대기 목록</h3>
         <div id="admin-properties-list" class="request-list" aria-live="polite"></div>
       </div>
     </div>
 
+    <script src="./js/i18n.js"></script>
     <script src="./js/supabase-browser-env.js"></script>
     <script type="module" src="./js/admin-dashboard.js"></script>
-    <script src="/js/master-backend.js"></script>
   </body>
 </html>

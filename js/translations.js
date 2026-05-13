@@ -11,6 +11,7 @@ const translations = {
     nav_dd: "실사 보고서(DD)",
     nav_explore: "신규 매물 탐색",
     nav_settings: "설정(에이전트)",
+    nav_admin: "관리자 · 서류 인증",
     search_title: "신규 매물 탐색",
     search_desc:
       "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
@@ -120,6 +121,7 @@ const translations = {
     nav_dd: "DD Reports",
     nav_explore: "Property Explorer",
     nav_settings: "Settings (Agent)",
+    nav_admin: "Admin · Document Verification",
     search_title: "Property Explorer",
     search_desc:
       "Explore premium investment assets with strict due diligence by Bali Bridge.",

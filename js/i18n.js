@@ -77,6 +77,27 @@
       // --- 공통 버튼 ---
       btn_logout: "로그아웃",
       btn_new_scenario: "새로운 시나리오 만들기",
+
+      // --- 관리자 · 서류 인증 ---
+      nav_admin: "관리자 · 서류 인증",
+      admin_doc_title: "[Bali Bridge] 관리자 · 법률 서류 인증",
+      admin_title: "관리자 · 법률 서류 인증",
+      admin_hint:
+        "등록된 매물 중 서류가 올라온 항목을 검토한 뒤 승인하기를 누르면 인증 상태가 활성화됩니다.",
+      admin_section_pending: "매물 인증 대기 목록",
+      admin_loading: "불러오는 중…",
+      admin_load_error: "목록을 불러오지 못했습니다:",
+      admin_no_properties: "등록된 매물이 없습니다.",
+      admin_property: "매물",
+      admin_open_doc: "서류 열기",
+      admin_no_doc: "서류 없음",
+      admin_verified: "인증 완료",
+      admin_approve: "승인하기",
+      admin_env_missing: "Supabase URL/키가 없습니다. js/supabase-browser-env.js를 확인하세요.",
+      admin_conn_error: "Supabase 연결을 확인해 주세요.",
+      admin_confirm_approve: "이 매물의 법률 서류를 검토하셨습니까? 인증 마크를 부여합니다.",
+      admin_success_approve: "법률 인증이 완료되었습니다!",
+      admin_fail_approve: "승인 처리에 실패했습니다. RLS·관리자 권한을 확인해 주세요.",
     },
     en: {
       // --- Navigation ---
@@ -151,6 +172,27 @@
       // --- Common buttons ---
       btn_logout: "Logout",
       btn_new_scenario: "Create New Scenario",
+
+      // --- Admin · document verification ---
+      nav_admin: "Admin · Document Verification",
+      admin_doc_title: "[Bali Bridge] Admin · Legal Document Verification",
+      admin_title: "Admin · Legal Document Verification",
+      admin_hint:
+        "Review properties with uploaded documents, then click Approve to activate verification status.",
+      admin_section_pending: "Pending property verification",
+      admin_loading: "Loading…",
+      admin_load_error: "Could not load the list:",
+      admin_no_properties: "No registered properties.",
+      admin_property: "Property",
+      admin_open_doc: "Open document",
+      admin_no_doc: "No document",
+      admin_verified: "Verified",
+      admin_approve: "Approve",
+      admin_env_missing: "Missing Supabase URL/key. Check js/supabase-browser-env.js.",
+      admin_conn_error: "Please check your Supabase connection.",
+      admin_confirm_approve: "Have you reviewed this property's legal documents? A verification badge will be applied.",
+      admin_success_approve: "Legal verification completed!",
+      admin_fail_approve: "Approval failed. Check RLS and admin permissions.",
     },
   };
 
@@ -159,6 +201,13 @@
     const normalized = lang === "en" ? "en" : "ko";
     localStorage.setItem("preferred_language", normalized);
     localStorage.setItem("bbLang", normalized);
+
+    document.documentElement.lang = normalized;
+
+    const titleKey = document.documentElement.getAttribute("data-i18n-title");
+    if (titleKey && translations[normalized] && translations[normalized][titleKey]) {
+      document.title = translations[normalized][titleKey];
+    }
 
     document.querySelectorAll("[data-i18n]").forEach((element) => {
       const key = element.getAttribute("data-i18n");
@@ -170,6 +219,21 @@
         }
       }
     });
+
+    const koBtn = document.getElementById("btn-kor");
+    const enBtn = document.getElementById("btn-eng");
+    if (koBtn) {
+      koBtn.style.backgroundColor = normalized === "ko" ? "#fff" : "transparent";
+      koBtn.style.color = normalized === "ko" ? "#111827" : "#6B7280";
+      koBtn.setAttribute("aria-pressed", normalized === "ko" ? "true" : "false");
+    }
+    if (enBtn) {
+      enBtn.style.backgroundColor = normalized === "en" ? "#fff" : "transparent";
+      enBtn.style.color = normalized === "en" ? "#111827" : "#6B7280";
+      enBtn.setAttribute("aria-pressed", normalized === "en" ? "true" : "false");
+    }
+
+    window.dispatchEvent(new CustomEvent("bb:languagechange", { detail: { lang: normalized } }));
   }
 
   window.bbI18n = {

@@ -3016,6 +3016,45 @@ body {
   letter-spacing: -0.03em;
 }
 
+.admin-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-header-copy {
+  flex: 1;
+  min-width: 220px;
+}
+
+.admin-lang-toggle {
+  display: flex;
+  background-color: #e5e7eb;
+  border-radius: 30px;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.admin-lang-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 26px;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: inherit;
+  font-size: 0.85rem;
+  background-color: transparent;
+  color: #6b7280;
+}
+
+.admin-lang-btn.is-active,
+.admin-lang-btn[aria-pressed="true"] {
+  background-color: #fff;
+  color: #111827;
+}
+
 .admin-header p {
   margin: 0;
   font-size: 1.05rem;

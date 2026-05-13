@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>[Bali Bridge] 관리자 · 법률 서류 인증</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-page-wrap">
+      <a class="admin-back" href="./dashboard.html">← 통합 대시보드로</a>
+
+      <div class="admin-container">
+        <header class="admin-header">
+          <h2>관리자 · 법률 서류 인증</h2>
+          <p id="admin-master-hint">
+            등록된 매물 중 서류가 올라온 항목을 검토한 뒤 <strong>승인하기</strong>를 누르면 <code>is_verified</code>가
+            활성화됩니다.
+          </p>
+        </header>
+
+        <h3 class="admin-section-title">매물 인증 대기 목록</h3>
+        <div id="admin-properties-list" class="request-list" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <script src="./js/supabase-browser-env.js"></script>
+    <script type="module" src="./js/admin-dashboard.js"></script>
+  </body>
+</html>

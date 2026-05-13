@@ -33,6 +33,40 @@
       financial_dd: "재무 및 수익성 (Financial Analysis)",
       loc_intelligence: "입지 및 인프라 (Location Intelligence)",
 
+      // --- DD 페이지 전용 ---
+      dd_roi_label: "예상 ROI (연)",
+      dd_period_label: "투자 기간",
+      dd_rights_label: "토지 권리 형태",
+      dd_period_value: "5년",
+
+      dd_legal_title: "법률 실사 (Legal Verification)",
+      dd_cert: "토지 증명서(Sertifikat):",
+      dd_zoning: "용도 확인(Zoning):",
+      dd_pbg: "PBG(건축 허가):",
+      dd_legal_warn: "* 권리 하자 리스크의 핵심(소유권/명도) 확인을 우선 검토합니다.",
+
+      dd_finance_title: "재무 및 수익성 (Financial Analysis)",
+      dd_sim_chart: "수익률 시뮬레이션 (보수적/평균적/공격적)",
+      dd_vacancy: "공실률 추이 (최근 3개년, 지역 평균)",
+      dd_exit: "Exit 전략(5년)",
+      dd_exit_val: "예상 매각가 1.45×",
+      dd_risk: "리스크 메모",
+      dd_risk_val: "PBG 승인 일정",
+
+      dd_loc_title: "입지 및 인프라 (Location Intelligence)",
+      dd_beach: "비치클럽",
+      dd_school: "국제 학교",
+      dd_hospital: "병원",
+      dd_airport: "공항",
+      dd_loc_desc1: "• 인근 개발 호재: 도로 확장 계획(예정) - 복합시설 입점 부지(확인 중)",
+      dd_loc_desc2: "• 소음/환경: 주변 공사 2곳 진행 - 일조권 양호(오전 우수)",
+
+      dd_doc_title: "증빙 문서 및 전문가 의견",
+      dd_doc_desc: "실사 결과를 뒷받침하는 문서/현장 자료를 한 곳에서 확인합니다.",
+      dd_photo_title: "현장 실사 사진 (드론/경계/현장)",
+      btn_download: "종합 실사 보고서 다운 받기",
+      btn_contact: "담당 컨설턴트 문의하기",
+
       // --- 3. 신규 매물 탐색 (Explore) ---
       title_explore: "신규 매물 탐색",
       desc_explore: "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
@@ -72,6 +106,40 @@
       legal_dd: "Legal Verification",
       financial_dd: "Financial Analysis",
       loc_intelligence: "Location Intelligence",
+
+      // --- DD 페이지 전용 ---
+      dd_roi_label: "Expected ROI (Annual)",
+      dd_period_label: "Investment Period",
+      dd_rights_label: "Land Rights Type",
+      dd_period_value: "5 Years",
+
+      dd_legal_title: "Legal Verification",
+      dd_cert: "Land Certificate (Sertifikat):",
+      dd_zoning: "Zoning Check:",
+      dd_pbg: "PBG (Building Permit):",
+      dd_legal_warn: "* Priority review of key title risks (ownership/eviction).",
+
+      dd_finance_title: "Financial Analysis",
+      dd_sim_chart: "ROI Simulation (Conservative/Base/Aggressive)",
+      dd_vacancy: "Vacancy Rate Trend (3-Year Avg)",
+      dd_exit: "Exit Strategy (5 Yrs)",
+      dd_exit_val: "Expected Sale Price 1.45×",
+      dd_risk: "Risk Memo",
+      dd_risk_val: "PBG Approval Timeline",
+
+      dd_loc_title: "Location Intelligence",
+      dd_beach: "Beach Club",
+      dd_school: "Int'l School",
+      dd_hospital: "Hospital",
+      dd_airport: "Airport",
+      dd_loc_desc1: "• Dev Catalysts: Road expansion planned - Mixed-use site pending.",
+      dd_loc_desc2: "• Noise/Env: 2 nearby constructions - Good sunlight (AM).",
+
+      dd_doc_title: "Supporting Docs & Expert Opinions",
+      dd_doc_desc: "Verify documents and site data supporting the DD results in one place.",
+      dd_photo_title: "Site Inspection Photos (Drone/Boundaries/On-site)",
+      btn_download: "Download Full DD Report",
+      btn_contact: "Contact Consultant",
 
       // --- 3. Property explorer ---
       title_explore: "Property Explorer",

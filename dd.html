@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>[Bali Bridge] 투자 실사 보고서</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Pretendard", system-ui, sans-serif;
+        background: #f3f4f6;
+        color: #111827;
+      }
+      .dd-page-wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px 20px 48px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+      .dd-back {
+        display: inline-block;
+        margin-bottom: 16px;
+        color: #374151;
+        text-decoration: none;
+      }
+      .dd-back:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dd-page-wrap">
+      <a class="dd-back" href="./dashboard.html">← 대시보드로</a>
+      <h1 id="dd-title" style="font-size: 1.35rem; font-weight: 700; margin: 0 0 20px">데이터 불러오는 중…</h1>
+      <img id="dd-image" hidden alt="" />
+
+      <!-- 상단 요약 카드 -->
+      <div style="display: flex; gap: 20px; margin-bottom: 24px; flex-wrap: wrap">
+        <div class="card">
+          <div data-i18n="dd_roi_label" style="color: #6b7280; font-size: 14px">예상 ROI (연)</div>
+          <div id="dd-roi" style="font-size: 24px; font-weight: bold">-</div>
+        </div>
+        <div class="card">
+          <div data-i18n="dd_period_label" style="color: #6b7280; font-size: 14px">투자 기간</div>
+          <div data-i18n="dd_period_value" style="font-size: 24px; font-weight: bold">5년</div>
+        </div>
+        <div class="card">
+          <div data-i18n="dd_rights_label" style="color: #6b7280; font-size: 14px">토지 권리 형태</div>
+          <div id="dd-land-rights" style="font-size: 24px; font-weight: bold">-</div>
+        </div>
+      </div>
+
+      <!-- 중간 영역: 법률 / 재무 -->
+      <div style="display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap">
+        <!-- 법률 실사 -->
+        <div class="card" style="flex: 1; min-width: 280px">
+          <h3 data-i18n="dd_legal_title">법률 실사 (Legal Verification)</h3>
+          <ul>
+            <li>
+              <span data-i18n="dd_cert">토지 증명서(Sertifikat):</span>
+              <strong id="dd-cert-status" style="font-weight: 600">—</strong>
+            </li>
+            <li>
+              <span data-i18n="dd_zoning">용도 확인(Zoning):</span>
+              <strong id="dd-zoning" style="color: #059669">-</strong>
+            </li>
+            <li>
+              <span data-i18n="dd_pbg">PBG(건축 허가):</span>
+              <strong id="dd-pbg" style="color: #d97706">-</strong>
+            </li>
+          </ul>
+          <p data-i18n="dd_legal_warn" style="font-size: 12px; color: #9ca3af">
+            * 권리 하자 리스크의 핵심(소유권/명도) 확인을 우선 검토합니다.
+          </p>
+        </div>
+
+        <!-- 재무 및 수익성 -->
+        <div class="card" style="flex: 1; min-width: 280px">
+          <h3 data-i18n="dd_finance_title">재무 및 수익성 (Financial Analysis)</h3>
+          <p data-i18n="dd_sim_chart" style="font-size: 14px">수익률 시뮬레이션 (보수적/평균적/공격적)</p>
+          <canvas id="roiChart" width="400" height="150"></canvas>
+
+          <div style="display: flex; gap: 16px; margin-top: 20px">
+            <div>
+              <div data-i18n="dd_exit" style="font-size: 12px; color: #6b7280">Exit 전략(5년)</div>
+              <div data-i18n="dd_exit_val" style="font-weight: bold">예상 매각가 1.45×</div>
+            </div>
+            <div>
+              <div data-i18n="dd_risk" style="font-size: 12px; color: #6b7280">리스크 메모</div>
+              <div data-i18n="dd_risk_val" style="font-weight: bold; color: #dc2626">PBG 승인 일정</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 입지 및 인프라 -->
+      <div class="card" style="margin-bottom: 24px">
+        <h3 data-i18n="dd_loc_title">입지 및 인프라 (Location Intelligence)</h3>
+        <div style="display: flex; justify-content: space-around; text-align: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px">
+          <div>
+            <div data-i18n="dd_beach" style="color: #6b7280">비치클럽</div>
+            <strong style="font-size: 20px">8분</strong>
+          </div>
+          <div>
+            <div data-i18n="dd_school" style="color: #6b7280">국제 학교</div>
+            <strong style="font-size: 20px">14분</strong>
+          </div>
+          <div>
+            <div data-i18n="dd_hospital" style="color: #6b7280">병원</div>
+            <strong style="font-size: 20px">18분</strong>
+          </div>
+          <div>
+            <div data-i18n="dd_airport" style="color: #6b7280">공항</div>
+            <strong style="font-size: 20px">45분</strong>
+          </div>
+        </div>
+        <p data-i18n="dd_loc_desc1">• 인근 개발 호재: 도로 확장 계획(예정) - 복합시설 입점 부지(확인 중)</p>
+        <p data-i18n="dd_loc_desc2">• 소음/환경: 주변 공사 2곳 진행 - 일조권 양호(오전 우수)</p>
+      </div>
+
+      <!-- 증빙 문서 및 버튼 -->
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start">
+          <div>
+            <h3 data-i18n="dd_doc_title">증빙 문서 및 전문가 의견</h3>
+            <p data-i18n="dd_doc_desc" style="font-size: 14px; color: #6b7280">
+              실사 결과를 뒷받침하는 문서/현장 자료를 한 곳에서 확인합니다.
+            </p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            <button type="button" data-i18n="btn_download" style="padding: 10px; background: #1f2937; color: #fff; border: none; border-radius: 8px; cursor: pointer">
+              종합 실사 보고서 다운 받기
+            </button>
+            <button
+              type="button"
+              data-i18n="btn_contact"
+              onclick="location.href='./agent-dashboard.html'"
+              style="padding: 10px; border: 1px solid #d1d5db; background: #fff; border-radius: 8px; cursor: pointer"
+            >
+              담당 컨설턴트 문의하기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 다국어 먼저 → data-i18n 적용 후 dd.js가 동적 필드 덮어씀 -->
+    <script src="/js/supabase-browser-env.js"></script>
+    <script src="/js/supabaseClient.js"></script>
+    <script src="/js/i18n.js"></script>
+    <script src="/js/dd.js"></script>
+  </body>
+</html>

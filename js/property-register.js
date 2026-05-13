@@ -17,7 +17,7 @@ async function insertProperty(supabase, payload) {
   let result = await supabase.from("properties").insert(payload);
   if (!result.error) return result;
 
-  // 2차: 스키마가 다를 경우 최소 컬럼으로 재시도
+  // 2차: 스키마가 다를 경우 최소 컬럼으로 재시도 (document_url / is_verified 등 미생성 DB 대비)
   if (result.error.code === "42703") {
     const fallbackPayload = {
       title: payload.title,
@@ -27,6 +27,8 @@ async function insertProperty(supabase, payload) {
       image_url: payload.image_url,
       status: payload.status,
     };
+    if (payload.owner_id != null) fallbackPayload.owner_id = payload.owner_id;
+    if (payload.price_usd != null) fallbackPayload.price_usd = payload.price_usd;
     result = await supabase.from("properties").insert(fallbackPayload);
   }
   return result;
@@ -68,6 +70,30 @@ async function init() {
 
     setLoading(true);
     try {
+      const fileInput = document.getElementById("reg-document");
+      let documentUrl = null;
+
+      if (fileInput && fileInput.files && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const fileExt = (file.name.split(".").pop() || "").toLowerCase();
+        const allowed = ["pdf", "jpg", "jpeg", "png"];
+        if (!allowed.includes(fileExt)) {
+          alert("PDF 또는 JPG/PNG만 업로드할 수 있습니다.");
+          return;
+        }
+        const fileName = `${Date.now()}.${fileExt}`;
+        const storagePath = `public/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("legal_documents")
+          .upload(storagePath, file, { cacheControl: "3600", upsert: false });
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage.from("legal_documents").getPublicUrl(storagePath);
+        documentUrl = urlData?.publicUrl ?? null;
+      }
+
       const payload = {
         owner_id: session.user.id,
         title,
@@ -79,13 +105,15 @@ async function init() {
           imageUrl ||
           "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
         status: "모집중",
+        document_url: documentUrl,
+        is_verified: false,
       };
 
       const { error } = await insertProperty(supabase, payload);
       if (error) throw error;
 
       alert("🎉 매물이 성공적으로 등록되었습니다!");
-      window.location.href = "/property-explorer.html";
+      window.location.href = "./property-explorer.html";
     } catch (error) {
       console.error("등록 에러:", error);
       alert("매물 등록에 실패했습니다. 빈 칸이 없는지 확인해 주세요.");

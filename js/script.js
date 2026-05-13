@@ -150,4 +150,18 @@ function init() {
   renderGrid();
 }
 
-init();
+try {
+  init();
+} catch (err) {
+  console.error("index 초기화 오류:", err);
+  const hero = document.getElementById("landingHero");
+  if (hero) {
+    const note = document.createElement("p");
+    note.setAttribute("role", "alert");
+    note.style.cssText =
+      "margin:0 auto 16px;max-width:520px;padding:12px 14px;border-radius:10px;background:rgba(127,29,29,0.85);color:#fecaca;font-weight:600;text-align:center";
+    note.textContent =
+      "화면을 불러오는 중 문제가 발생했습니다. 새로고침하거나 /dashboard.html 로 이동해 주세요.";
+    hero.insertBefore(note, hero.firstChild);
+  }
+}

@@ -8,9 +8,9 @@ async function getCreateClient() {
   return cachedCreateClient;
 }
 
-function getRedirectUrl() {
-  const { origin, pathname, search } = window.location;
-  return `${origin}${pathname}${search}`.replace(/#.*$/, "");
+function getPostLoginRedirectUrl() {
+  const origin = String(window.location.origin || "").replace(/\/$/, "");
+  return `${origin}/dashboard.html`;
 }
 
 export async function signInWithGoogle() {
@@ -29,7 +29,7 @@ export async function signInWithGoogle() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: getRedirectUrl(),
+        redirectTo: getPostLoginRedirectUrl(),
       },
     });
 

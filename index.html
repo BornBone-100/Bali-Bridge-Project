@@ -12,6 +12,24 @@
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
+    <script>
+      (function () {
+        var h = window.location.hash || "";
+        var s = window.location.search || "";
+        if (
+          h.indexOf("access_token=") !== -1 ||
+          h.indexOf("error=") !== -1 ||
+          h.indexOf("error_description=") !== -1
+        ) {
+          window.location.replace("/dashboard.html" + s + h);
+          return;
+        }
+        var m = s.match(/[?&]code=([^&]+)/);
+        if (m && m[1] && String(m[1]).length >= 20) {
+          window.location.replace("/dashboard.html" + s + h);
+        }
+      })();
+    </script>
     <div class="landing-hero" id="landingHero">
       <div class="hero-overlay">
         <header class="landing-header">

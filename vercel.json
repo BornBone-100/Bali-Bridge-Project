@@ -9,6 +9,8 @@
     { "source": "/dashboard/", "destination": "/dashboard.html" },
     { "source": "/dd-report", "destination": "/dd-report.html" },
     { "source": "/dd-report/", "destination": "/dd-report.html" },
+    { "source": "/dd-select", "destination": "/dd-select.html" },
+    { "source": "/dd-select/", "destination": "/dd-select.html" },
     { "source": "/property-explorer", "destination": "/property-explorer.html" },
     { "source": "/property-explorer/", "destination": "/property-explorer.html" },
     { "source": "/agent-dashboard", "destination": "/agent-dashboard.html" },

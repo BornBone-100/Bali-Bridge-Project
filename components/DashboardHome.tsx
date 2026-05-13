@@ -88,7 +88,7 @@ export default function DashboardHome() {
               type="button"
               style={{ fontSize: '12px', color: '#3B82F6', cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
               onClick={() => {
-                window.location.href = '/dd-report';
+                window.location.href = '/dd-select';
               }}
             >
               DD 보고서 보기

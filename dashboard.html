@@ -39,7 +39,7 @@
         <nav class="bbdash-nav">
           <a class="bbdash-link is-active" id="dash-nav-home" data-i18n="nav_dashboard" href="./dashboard.html">대시보드 홈</a>
           <a class="bbdash-link" id="dash-nav-assets" data-i18n="nav_vault" href="./vault.html">나의 투자 자산</a>
-          <a class="bbdash-link" id="dash-nav-reports" data-i18n="nav_dd" href="./dd-report.html">실사 보고서(DD)</a>
+          <a class="bbdash-link" id="dash-nav-reports" data-i18n="nav_dd" href="./dd-select.html">실사 보고서(DD)</a>
           <a class="bbdash-link" id="dash-nav-search" data-i18n="nav_explore" href="./property-explorer.html">신규 매물 탐색</a>
           <a class="bbdash-link" id="dash-nav-admin" href="./admin-dashboard.html">관리자 · 서류 인증</a>
           <a class="bbdash-link" id="dash-nav-agent" data-i18n="nav_settings" href="./agent-dashboard.html">설정(에이전트)</a>
@@ -183,7 +183,7 @@
               </div>
               <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end">
                 <a class="bbdash-chip" id="dash-sim-link" data-i18n="dash_sim_link" href="/simulator">시뮬레이터 열기</a>
-                <a class="bbdash-chip" id="dash-dd-link" data-i18n="dash_dd_link" href="./dd-report.html">DD 보고서 보기</a>
+                <a class="bbdash-chip" id="dash-dd-link" data-i18n="dash_dd_link" href="./dd-select.html">DD 보고서 보기</a>
               </div>
             </header>
 
@@ -213,7 +213,7 @@
 
             <div class="bbdash-timeline" id="dd-timeline" aria-live="polite"></div>
             <div class="bbdash-timeline-actions">
-              <a class="bbdash-btn bbdash-btn--primary" id="dash-open-dd-btn" data-i18n="dash_open_dd_btn" href="./dd-report.html"
+              <a class="bbdash-btn bbdash-btn--primary" id="dash-open-dd-btn" data-i18n="dash_open_dd_btn" href="./dd-select.html"
                 >실사 대시보드 열기</a
               >
               <button type="button" class="bbdash-btn" id="dd-download" data-i18n="dash_pdf_download">
@@ -222,7 +222,7 @@
             </div>
           </aside>
 
-          <section class="bbdash-card bbdash-card--wide" aria-label="추천 매물 리스트">
+          <section class="bbdash-card bbdash-card--wide" id="dash-reco-section" aria-label="추천 매물 리스트">
             <header class="bbdash-card-head">
               <div>
                 <h2 id="dash-reco-title" data-i18n="dash_reco_title">🏝️ 실시간 추천 매물</h2>

@@ -13,8 +13,32 @@ function bindGoogleButtons() {
   });
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", bindGoogleButtons);
-} else {
+/** 로그아웃 등으로 index.html#login 으로 온 경우 로그인 영역으로 스크롤 */
+function focusLoginSectionFromHash() {
+  const hash = (location.hash || "").toLowerCase();
+  if (hash !== "#login" && hash !== "#reauth") return;
+  const login = document.getElementById("login");
+  if (!login) return;
+  requestAnimationFrame(() => {
+    login.scrollIntoView({ behavior: "smooth", block: "center" });
+    const btn = login.querySelector("[data-google-signin]");
+    if (btn && typeof btn.focus === "function") {
+      try {
+        btn.focus({ preventScroll: true });
+      } catch {
+        btn.focus();
+      }
+    }
+  });
+}
+
+function initGoogleLoginUi() {
   bindGoogleButtons();
+  focusLoginSectionFromHash();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initGoogleLoginUi);
+} else {
+  initGoogleLoginUi();
 }

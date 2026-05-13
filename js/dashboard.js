@@ -326,7 +326,6 @@ function bindDashboardLogout(supabase) {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
       }
-      alert(currentLang === "en" ? "You have been signed out securely." : "안전하게 로그아웃 되었습니다.");
     } catch (error) {
       console.error("로그아웃 에러:", error);
       alert(currentLang === "en" ? "A problem occurred while signing out." : "로그아웃 중 문제가 발생했습니다.");
@@ -334,7 +333,7 @@ function bindDashboardLogout(supabase) {
     } finally {
       sessionStorage.removeItem("bb_guest_dashboard");
     }
-    window.location.href = "./index.html";
+    window.location.href = "./index.html#login";
   });
 }
 
@@ -367,7 +366,7 @@ async function fetchDashboardSummary() {
     // "서비스 대시보드 바로가기(임시)" 버튼으로 온 경우에만 비로그인 진입 허용
     const allowGuest = sessionStorage.getItem("bb_guest_dashboard") === "1";
     if (!allowGuest) {
-      window.location.href = "./index.html";
+      window.location.href = "./index.html#login";
       return { supabase, session: null };
     }
     dashboardState.userName = currentLang === "en" ? "Guest" : "고객";
@@ -482,6 +481,6 @@ document.addEventListener("DOMContentLoaded", () => {
  * 2단계 마스터(로그아웃·i18n) 통합 안내
  * - 별도 `const translations` / 두 번째 DOMContentLoaded는 넣지 않음(기존 translations.js·initDashboard와 충돌).
  * - 언어: setLanguage()가 preferred_language + bbLang을 동기화하고 applyDashboardTranslations·차트·타임라인을 갱신.
- * - 로그아웃: bindDashboardLogout(supabase)에서 signOut → 알림 → ./index.html (마스터의 /login.html 대신).
+ * - 로그아웃·비로그인 진입: ./index.html#login (구글 로그인 영역으로 스크롤, bind-google-login.js)
  * - 마스터 키 welcome, subtitle, total_investment, ongoing_dd, logout_btn 은 translations.js에 별칭으로 추가됨.
  */

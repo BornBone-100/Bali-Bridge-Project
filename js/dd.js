@@ -71,7 +71,7 @@
     const user = authData?.user;
     if (authError || !user) {
       alert("로그인이 필요합니다.");
-      window.location.href = "./index.html";
+      window.location.href = "./index.html#login";
       return;
     }
 

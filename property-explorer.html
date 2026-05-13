@@ -55,26 +55,28 @@
 
       <main class="bbdash-main ppex-main">
         <header class="ppex-header">
-          <h1 id="search-title">신규 매물 탐색</h1>
-          <p id="search-desc">Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.</p>
+          <h1 id="search-title" data-i18n="title_explore">신규 매물 탐색</h1>
+          <p id="search-desc" data-i18n="desc_explore">
+            Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.
+          </p>
           <p id="ppex-source-note" class="ppex-source-note" hidden aria-live="polite"></p>
         </header>
 
         <section class="ppex-filters" aria-label="고급 필터">
           <select id="filter-region">
-            <option id="filter-all-label" value="all">모든 지역</option>
+            <option id="filter-all-label" value="all" data-i18n="filter_all">모든 지역</option>
             <option value="canggu">Canggu</option>
             <option value="uluwatu">Uluwatu</option>
             <option value="seminyak">Seminyak</option>
           </select>
           <select id="filter-roi">
-            <option id="filter-roi-label" value="all">예상 수익률(ROI)</option>
+            <option id="filter-roi-label" value="all" data-i18n="filter_roi">예상 수익률(ROI)</option>
             <option id="roi-high-label" value="high">14% 이상</option>
             <option id="roi-mid-label" value="mid">12% ~ 13.9%</option>
             <option id="roi-low-label" value="low">12% 미만</option>
           </select>
           <select id="filter-budget">
-            <option id="filter-price-label" value="all">투자 금액대</option>
+            <option id="filter-price-label" value="all" data-i18n="filter_price">투자 금액대</option>
             <option id="budget-lt700-label" value="lt700">$700k 미만</option>
             <option id="budget-700to1000-label" value="700to1000">$700k ~ $1M</option>
             <option id="budget-gt1000-label" value="gt1000">$1M 이상</option>

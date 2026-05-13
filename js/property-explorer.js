@@ -12,7 +12,10 @@ const i18n = window.translations || {
     nav_explore: "신규 매물 탐색",
     nav_settings: "설정(에이전트)",
     search_title: "신규 매물 탐색",
+    title_explore: "신규 매물 탐색",
     search_desc:
+      "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
+    desc_explore:
       "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
     filter_all: "모든 지역",
     filter_roi: "예상 수익률(ROI)",
@@ -36,11 +39,14 @@ const i18n = window.translations || {
     nav_dashboard: "Dashboard Home",
     nav_vault: "My Investment Vault",
     nav_dd: "DD Reports",
-    nav_explore: "Property Search",
+    nav_explore: "Property Explorer",
     nav_settings: "Settings (Agent)",
-    search_title: "Property Search",
+    search_title: "Property Explorer",
+    title_explore: "Property Explorer",
     search_desc:
       "Explore premium investment assets with strict due diligence by Bali Bridge.",
+    desc_explore:
+      "Discover premium investment assets vetted by Bali Bridge's strict DD.",
     filter_all: "All Locations",
     filter_roi: "Expected ROI",
     filter_price: "Investment Range",
@@ -242,8 +248,8 @@ function applyTranslations() {
   setTextById("nav-reports", t("nav_dd"));
   setTextById("nav-search", t("nav_explore"));
   setTextById("nav-settings", t("nav_settings"));
-  setTextById("search-title", t("search_title"));
-  setTextById("search-desc", t("search_desc"));
+  setTextById("search-title", t("title_explore"));
+  setTextById("search-desc", t("desc_explore"));
   setTextById("filter-all-label", t("filter_all"));
   setTextById("filter-roi-label", t("filter_roi"));
   setTextById("filter-price-label", t("filter_price"));

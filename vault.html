@@ -19,8 +19,8 @@
 
       <div class="vault-container">
         <header class="vault-header">
-          <h1>나의 투자 보관함</h1>
-          <p>발리 투자 여정을 한곳에서 확인하세요.</p>
+          <h1 data-i18n="title_vault">나의 투자 보관함</h1>
+          <p data-i18n="desc_vault">발리 투자 여정을 한곳에서 확인하세요.</p>
         </header>
 
         <section class="vault-card profile-summary" aria-labelledby="vault-profile-title">
@@ -32,12 +32,14 @@
         </section>
 
         <section class="vault-card vault-total-assets" id="total-assets-card" aria-label="총 포트폴리오 가치">
-          <p class="vault-total-assets-label">총 포트폴리오 가치</p>
+          <p class="vault-total-assets-label" data-i18n="total_portfolio">총 포트폴리오 가치</p>
           <h2 id="total-amount" class="vault-total-assets-value">$0</h2>
         </section>
 
         <section class="vault-card" aria-labelledby="vault-sim-section-title">
-          <h2 id="vault-sim-section-title" class="vault-panel-title" style="margin-top: 0">수익 시뮬레이션 기록</h2>
+          <h2 id="vault-sim-section-title" class="vault-panel-title" style="margin-top: 0" data-i18n="sim_records">
+            수익 시뮬레이션 기록
+          </h2>
           <p class="vault-panel-lead">Supabase에 저장된 시나리오를 불러옵니다.</p>
           <div id="simulation-list">
             <div id="loading-msg">데이터를 불러오는 중입니다...</div>

@@ -61,8 +61,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const rent = Number(rentInput.value);
     const occ = Number(occupancyInput.value);
 
-    if (!title || inv <= 0 || rent <= 0 || occ <= 0) {
-      alert("모든 항목을 올바르게 입력해주세요.");
+    if (!title || inv <= 0 || rent <= 0 || occ <= 0 || occ > 100) {
+      alert("모든 항목을 올바르게 입력해주세요. (가동률은 1~100%)");
       return;
     }
 

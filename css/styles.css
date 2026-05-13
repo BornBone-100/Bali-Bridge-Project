@@ -2720,6 +2720,35 @@ body {
   font-weight: 600;
 }
 
+.sim-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.vault-sim-delete-btn {
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  background: #fff;
+  color: #dc2626;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.vault-sim-delete-btn:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.vault-sim-delete-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .vault-sim-detail {
   margin: 0;
   font-size: 0.88rem;

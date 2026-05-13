@@ -49,8 +49,8 @@ function bindVaultRecorder(supabase, user, onSaved) {
     const rent = Number(rentInput.value);
     const occ = Number(occupancyInput.value);
 
-    if (!title || inv <= 0 || rent <= 0 || occ <= 0) {
-      alert("모든 항목을 올바르게 입력해 주세요.");
+    if (!title || inv <= 0 || rent <= 0 || occ <= 0 || occ > 100) {
+      alert("모든 항목을 올바르게 입력해 주세요. (가동률은 1~100%)");
       return;
     }
 
@@ -83,6 +83,39 @@ function bindVaultRecorder(supabase, user, onSaved) {
     } finally {
       saveBtn.disabled = false;
       saveBtn.innerHTML = saveBtnDefaultHtml;
+    }
+  });
+}
+
+function bindVaultSimDelete(supabase, user, onDeleted) {
+  const listRoot = document.getElementById("vault-sim-list");
+  if (!listRoot || listRoot.dataset.deleteBound === "1") return;
+  listRoot.dataset.deleteBound = "1";
+
+  listRoot.addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-vault-delete-id]");
+    if (!btn) return;
+
+    const simId = btn.getAttribute("data-vault-delete-id");
+    if (!simId) return;
+
+    const title = btn.getAttribute("data-vault-delete-title") || "이 시나리오";
+    if (!window.confirm(`「${title}」 기록을 삭제할까요?\n대시보드 총 투자액·ROI에도 반영됩니다.`)) return;
+
+    try {
+      btn.disabled = true;
+      const { error } = await supabase
+        .from("profit_simulations")
+        .delete()
+        .eq("id", simId)
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+      if (typeof onDeleted === "function") await onDeleted();
+    } catch (err) {
+      console.error("시뮬레이션 삭제 에러:", err);
+      alert("삭제 중 문제가 발생했습니다. 다시 시도해 주세요.");
+      btn.disabled = false;
     }
   });
 }
@@ -123,13 +156,18 @@ async function renderVaultSimulations(supabase, user) {
     const roi = sim.calculated_roi != null ? escapeVaultText(String(sim.calculated_roi).replace(/%$/, "")) : "—";
     const dateStr = sim.created_at ? new Date(sim.created_at).toLocaleDateString("ko-KR") : "—";
     const rent = sim.monthly_rent != null ? `$${Number(sim.monthly_rent).toLocaleString()}` : "—";
-    const occ = sim.occupancy_rate != null ? `${sim.occupancy_rate}%` : "—";
+    const occRaw = sim.occupancy_rate != null ? Number(sim.occupancy_rate) : null;
+    const occ = occRaw != null ? `${Math.min(occRaw, 100)}%` : "—";
+    const simId = sim.id != null ? escapeVaultText(String(sim.id)) : "";
 
     htmlContent += `
-      <article class="vault-panel vault-sim-card">
+      <article class="vault-panel vault-sim-card" data-sim-id="${simId}">
         <div class="sim-header">
           <strong>${title}</strong>
-          <span>${escapeVaultText(dateStr)}</span>
+          <div class="sim-header-actions">
+            <span>${escapeVaultText(dateStr)}</span>
+            <button type="button" class="vault-sim-delete-btn" data-vault-delete-id="${simId}" data-vault-delete-title="${title}" aria-label="${title} 삭제">삭제</button>
+          </div>
         </div>
         <p class="vault-sim-detail">
           투자금 <span class="vault-highlight">$${amt.toLocaleString()}</span>
@@ -167,6 +205,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const refreshList = () => renderVaultSimulations(supabase, user);
     bindVaultRecorder(supabase, user, refreshList);
+    bindVaultSimDelete(supabase, user, refreshList);
     await refreshList();
   } catch (err) {
     console.error("보관함 로딩 실패:", err);

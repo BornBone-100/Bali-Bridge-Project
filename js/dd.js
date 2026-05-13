@@ -1,5 +1,5 @@
-// js/dd.js — DD 페이지: 최신 매물 1건 조회 + ROI 막대 차트
-// dd-report.html · dd.html: head에 Chart.js·@supabase/supabase-js, 본문에 supabase-browser-env.js → supabaseClient.js → i18n.js → 본 스크립트
+// dd.html · dd-report.html — Supabase 최신 매물 1건 + 인증·PDF + ROI 막대 차트
+// head: Chart.js UMD, @supabase/supabase-js | 본문: supabase-browser-env → supabaseClient → i18n → 본 스크립트
 
 (function () {
   function resolveCreateClient() {
@@ -15,135 +15,143 @@
     return Number.isFinite(n) ? n : 0;
   }
 
-  function renderChart(baseRoi) {
+  /** @param {string|number} baseRoi */
+  function renderRoiChart(baseRoi) {
     const canvas = document.getElementById("roiChart");
     if (!canvas || typeof Chart === "undefined") return;
 
     const ctx = canvas.getContext("2d");
-    const roi = Number(baseRoi) || 0;
+    const roi = parseRoi(baseRoi);
 
+    if (window.myChart) {
+      window.myChart.destroy();
+      window.myChart = null;
+    }
     if (window.myRoiChart) {
       window.myRoiChart.destroy();
       window.myRoiChart = null;
     }
 
-    window.myRoiChart = new Chart(ctx, {
+    window.myChart = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: ["보수적 시나리오", "평균적 (기본)", "공격적 시나리오"],
+        labels: ["보수적", "평균적(기준)", "공격적"],
         datasets: [
           {
-            label: "예상 연간 수익률 (ROI %)",
-            data: [roi - 3, roi, roi + 4],
-            backgroundColor: [
-              "rgba(156, 163, 175, 0.6)",
-              "rgba(5, 150, 105, 0.8)",
-              "rgba(59, 130, 246, 0.6)",
-            ],
-            borderColor: ["rgb(107, 114, 128)", "rgb(4, 120, 87)", "rgb(37, 99, 235)"],
-            borderWidth: 1,
-            borderRadius: 6,
+            label: "예상 ROI (%)",
+            data: [roi - 3.5, roi, roi + 4.2],
+            backgroundColor: ["#E5E7EB", "#10B981", "#3B82F6"],
+            borderRadius: 8,
           },
         ],
       },
       options: {
         responsive: true,
-        scales: {
-          y: { beginAtZero: true },
-        },
-        plugins: {
-          legend: { display: false },
-        },
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } },
       },
     });
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    const setTitle = (msg) => {
-      const el = document.getElementById("dd-title");
-      if (el) el.textContent = msg;
-    };
-
     let supabase = window.bbSupabase;
     if (!supabase) {
       const createClient = resolveCreateClient();
       const url = String(window.BB_SUPABASE_URL || "").trim();
       const key = String(window.BB_SUPABASE_ANON_KEY || "").trim();
       if (!createClient || !url || !key) {
-        console.error("Supabase 클라이언트가 없습니다. head의 CDN과 /js/supabaseClient.js(또는 env+키)를 확인하세요.");
-        setTitle("Supabase 설정을 확인해 주세요.");
+        const t = document.getElementById("dd-title");
+        if (t) t.textContent = "Supabase 설정을 확인해 주세요.";
         return;
       }
       supabase = createClient(url, key);
     }
 
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    const user = authData?.user;
+    if (authError || !user) {
+      alert("로그인이 필요합니다.");
+      window.location.href = "./index.html";
+      return;
+    }
+
     try {
-      await supabase.auth.getUser();
-
-      const { data: properties, error } = await supabase
-        .from("properties")
-        .select("*")
-        .order("id", { ascending: false })
-        .limit(1);
-
-      if (error) throw error;
+      let res = await supabase.from("properties").select("*").order("created_at", { ascending: false }).limit(1);
+      if (res.error) {
+        res = await supabase.from("properties").select("*").order("id", { ascending: false }).limit(1);
+      }
+      if (res.error) throw res.error;
+      const properties = res.data;
 
       if (properties && properties.length > 0) {
         const prop = properties[0];
         const roiNum = parseRoi(prop.roi);
 
         const titleEl = document.getElementById("dd-title");
-        if (titleEl) titleEl.textContent = prop.title || "—";
+        if (titleEl) titleEl.textContent = prop.title || "이름 없는 매물";
+
+        const locEl = document.getElementById("dd-location");
+        if (locEl) locEl.textContent = prop.location || "위치 미상";
 
         const roiEl = document.getElementById("dd-roi");
-        if (roiEl) roiEl.textContent = roiNum ? `${roiNum}%` : "—";
+        if (roiEl) roiEl.textContent = roiNum ? `${roiNum}%` : "0%";
 
         const landEl = document.getElementById("dd-land-rights");
-        if (landEl) landEl.textContent = prop.land_rights || "Leasehold";
-
-        const landMetric = document.getElementById("dd-land-rights-metric");
-        if (landMetric) landMetric.textContent = prop.land_rights || "Leasehold";
+        if (landEl) landEl.textContent = prop.land_rights || "확인 중";
 
         const zoningEl = document.getElementById("dd-zoning");
         if (zoningEl) {
-          const z = prop.zoning != null && String(prop.zoning).trim() !== "" ? String(prop.zoning) : "-";
-          zoningEl.textContent = z === "-" ? "-" : `${z} 확인 완료`;
+          const z = prop.zoning != null && String(prop.zoning).trim() !== "" ? String(prop.zoning) : "";
+          zoningEl.textContent = z || "확인 중";
         }
 
         const pbgEl = document.getElementById("dd-pbg");
-        if (pbgEl) pbgEl.textContent = prop.pbg_status != null ? String(prop.pbg_status) : "-";
+        if (pbgEl) pbgEl.textContent = prop.pbg_status != null && String(prop.pbg_status).trim() !== "" ? String(prop.pbg_status) : "확인 중";
+
+        const certStatus = document.getElementById("dd-cert-status");
+        const certBadge = document.getElementById("dd-cert-badge");
+        const downloadBtn = document.getElementById("btn-download-pdf") || document.querySelector('[data-i18n="btn_download"]');
 
         const verified = Boolean(prop.is_verified);
-        const certElement = document.getElementById("dd-cert-status");
-        if (certElement) {
-          if (verified) {
-            certElement.textContent = "확인 완료 (Bali Bridge 인증)";
-            certElement.style.color = "#059669";
-          } else {
-            certElement.textContent = "검토 중";
-            certElement.style.color = "#dc2626";
-          }
-        }
 
-        const downloadBtn = document.querySelector('[data-i18n="btn_download"]');
-        if (downloadBtn && !downloadBtn.dataset.ddDownloadBound) {
-          downloadBtn.dataset.ddDownloadBound = "1";
-          downloadBtn.addEventListener("click", () => {
-            const docUrl = prop.document_url != null ? String(prop.document_url).trim() : "";
-            if (!docUrl) {
-              alert("현재 등록된 실사 보고서 파일이 없습니다.");
-              return;
-            }
-            if (!verified) {
-              alert("아직 법률 실사가 완료되지 않은 매물입니다.");
-              return;
-            }
-            if (!/^https?:\/\//i.test(docUrl)) {
-              alert("문서 링크를 열 수 없습니다.");
-              return;
-            }
-            window.open(docUrl, "_blank", "noopener,noreferrer");
-          });
+        if (verified) {
+          if (certStatus) {
+            certStatus.textContent = "유효성 확인 완료 (Bali Bridge 인증)";
+            certStatus.style.color = "#059669";
+          }
+          if (certBadge) {
+            certBadge.textContent = "인증 완료";
+            certBadge.style.backgroundColor = "#DEF7EC";
+            certBadge.style.color = "#03543F";
+          }
+          if (downloadBtn) {
+            downloadBtn.style.backgroundColor = "";
+            downloadBtn.style.opacity = "";
+            downloadBtn.addEventListener("click", () => {
+              const docUrl = prop.document_url != null ? String(prop.document_url).trim() : "";
+              if (docUrl && /^https?:\/\//i.test(docUrl)) {
+                window.open(docUrl, "_blank", "noopener,noreferrer");
+              } else {
+                alert("첨부된 실사 파일이 없습니다.");
+              }
+            });
+          }
+        } else {
+          if (certStatus) {
+            certStatus.textContent = "서류 검토 및 마스터 승인 대기중";
+            certStatus.style.color = "#DC2626";
+          }
+          if (certBadge) {
+            certBadge.textContent = "검토 중";
+            certBadge.style.backgroundColor = "#FEF2F2";
+            certBadge.style.color = "#DC2626";
+          }
+          if (downloadBtn) {
+            downloadBtn.style.backgroundColor = "#4B5563";
+            downloadBtn.addEventListener("click", () => {
+              alert("마스터(Bali Bridge)의 법률 인증이 완료된 후에 다운로드할 수 있습니다.");
+            });
+          }
         }
 
         const imgUrl = prop.image_url || prop.image || "";
@@ -153,13 +161,15 @@
           imgElement.removeAttribute("hidden");
         }
 
-        renderChart(roiNum);
+        renderRoiChart(roiNum);
       } else {
-        setTitle("등록된 매물이 없습니다.");
+        const t = document.getElementById("dd-title");
+        if (t) t.textContent = "등록된 매물이 없습니다.";
       }
     } catch (err) {
-      console.error("DD 데이터 로딩 실패:", err);
-      setTitle("데이터를 불러오는 중 오류가 발생했습니다.");
+      console.error("DD 로딩 에러:", err);
+      const t = document.getElementById("dd-title");
+      if (t) t.textContent = "데이터를 불러오는 중 오류가 발생했습니다.";
     }
   });
 })();

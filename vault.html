@@ -36,13 +36,40 @@
           <h2 id="vault-total" class="vault-total-assets-value">$0</h2>
         </section>
 
-        <section class="vault-card" aria-labelledby="vault-sim-section-title">
+        <section class="vault-card vault-sim-panel" aria-labelledby="vault-sim-section-title">
           <h2 id="vault-sim-section-title" class="vault-panel-title" style="margin-top: 0" data-i18n="sim_records">
             수익 시뮬레이션 기록
           </h2>
-          <p class="vault-panel-lead">Supabase에 저장된 시나리오를 불러옵니다.</p>
-          <div id="vault-sim-list">
-            <div id="loading-msg">데이터를 불러오는 중입니다...</div>
+          <p class="vault-panel-lead">시나리오를 입력하고 저장하면 Supabase 보관함과 대시보드에 반영됩니다.</p>
+
+          <div class="vault-sim-recorder" id="vault-sim-recorder">
+            <div class="vault-sim-form-row">
+              <label class="vault-sim-label" for="sim-title">시나리오 이름</label>
+              <input class="vault-sim-input" type="text" id="sim-title" placeholder="예: 짱구 풀빌라 보수적 시나리오" />
+            </div>
+            <div class="vault-sim-form-row vault-sim-form-row--split">
+              <div>
+                <label class="vault-sim-label" for="sim-investment">총 투자 금액 (USD)</label>
+                <input class="vault-sim-input" type="number" id="sim-investment" min="1" placeholder="500000" />
+              </div>
+              <div>
+                <label class="vault-sim-label" for="sim-rent">예상 월 임대료 ($)</label>
+                <input class="vault-sim-input" type="number" id="sim-rent" min="0" placeholder="6500" />
+              </div>
+              <div>
+                <label class="vault-sim-label" for="sim-occupancy">예상 가동률 (%)</label>
+                <input class="vault-sim-input" type="number" id="sim-occupancy" min="0" max="100" placeholder="75" />
+              </div>
+            </div>
+            <div class="vault-sim-roi-box">
+              <span class="vault-sim-roi-label">예상 연간 ROI</span>
+              <strong class="vault-sim-roi-value" id="sim-roi">0.0%</strong>
+            </div>
+            <button type="button" id="vault-save-btn" class="save-btn vault-sim-save-btn">💾 시나리오 저장하기</button>
+          </div>
+
+          <div id="vault-sim-list" class="vault-sim-list-wrap" aria-live="polite">
+            <p id="loading-msg" style="color: #6b7280; margin: 16px 0 0">데이터를 불러오는 중입니다...</p>
           </div>
         </section>
       </div>
@@ -51,6 +78,6 @@
     <script src="/js/i18n.js"></script>
     <script src="./js/supabase-browser-env.js"></script>
     <script src="./js/supabaseClient.js"></script>
-    <script src="/js/master-backend.js"></script>
+    <script src="/js/vault.js"></script>
   </body>
 </html>

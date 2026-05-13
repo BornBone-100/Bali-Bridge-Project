@@ -2599,6 +2599,80 @@ body {
   margin-bottom: 18px;
 }
 
+.vault-sim-recorder {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.vault-sim-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vault-sim-form-row--split {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.vault-sim-form-row--split > div {
+  flex: 1 1 140px;
+  min-width: 0;
+}
+
+.vault-sim-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.vault-sim-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.vault-sim-roi-box {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.vault-sim-roi-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #166534;
+}
+
+.vault-sim-roi-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #15803d;
+}
+
+.vault-sim-save-btn {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.vault-sim-list-wrap {
+  margin-top: 4px;
+}
+
 .vault-sim-stack {
   display: flex;
   flex-direction: column;

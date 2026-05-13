@@ -2,71 +2,150 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>수익 시뮬레이터 — Bali Bridge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>수익성 시뮬레이터 - Bali Bridge</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
       crossorigin
     />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-      html,
       body {
         margin: 0;
-        height: 100%;
-        font-family: 'Pretendard', system-ui, sans-serif;
-        background: #f8fafc;
+        padding: 48px;
+        background-color: #f8fafc;
+        font-family: "Pretendard", system-ui, sans-serif;
+        color: #1f2937;
       }
-      .sim-shell {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        min-height: 100vh;
-      }
-      .sim-toolbar {
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 16px;
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
         background: #fff;
-        border-bottom: 1px solid #e5e7eb;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
       }
-      .sim-toolbar button {
+      .back-btn {
+        display: inline-block;
+        margin-bottom: 24px;
         padding: 8px 16px;
         border-radius: 8px;
         border: 1px solid #d1d5db;
         background: #fff;
         cursor: pointer;
-        font-weight: 600;
+        color: #4b5563;
+        font-family: inherit;
         font-size: 14px;
       }
-      .sim-toolbar span {
-        font-size: 14px;
-        color: #6b7280;
+      .form-group {
+        margin-bottom: 20px;
       }
-      .sim-frame-wrap {
-        flex: 1;
-        min-height: 0;
-      }
-      .sim-frame-wrap iframe {
+      label {
         display: block;
-        border: 0;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #374151;
+      }
+      input {
         width: 100%;
-        height: 100%;
-        min-height: calc(100vh - 53px);
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        box-sizing: border-box;
+        font-size: 15px;
+        font-family: inherit;
+      }
+      .flex-row {
+        display: flex;
+        gap: 16px;
+      }
+      .flex-row > div {
+        flex: 1;
+      }
+      .result-box {
+        margin-top: 32px;
+        padding: 24px;
+        background: #f0fdf4;
+        border-radius: 12px;
+        border: 1px solid #bbf7d0;
+        text-align: center;
+      }
+      .result-label {
+        color: #166534;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .result-value {
+        color: #15803d;
+        font-size: 48px;
+        font-weight: 900;
+        margin: 0;
+      }
+      .submit-btn {
+        width: 100%;
+        padding: 16px;
+        margin-top: 32px;
+        background: #059669;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .submit-btn:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
       }
     </style>
   </head>
   <body>
-    <div class="sim-shell">
-      <div class="sim-toolbar">
-        <button type="button" onclick="window.history.back()">⬅️ 돌아가기</button>
-        <span>메인 시뮬레이터 섹션을 불러옵니다. Next.js 앱에서 연동 시 이 페이지를 교체할 수 있습니다.</span>
+    <button type="button" class="back-btn" onclick="window.history.back()">⬅️ 보관함으로 돌아가기</button>
+
+    <div class="container">
+      <h1 style="font-size: 24px; font-weight: 800; margin-top: 0; margin-bottom: 8px">📈 수익성 시뮬레이터</h1>
+      <p style="color: #6b7280; margin-bottom: 32px; font-size: 14px">투자금과 운영 조건을 조절하여 예상 수익률을 확인하세요.</p>
+
+      <div class="form-group">
+        <label for="sim-title">시나리오 이름</label>
+        <input
+          type="text"
+          id="sim-title"
+          placeholder="예: 짱구 풀빌라 보수적 시나리오"
+          value="발리 풀빌라 투자 시나리오"
+        />
       </div>
-      <div class="sim-frame-wrap">
-        <iframe src="/index.html#simulator" title="발리 빌라 수익 시뮬레이터"></iframe>
+
+      <div class="form-group">
+        <label for="sim-investment">총 투자 금액 (USD)</label>
+        <input type="number" id="sim-investment" placeholder="예: 500000" value="500000" min="1" />
       </div>
+
+      <div class="flex-row">
+        <div class="form-group">
+          <label for="sim-rent">예상 월 임대료 ($)</label>
+          <input type="number" id="sim-rent" placeholder="예: 6500" value="6500" min="0" />
+        </div>
+        <div class="form-group">
+          <label for="sim-occupancy">예상 객실 가동률 (%)</label>
+          <input type="number" id="sim-occupancy" placeholder="예: 75" value="75" max="100" min="0" />
+        </div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-label">예상 연간 투자 수익률 (ROI)</div>
+        <p class="result-value" id="sim-roi">0%</p>
+      </div>
+
+      <button type="button" id="save-btn" class="submit-btn">💾 내 보관함에 시나리오 저장하기</button>
     </div>
+
+    <script src="./js/supabase-browser-env.js"></script>
+    <script src="./js/supabaseClient.js"></script>
+    <script src="./js/simulator.js"></script>
   </body>
 </html>

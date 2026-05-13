@@ -1,15 +1,16 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
+
 let PROPERTY_DATA = [];
 let dataSource = "supabase";
-let currentLang = localStorage.getItem("bbLang") || "ko";
-let ppexLangToggleBound = false;
-let ppexApplyFilterBound = false;
+let currentLang = "ko";
 
 const i18n = window.translations || {
   ko: {
-    nav_home: "📊 대시보드 홈",
-    nav_assets: "💼 나의 투자 자산",
-    nav_reports: "📄 실사(DD) 보고서",
-    nav_search: "🌴 신규 매물 탐색",
+    nav_dashboard: "대시보드 홈",
+    nav_vault: "나의 투자 자산",
+    nav_dd: "실사 보고서(DD)",
+    nav_explore: "신규 매물 탐색",
+    nav_settings: "설정(에이전트)",
     search_title: "신규 매물 탐색",
     search_desc:
       "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
@@ -32,10 +33,11 @@ const i18n = window.translations || {
     source_demo: "데이터 연결이 비활성화되었습니다. Supabase 환경값을 확인해 주세요.",
   },
   en: {
-    nav_home: "📊 Dashboard",
-    nav_assets: "💼 My Assets",
-    nav_reports: "📄 DD Reports",
-    nav_search: "🌴 Property Search",
+    nav_dashboard: "Dashboard Home",
+    nav_vault: "My Investment Vault",
+    nav_dd: "DD Reports",
+    nav_explore: "Property Search",
+    nav_settings: "Settings (Agent)",
     search_title: "Property Search",
     search_desc:
       "Explore premium investment assets with strict due diligence by Bali Bridge.",
@@ -235,10 +237,11 @@ function setTextById(id, value) {
 }
 
 function applyTranslations() {
-  setTextById("nav-home", t("nav_home"));
-  setTextById("nav-assets", t("nav_assets"));
-  setTextById("nav-reports", t("nav_reports"));
-  setTextById("nav-search", t("nav_search"));
+  setTextById("nav-home", t("nav_dashboard"));
+  setTextById("nav-assets", t("nav_vault"));
+  setTextById("nav-reports", t("nav_dd"));
+  setTextById("nav-search", t("nav_explore"));
+  setTextById("nav-settings", t("nav_settings"));
   setTextById("search-title", t("search_title"));
   setTextById("search-desc", t("search_desc"));
   setTextById("filter-all-label", t("filter_all"));
@@ -271,14 +274,11 @@ function applyTranslations() {
 }
 
 function bindLanguageToggle() {
-  if (ppexLangToggleBound) return;
-  ppexLangToggleBound = true;
   const koBtn = document.getElementById("lang-ko");
   const enBtn = document.getElementById("lang-en");
   if (koBtn) {
     koBtn.addEventListener("click", () => {
       currentLang = "ko";
-      localStorage.setItem("bbLang", currentLang);
       applyTranslations();
       setSourceNote();
       applyFilters();
@@ -287,7 +287,6 @@ function bindLanguageToggle() {
   if (enBtn) {
     enBtn.addEventListener("click", () => {
       currentLang = "en";
-      localStorage.setItem("bbLang", currentLang);
       applyTranslations();
       setSourceNote();
       applyFilters();
@@ -309,7 +308,6 @@ async function loadProperties() {
   }
 
   try {
-    const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.3/+esm");
     const supabase = createClient(cfg.url, cfg.key);
     const { data, error } = await supabase.from("properties").select("*");
     if (error) {
@@ -332,23 +330,13 @@ async function loadProperties() {
 }
 
 async function initPropertyExplorer() {
-  currentLang = localStorage.getItem("bbLang") || "ko";
-  bindLanguageToggle();
   applyTranslations();
-  try {
-    await loadProperties();
-    setSourceNote();
-    renderProperties(PROPERTY_DATA);
-    const btn = document.getElementById("apply-filter");
-    if (btn && !ppexApplyFilterBound) {
-      ppexApplyFilterBound = true;
-      btn.addEventListener("click", applyFilters);
-    }
-  } catch (e) {
-    console.error("Property explorer 초기화 오류:", e);
-    setSourceNote();
-    renderProperties(PROPERTY_DATA);
-  }
+  bindLanguageToggle();
+  await loadProperties();
+  setSourceNote();
+  renderProperties(PROPERTY_DATA);
+  const btn = document.getElementById("apply-filter");
+  if (btn) btn.addEventListener("click", applyFilters);
 }
 
 document.addEventListener("DOMContentLoaded", initPropertyExplorer);

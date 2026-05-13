@@ -6,6 +6,11 @@ const translations = {
     nav_reports: "📄 실사(DD) 보고서",
     nav_search: "🌴 신규 매물 탐색",
     nav_agent: "⚙️ 설정(에이전트)",
+    nav_dashboard: "대시보드 홈",
+    nav_vault: "나의 투자 자산",
+    nav_dd: "실사 보고서(DD)",
+    nav_explore: "신규 매물 탐색",
+    nav_settings: "설정(에이전트)",
     search_title: "신규 매물 탐색",
     search_desc:
       "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
@@ -97,6 +102,11 @@ const translations = {
     nav_reports: "📄 DD Reports",
     nav_search: "🌴 Property Search",
     nav_agent: "⚙️ Settings (Agent)",
+    nav_dashboard: "Dashboard Home",
+    nav_vault: "My Investment Vault",
+    nav_dd: "DD Reports",
+    nav_explore: "Property Search",
+    nav_settings: "Settings (Agent)",
     search_title: "Property Search",
     search_desc:
       "Explore premium investment assets with strict due diligence by Bali Bridge.",

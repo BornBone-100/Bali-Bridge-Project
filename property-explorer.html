@@ -9,7 +9,7 @@
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
       crossorigin
     />
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body class="bbdash-body">
     <div class="bbdash-wrapper">
@@ -37,11 +37,11 @@
         </div>
 
         <nav class="bbdash-nav">
-          <a id="nav-home" class="bbdash-link" href="/dashboard.html">대시보드 홈</a>
-          <a id="nav-assets" class="bbdash-link" href="/vault.html">나의 투자 자산</a>
-          <a id="nav-reports" class="bbdash-link" href="/dd-report.html">실사 보고서(DD)</a>
-          <a id="nav-search" class="bbdash-link is-active" href="/property-explorer.html">신규 매물 탐색</a>
-          <a class="bbdash-link" href="/agent-dashboard.html">설정(에이전트)</a>
+          <a id="nav-home" class="bbdash-link" data-i18n="nav_dashboard" href="./index.html">대시보드 홈</a>
+          <a id="nav-assets" class="bbdash-link" data-i18n="nav_vault" href="./vault.html">나의 투자 자산</a>
+          <a id="nav-reports" class="bbdash-link" data-i18n="nav_dd" href="./dd-report.html">실사 보고서(DD)</a>
+          <a id="nav-search" class="bbdash-link is-active" data-i18n="nav_explore" href="./property-explorer.html">신규 매물 탐색</a>
+          <a id="nav-settings" class="bbdash-link" data-i18n="nav_settings" href="./agent-dashboard.html">설정(에이전트)</a>
         </nav>
 
         <div class="bbdash-sidebar-foot">
@@ -49,59 +49,15 @@
             <div class="bbdash-mini-dot"></div>
             <span>BB</span>
           </div>
-          <a class="bbdash-sideback" href="/dashboard.html">← 대시보드 홈으로</a>
+          <a class="bbdash-sideback" href="./index.html">← 홈으로</a>
         </div>
       </aside>
 
       <main class="bbdash-main ppex-main">
         <header class="ppex-header">
-          <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px; width: 100%">
-            <div style="flex: 1; min-width: 200px">
-              <h1 id="search-title">신규 매물 탐색</h1>
-              <p id="search-desc">Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.</p>
-              <p id="ppex-source-note" class="ppex-source-note" hidden aria-live="polite"></p>
-            </div>
-            <div
-              style="
-                display: flex;
-                background-color: #e5e7eb;
-                border-radius: 30px;
-                padding: 4px;
-                flex-shrink: 0;
-              "
-            >
-              <button
-                id="lang-ko"
-                type="button"
-                style="
-                  padding: 8px 16px;
-                  border: none;
-                  border-radius: 26px;
-                  cursor: pointer;
-                  font-weight: bold;
-                  background-color: #fff;
-                  color: #111827;
-                "
-              >
-                KOR
-              </button>
-              <button
-                id="lang-en"
-                type="button"
-                style="
-                  padding: 8px 16px;
-                  border: none;
-                  border-radius: 26px;
-                  cursor: pointer;
-                  font-weight: bold;
-                  background-color: transparent;
-                  color: #6b7280;
-                "
-              >
-                ENG
-              </button>
-            </div>
-          </div>
+          <h1 id="search-title">신규 매물 탐색</h1>
+          <p id="search-desc">Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.</p>
+          <p id="ppex-source-note" class="ppex-source-note" hidden aria-live="polite"></p>
         </header>
 
         <section class="ppex-filters" aria-label="고급 필터">
@@ -136,9 +92,10 @@
       </main>
     </div>
 
-    <script src="/js/translations.js"></script>
-    <script src="/js/supabase-browser-env.js"></script>
-    <script type="module" src="/js/property-explorer.js"></script>
+    <script src="/js/i18n.js"></script>
+    <script src="./js/translations.js"></script>
+    <script src="./js/supabase-browser-env.js"></script>
+    <script type="module" src="./js/property-explorer.js"></script>
   </body>
 </html>
 

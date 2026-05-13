@@ -1,3 +1,24 @@
 {
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/vault", "destination": "/vault.html" },
+    { "source": "/vault/", "destination": "/vault.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/dashboard/", "destination": "/dashboard.html" },
+    { "source": "/dd-report", "destination": "/dd-report.html" },
+    { "source": "/dd-report/", "destination": "/dd-report.html" },
+    { "source": "/property-explorer", "destination": "/property-explorer.html" },
+    { "source": "/property-explorer/", "destination": "/property-explorer.html" },
+    { "source": "/agent-dashboard", "destination": "/agent-dashboard.html" },
+    { "source": "/agent-dashboard/", "destination": "/agent-dashboard.html" },
+    { "source": "/compare", "destination": "/compare.html" },
+    { "source": "/compare/", "destination": "/compare.html" },
+    { "source": "/detail", "destination": "/detail.html" },
+    { "source": "/detail/", "destination": "/detail.html" },
+    { "source": "/inspection-editor", "destination": "/inspection-editor.html" },
+    { "source": "/inspection-editor/", "destination": "/inspection-editor.html" },
+    { "source": "/property-register", "destination": "/property-register.html" },
+    { "source": "/property-register/", "destination": "/property-register.html" }
+  ]
 }

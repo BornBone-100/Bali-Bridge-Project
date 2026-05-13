@@ -190,7 +190,7 @@ function renderVaultSimulation() {
       <p class="vault-panel-lead">
         메인 화면 시뮬레이터에서 조건을 바꿀 때마다 최근 결과가 localStorage에 저장됩니다.
       </p>
-      <a class="btn btn--secondary vault-panel-cta vault-panel-cta--inline" href="/index.html#simulator">시뮬레이터 열기</a>
+      <a class="btn btn--secondary vault-panel-cta vault-panel-cta--inline" href="/simulator">시뮬레이터 열기</a>
       <div class="vault-sim-stack">${cards}</div>
     </section>
   `;

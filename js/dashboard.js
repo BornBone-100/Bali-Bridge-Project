@@ -1,15 +1,6 @@
-let cachedCreateClient = null;
-async function getCreateClient() {
-  if (!cachedCreateClient) {
-    const mod = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.3/+esm");
-    cachedCreateClient = mod.createClient;
-  }
-  return cachedCreateClient;
-}
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
 
 let currentLang = localStorage.getItem("bbLang") || "ko";
-let dashboardLangToggleBound = false;
-let dashboardLogoutBound = false;
 const dashboardState = {
   userName: "고객",
   totalAsset: 0,
@@ -50,6 +41,7 @@ function applyDashboardTranslations() {
   setTextById("dash-stat4-sub", t("dash_stat4_sub"));
   setTextById("dash-chart-title", t("dash_chart_title"));
   setTextById("dash-chart-desc", t("dash_chart_desc"));
+  setTextById("dash-sim-link", t("dash_sim_link"));
   setTextById("dash-dd-link", t("dash_dd_link"));
   setTextById("dash-chart-region-title", t("dash_chart_region_title"));
   setTextById("dash-chart-monthly-title", t("dash_chart_monthly_title"));
@@ -81,8 +73,6 @@ function applyLangButtonState() {
 }
 
 function bindDashboardLanguageToggle() {
-  if (dashboardLangToggleBound) return;
-  dashboardLangToggleBound = true;
   const koBtn = document.getElementById("dash-lang-ko");
   const enBtn = document.getElementById("dash-lang-en");
   if (koBtn) {
@@ -333,8 +323,8 @@ function renderRecommendedProperties(list = []) {
               <strong>${p.pricePerPyeong}</strong>
             </div>
             <div class="bbdash-prop-actions">
-              <a class="bbdash-mini-btn" href="/dd-report.html?propertyId=${encodeURIComponent(p.id)}">${t("dash_prop_dd_view")}</a>
-              <a class="bbdash-mini-btn bbdash-mini-btn--primary" href="/index.html">${t("dash_prop_detail")}</a>
+              <a class="bbdash-mini-btn" href="./dd-report.html?propertyId=${encodeURIComponent(p.id)}">${t("dash_prop_dd_view")}</a>
+              <a class="bbdash-mini-btn bbdash-mini-btn--primary" href="./index.html">${t("dash_prop_detail")}</a>
             </div>
           </div>
         </article>
@@ -343,19 +333,15 @@ function renderRecommendedProperties(list = []) {
     .join("");
 }
 
-let pdfDownloadBound = false;
-
 function bindPdfDownload() {
   const btn = document.getElementById("dd-download");
-  if (!btn || pdfDownloadBound) return;
-  pdfDownloadBound = true;
+  if (!btn) return;
   btn.addEventListener("click", () => window.print());
 }
 
 function bindDashboardLogout(supabase) {
   const btn = document.getElementById("dashboard-logout-btn");
-  if (!btn || dashboardLogoutBound) return;
-  dashboardLogoutBound = true;
+  if (!btn) return;
   btn.addEventListener("click", async () => {
     try {
       if (supabase) {
@@ -365,7 +351,7 @@ function bindDashboardLogout(supabase) {
       console.error("로그아웃 에러:", error);
     } finally {
       sessionStorage.removeItem("bb_guest_dashboard");
-      window.location.href = "/index.html";
+      window.location.href = "./index.html";
     }
   });
 }
@@ -384,7 +370,6 @@ async function fetchDashboardSummary() {
     return { supabase: null, session: null };
   }
 
-  const createClient = await getCreateClient();
   const supabase = createClient(url, key);
   const {
     data: { session },
@@ -395,7 +380,7 @@ async function fetchDashboardSummary() {
     // "서비스 대시보드 바로가기(임시)" 버튼으로 온 경우에만 비로그인 진입 허용
     const allowGuest = sessionStorage.getItem("bb_guest_dashboard") === "1";
     if (!allowGuest) {
-      window.location.href = "/index.html";
+      window.location.href = "./index.html";
       return { supabase, session: null };
     }
     dashboardState.userName = currentLang === "en" ? "Guest" : "고객";
@@ -484,32 +469,18 @@ async function fetchRecommendedProperties(supabase) {
 }
 
 async function initDashboard() {
-  currentLang = localStorage.getItem("bbLang") || "ko";
+  const { supabase } = await fetchDashboardSummary();
+  const { timeline, marketData } = await fetchDashboardWidgets(supabase);
+  const recommended = await fetchRecommendedProperties(supabase);
+  dashboardState.timeline = timeline;
+  dashboardState.marketData = marketData;
+  dashboardState.recommended = recommended;
+  applyDashboardTranslations();
   bindDashboardLanguageToggle();
   applyLangButtonState();
-  applyDashboardTranslations();
-
-  let supabase = null;
-  try {
-    const summary = await fetchDashboardSummary();
-    supabase = summary?.supabase ?? null;
-    const { timeline, marketData } = await fetchDashboardWidgets(supabase);
-    const recommended = await fetchRecommendedProperties(supabase);
-    dashboardState.timeline = timeline;
-    dashboardState.marketData = marketData;
-    dashboardState.recommended = recommended;
-    applyDashboardTranslations();
-    applyLangButtonState();
-    renderLocalizedSections();
-    bindPdfDownload();
-    bindDashboardLogout(supabase);
-  } catch (err) {
-    console.error("대시보드 초기화 오류:", err);
-    applyDashboardTranslations();
-    applyLangButtonState();
-    bindPdfDownload();
-    bindDashboardLogout(supabase);
-  }
+  renderLocalizedSections();
+  bindPdfDownload();
+  bindDashboardLogout(supabase);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

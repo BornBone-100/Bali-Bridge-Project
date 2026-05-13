@@ -1,5 +1,6 @@
 {
   "trailingSlash": false,
+  "cleanUrls": false,
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/vault", "destination": "/vault.html" },
@@ -19,6 +20,8 @@
     { "source": "/inspection-editor", "destination": "/inspection-editor.html" },
     { "source": "/inspection-editor/", "destination": "/inspection-editor.html" },
     { "source": "/property-register", "destination": "/property-register.html" },
-    { "source": "/property-register/", "destination": "/property-register.html" }
+    { "source": "/property-register/", "destination": "/property-register.html" },
+    { "source": "/simulator", "destination": "/simulator.html" },
+    { "source": "/simulator/", "destination": "/simulator.html" }
   ]
 }

@@ -90,13 +90,16 @@
           <button id="apply-filter" type="button">검색 적용</button>
         </section>
 
-        <section id="property-list" class="ppex-grid" aria-live="polite"></section>
+        <section id="explore-list" class="ppex-grid" aria-live="polite"></section>
       </main>
     </div>
 
     <script src="/js/i18n.js"></script>
     <script src="./js/translations.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./js/supabase-browser-env.js"></script>
+    <script src="./js/supabaseClient.js"></script>
+    <script defer src="/js/master-backend.js"></script>
     <script type="module" src="./js/property-explorer.js"></script>
   </body>
 </html>

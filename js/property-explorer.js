@@ -170,7 +170,7 @@ function getDdBadgeText(prop) {
 }
 
 function renderProperties(list) {
-  const root = document.getElementById("property-list");
+  const root = document.getElementById("explore-list");
   if (!root) return;
 
   if (!list.length) {
@@ -301,7 +301,7 @@ function bindLanguageToggle() {
 }
 
 async function loadProperties() {
-  const root = document.getElementById("property-list");
+  const root = document.getElementById("explore-list");
   if (root) {
     root.innerHTML = `<p class="ppex-loading">${escapeHtml(t("loading"))}</p>`;
   }

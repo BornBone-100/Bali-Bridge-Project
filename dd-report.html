@@ -25,7 +25,7 @@
             <p class="dd-kicker" data-i18n="title_dd">투자 실사 보고서 대시보드</p>
             <h1 class="dd-title" id="dd-title">데이터 불러오는 중...</h1>
             <p class="dd-sub" id="dd-sub-lead">
-              실사 완료일: <strong id="dd-updated-at">2026.05.07</strong> · 토지 권리 형태:
+              <span id="dd-location" style="font-weight: 600">-</span> · 실사 완료일: <strong id="dd-updated-at">2026.05.07</strong> · 토지 권리 형태:
               <strong id="dd-land-rights">HGB</strong> · 투자 기간: <strong id="dd-investment-period">5년</strong>
             </p>
           </div>
@@ -61,12 +61,12 @@
             <h2>
               <span aria-hidden="true">⚖️ </span><span data-i18n="legal_dd">법률 실사 (Legal Verification)</span>
             </h2>
-            <span class="dd-chip dd-chip--good" id="dd-chip-legal">완료</span>
+            <span class="dd-chip dd-chip--good" id="dd-cert-badge">검토 중</span>
           </header>
           <ul class="dd-list">
             <li>
               <strong>토지 증명서(Sertifikat)</strong>:
-              <span class="dd-ok" id="dd-cert-status">유효성 확인 완료</span>
+              <span class="dd-ok" id="dd-cert">유효성 확인 완료</span>
             </li>
             <li>
               <strong>용도 확인(Zoning)</strong>:
@@ -226,8 +226,8 @@
     <script src="/js/supabaseClient.js"></script>
     <!-- 2. 다국어 (data-i18n 먼저 적용) -->
     <script src="/js/i18n.js"></script>
-    <!-- 3. DD 데이터 & 차트 렌더링 -->
-    <script src="/js/dd.js"></script>
+    <!-- 3. 공통 데이터 바인딩 (DD·Vault·Explore) -->
+    <script src="/js/master-backend.js"></script>
   </body>
 </html>
 

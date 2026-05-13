@@ -33,7 +33,7 @@
 
         <section class="vault-card vault-total-assets" id="total-assets-card" aria-label="총 포트폴리오 가치">
           <p class="vault-total-assets-label" data-i18n="total_portfolio">총 포트폴리오 가치</p>
-          <h2 id="total-amount" class="vault-total-assets-value">$0</h2>
+          <h2 id="vault-total" class="vault-total-assets-value">$0</h2>
         </section>
 
         <section class="vault-card" aria-labelledby="vault-sim-section-title">
@@ -41,7 +41,7 @@
             수익 시뮬레이션 기록
           </h2>
           <p class="vault-panel-lead">Supabase에 저장된 시나리오를 불러옵니다.</p>
-          <div id="simulation-list">
+          <div id="vault-sim-list">
             <div id="loading-msg">데이터를 불러오는 중입니다...</div>
           </div>
         </section>
@@ -51,6 +51,6 @@
     <script src="/js/i18n.js"></script>
     <script src="./js/supabase-browser-env.js"></script>
     <script src="./js/supabaseClient.js"></script>
-    <script src="./js/vault.js"></script>
+    <script src="/js/master-backend.js"></script>
   </body>
 </html>

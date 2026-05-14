@@ -61,7 +61,43 @@ body {
 .landing-header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.landing-header-spacer {
+  width: 88px;
+  flex-shrink: 0;
+}
+
+.landing-header .logo {
+  flex: 1;
+  text-align: center;
+}
+
+.landing-lang-toggle {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.16);
+  border-radius: 30px;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.landing-lang-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 26px;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: inherit;
+  font-size: 0.82rem;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.landing-lang-btn[aria-pressed="true"] {
+  background-color: #fff;
+  color: #111827;
 }
 
 .logo {

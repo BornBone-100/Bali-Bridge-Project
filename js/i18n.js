@@ -91,6 +91,17 @@
       btn_logout: "로그아웃",
       btn_new_scenario: "새로운 시나리오 만들기",
 
+      // --- 로그인 랜딩 ---
+      login_doc_title: "Bali Bridge · 발리 비즈니스 진단",
+      login_hero_line1: "데이터로 설계하는",
+      login_hero_line2: "나만의 발리 비즈니스",
+      login_hero_copy_1: "수익성, 입지, 법적 안전성을 한눈에 비교하고",
+      login_hero_copy_2: "나에게 맞는 발리 부동산 투자를 시작해 보세요.",
+      login_google_btn: "구글로 시작하기",
+      login_google_aria: "구글로 로그인",
+      login_tip: "3초 만에 시작하기",
+      login_footer: "© 2026 Bali Bridge. All rights reserved.",
+
       // --- 관리자 · 서류 인증 ---
       nav_admin: "관리자 · 서류 인증",
       admin_doc_title: "[Bali Bridge] 관리자 · 법률 서류 인증",
@@ -199,6 +210,17 @@
       btn_logout: "Logout",
       btn_new_scenario: "Create New Scenario",
 
+      // --- Login landing ---
+      login_doc_title: "Bali Bridge · Bali Business Insights",
+      login_hero_line1: "Design with data",
+      login_hero_line2: "your own Bali business",
+      login_hero_copy_1: "Compare profitability, location, and legal safety at a glance",
+      login_hero_copy_2: "and start the Bali property investment that's right for you.",
+      login_google_btn: "Continue with Google",
+      login_google_aria: "Sign in with Google",
+      login_tip: "Get started in 3 seconds",
+      login_footer: "© 2026 Bali Bridge. All rights reserved.",
+
       // --- Admin · document verification ---
       nav_admin: "Admin · Document Verification",
       admin_doc_title: "[Bali Bridge] Admin · Legal Document Verification",
@@ -246,6 +268,13 @@
       }
     });
 
+    document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+      const key = element.getAttribute("data-i18n-aria");
+      if (translations[normalized] && translations[normalized][key]) {
+        element.setAttribute("aria-label", translations[normalized][key]);
+      }
+    });
+
     const koBtn = document.getElementById("btn-kor");
     const enBtn = document.getElementById("btn-eng");
     if (koBtn) {
@@ -275,7 +304,13 @@
     const btnKor = document.getElementById("btn-kor");
     const btnEng = document.getElementById("btn-eng");
 
-    if (btnKor) btnKor.addEventListener("click", () => applyLanguage("ko"));
-    if (btnEng) btnEng.addEventListener("click", () => applyLanguage("en"));
+    if (btnKor && btnKor.dataset.bbLangBound !== "1") {
+      btnKor.dataset.bbLangBound = "1";
+      btnKor.addEventListener("click", () => applyLanguage("ko"));
+    }
+    if (btnEng && btnEng.dataset.bbLangBound !== "1") {
+      btnEng.dataset.bbLangBound = "1";
+      btnEng.addEventListener("click", () => applyLanguage("en"));
+    }
   });
 })();

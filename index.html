@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-i18n-title="login_doc_title">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -15,17 +15,22 @@
     <div class="landing-hero" id="landingHero">
       <div class="hero-overlay">
         <header class="landing-header">
+          <div class="landing-header-spacer" aria-hidden="true"></div>
           <h1 class="logo">Bali Bridge</h1>
+          <div class="landing-lang-toggle" role="group" aria-label="Language">
+            <button id="btn-kor" type="button" class="landing-lang-btn" aria-pressed="true">KOR</button>
+            <button id="btn-eng" type="button" class="landing-lang-btn" aria-pressed="false">ENG</button>
+          </div>
         </header>
 
         <main class="hero-content">
           <h2 class="hero-title">
-            데이터로 설계하는<br />
-            <span>나만의 발리 비즈니스</span>
+            <span data-i18n="login_hero_line1">데이터로 설계하는</span><br />
+            <span data-i18n="login_hero_line2">나만의 발리 비즈니스</span>
           </h2>
           <p class="hero-copy">
-            수익성, 입지, 법적 안전성을 한눈에 비교하고<br />
-            나에게 맞는 발리 부동산 투자를 시작해 보세요.
+            <span data-i18n="login_hero_copy_1">수익성, 입지, 법적 안전성을 한눈에 비교하고</span><br />
+            <span data-i18n="login_hero_copy_2">나에게 맞는 발리 부동산 투자를 시작해 보세요.</span>
           </p>
 
           <div class="auth-action auth-action--stack" id="login">
@@ -33,17 +38,18 @@
               type="button"
               class="google-login-btn"
               data-google-signin
+              data-i18n-aria="login_google_aria"
               aria-label="구글로 로그인"
             >
               <span class="google-login-btn__g" aria-hidden="true">G</span>
-              구글로 시작하기
+              <span data-i18n="login_google_btn">구글로 시작하기</span>
             </button>
-            <p class="auth-tip">3초 만에 시작하기</p>
+            <p class="auth-tip" data-i18n="login_tip">3초 만에 시작하기</p>
           </div>
         </main>
 
         <footer class="landing-footer">
-          <p>© 2026 Bali Bridge. All rights reserved.</p>
+          <p data-i18n="login_footer">© 2026 Bali Bridge. All rights reserved.</p>
         </footer>
       </div>
     </div>
@@ -176,7 +182,34 @@
       </div>
     </div>
 
-    <script src="/js/i18n.js"></script>
+    <script src="./js/i18n.js"></script>
+    <script>
+      (function () {
+        function applyLoginLang(lang) {
+          if (window.bbI18n && typeof window.bbI18n.applyLanguage === "function") {
+            window.bbI18n.applyLanguage(lang === "en" ? "en" : "ko");
+          }
+        }
+        function bindLoginLangButtons() {
+          var ko = document.getElementById("btn-kor");
+          var en = document.getElementById("btn-eng");
+          if (!ko || !en || ko.dataset.loginLangBound === "1") return;
+          ko.dataset.loginLangBound = "1";
+          en.dataset.loginLangBound = "1";
+          ko.addEventListener("click", function () {
+            applyLoginLang("ko");
+          });
+          en.addEventListener("click", function () {
+            applyLoginLang("en");
+          });
+        }
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", bindLoginLangButtons);
+        } else {
+          bindLoginLangButtons();
+        }
+      })();
+    </script>
     <script src="./js/supabase-browser-env.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./js/supabaseClient.js"></script>
@@ -190,6 +223,6 @@
     <script src="./js/calculator.js"></script>
     <script src="./js/script.js" defer></script>
     <script type="module" src="./js/bind-google-login.js"></script>
-    <script src="/js/master-backend.js"></script>
+    <script src="./js/master-backend.js"></script>
   </body>
 </html>

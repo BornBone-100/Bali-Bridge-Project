@@ -294,47 +294,10 @@ function applyTranslations() {
     sideback.textContent = t("dash_sideback");
   }
 
-  const koBtn = document.getElementById("btn-kor");
-  const enBtn = document.getElementById("btn-eng");
-  if (koBtn) {
-    koBtn.style.backgroundColor = currentLang === "ko" ? "#fff" : "transparent";
-    koBtn.style.color = currentLang === "ko" ? "#111827" : "#6B7280";
-    koBtn.setAttribute("aria-pressed", currentLang === "ko" ? "true" : "false");
-  }
-  if (enBtn) {
-    enBtn.style.backgroundColor = currentLang === "en" ? "#fff" : "transparent";
-    enBtn.style.color = currentLang === "en" ? "#111827" : "#6B7280";
-    enBtn.setAttribute("aria-pressed", currentLang === "en" ? "true" : "false");
-  }
-
   const titleKey = document.documentElement.getAttribute("data-i18n-title");
   if (titleKey) {
     const titleText = i18n[currentLang]?.[titleKey] ?? i18n.ko?.[titleKey];
     if (titleText) document.title = titleText;
-  }
-}
-
-function setLang(lang) {
-  const normalized = lang === "en" ? "en" : "ko";
-  if (window.bbI18n?.applyLanguage) {
-    window.bbI18n.applyLanguage(normalized);
-    return;
-  }
-  localStorage.setItem("preferred_language", normalized);
-  localStorage.setItem("bbLang", normalized);
-  syncLangFromStorage(normalized);
-}
-
-function bindLanguageToggle() {
-  const koBtn = document.getElementById("btn-kor");
-  const enBtn = document.getElementById("btn-eng");
-  if (koBtn && koBtn.dataset.ppexLangBound !== "1") {
-    koBtn.dataset.ppexLangBound = "1";
-    koBtn.addEventListener("click", () => setLang("ko"));
-  }
-  if (enBtn && enBtn.dataset.ppexLangBound !== "1") {
-    enBtn.dataset.ppexLangBound = "1";
-    enBtn.addEventListener("click", () => setLang("en"));
   }
 }
 
@@ -392,7 +355,6 @@ async function initPropertyExplorer() {
   currentLang = getSavedLang();
   document.documentElement.lang = currentLang;
   bindLanguageSync();
-  bindLanguageToggle();
   applyTranslations();
   await loadProperties();
   setSourceNote();

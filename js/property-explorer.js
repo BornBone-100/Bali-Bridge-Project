@@ -41,6 +41,7 @@ const i18n = window.translations || {
     dd_badge_scheduled: "실사 예정",
     source_supabase: "연동: Supabase `properties` 테이블 (실시간)",
     source_demo: "데이터 연결이 비활성화되었습니다. Supabase 환경값을 확인해 주세요.",
+    dash_sideback: "← 홈으로",
   },
   en: {
     nav_dashboard: "Dashboard Home",
@@ -72,6 +73,7 @@ const i18n = window.translations || {
     dd_badge_scheduled: "DD scheduled",
     source_supabase: "Source: Supabase `properties` table (live)",
     source_demo: "Data connection is disabled. Please check Supabase env values.",
+    dash_sideback: "← Home",
   },
 };
 
@@ -280,6 +282,12 @@ function applyTranslations() {
   setTextById("dd-done-label", t("dd_done"));
   setTextById("dd-progress-label", t("dd_progress"));
   setTextById("dd-scheduled-label", t("dd_scheduled"));
+  setTextById("dash-sideback-label", t("dash_sideback"));
+
+  const sideback = document.querySelector(".bbdash-sideback");
+  if (sideback && !document.getElementById("dash-sideback-label")) {
+    sideback.textContent = t("dash_sideback");
+  }
 
   const koBtn = document.getElementById("btn-kor");
   const enBtn = document.getElementById("btn-eng");
@@ -301,7 +309,33 @@ function applyTranslations() {
   }
 }
 
+function setLang(lang) {
+  const normalized = lang === "en" ? "en" : "ko";
+  if (window.bbI18n?.applyLanguage) {
+    window.bbI18n.applyLanguage(normalized);
+    return;
+  }
+  localStorage.setItem("preferred_language", normalized);
+  localStorage.setItem("bbLang", normalized);
+  syncLangFromStorage(normalized);
+}
+
+function bindLanguageToggle() {
+  const koBtn = document.getElementById("btn-kor");
+  const enBtn = document.getElementById("btn-eng");
+  if (koBtn && koBtn.dataset.ppexLangBound !== "1") {
+    koBtn.dataset.ppexLangBound = "1";
+    koBtn.addEventListener("click", () => setLang("ko"));
+  }
+  if (enBtn && enBtn.dataset.ppexLangBound !== "1") {
+    enBtn.dataset.ppexLangBound = "1";
+    enBtn.addEventListener("click", () => setLang("en"));
+  }
+}
+
 function bindLanguageSync() {
+  if (window.__ppexLangSyncBound === "1") return;
+  window.__ppexLangSyncBound = "1";
   window.addEventListener("bb:languagechange", (event) => {
     const lang = event.detail?.lang || getSavedLang();
     syncLangFromStorage(lang);
@@ -347,12 +381,26 @@ async function initPropertyExplorer() {
   currentLang = getSavedLang();
   document.documentElement.lang = currentLang;
   bindLanguageSync();
+  bindLanguageToggle();
   applyTranslations();
   await loadProperties();
   setSourceNote();
   renderProperties(PROPERTY_DATA);
   const btn = document.getElementById("apply-filter");
-  if (btn) btn.addEventListener("click", applyFilters);
+  if (btn && btn.dataset.ppexFilterBound !== "1") {
+    btn.dataset.ppexFilterBound = "1";
+    btn.addEventListener("click", applyFilters);
+  }
 }
 
-document.addEventListener("DOMContentLoaded", initPropertyExplorer);
+function bootPropertyExplorer() {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      void initPropertyExplorer();
+    });
+  } else {
+    void initPropertyExplorer();
+  }
+}
+
+bootPropertyExplorer();

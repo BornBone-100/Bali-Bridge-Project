@@ -25,10 +25,10 @@ const i18n = window.translations || {
     search_title: "신규 매물 탐색",
     title_explore: "신규 매물 탐색",
     search_desc:
-      "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
+      "Bali Bridge Partners의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
     desc_explore:
-      "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
-    explore_doc_title: "[Bali Bridge] 신규 매물 탐색",
+      "Bali Bridge Partners의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
+    explore_doc_title: "[Bali Bridge Partners] 신규 매물 탐색",
     filter_all: "모든 지역",
     filter_roi: "예상 수익률(ROI)",
     filter_price: "투자 금액대",
@@ -57,10 +57,10 @@ const i18n = window.translations || {
     search_title: "Property Explorer",
     title_explore: "Property Explorer",
     search_desc:
-      "Explore premium investment assets with strict due diligence by Bali Bridge.",
+      "Explore premium investment assets with strict due diligence by Bali Bridge Partners.",
     desc_explore:
-      "Discover premium investment assets vetted by Bali Bridge's strict DD.",
-    explore_doc_title: "[Bali Bridge] Property Explorer",
+      "Discover premium investment assets vetted by Bali Bridge Partners' strict DD.",
+    explore_doc_title: "[Bali Bridge Partners] Property Explorer",
     filter_all: "All Locations",
     filter_roi: "Expected ROI",
     filter_price: "Investment Range",

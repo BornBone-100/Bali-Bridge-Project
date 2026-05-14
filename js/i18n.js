@@ -69,8 +69,8 @@
 
       // --- 3. 신규 매물 탐색 (Explore) ---
       title_explore: "신규 매물 탐색",
-      desc_explore: "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
-      explore_doc_title: "[Bali Bridge] 신규 매물 탐색",
+      desc_explore: "Bali Bridge Partners의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
+      explore_doc_title: "[Bali Bridge Partners] 신규 매물 탐색",
       filter_all: "모든 지역",
       filter_roi: "예상 수익률(ROI)",
       filter_price: "투자 금액대",
@@ -92,7 +92,7 @@
       btn_new_scenario: "새로운 시나리오 만들기",
 
       // --- 로그인 랜딩 ---
-      login_doc_title: "Bali Bridge · 발리 비즈니스 진단",
+      login_doc_title: "Bali Bridge Partners · 발리 비즈니스 진단",
       login_hero_line1: "데이터로 설계하는",
       login_hero_line2: "나만의 발리 비즈니스",
       login_hero_copy_1: "수익성, 입지, 법적 안전성을 한눈에 비교하고",
@@ -100,11 +100,11 @@
       login_google_btn: "구글로 시작하기",
       login_google_aria: "구글로 로그인",
       login_tip: "3초 만에 시작하기",
-      login_footer: "© 2026 Bali Bridge. All rights reserved.",
+      login_footer: "© 2026 Bali Bridge Partners. All rights reserved.",
 
       // --- 관리자 · 서류 인증 ---
       nav_admin: "관리자 · 서류 인증",
-      admin_doc_title: "[Bali Bridge] 관리자 · 법률 서류 인증",
+      admin_doc_title: "[Bali Bridge Partners] 관리자 · 법률 서류 인증",
       admin_title: "관리자 · 법률 서류 인증",
       admin_hint:
         "등록된 매물 중 서류가 올라온 항목을 검토한 뒤 승인하기를 누르면 인증 상태가 활성화됩니다.",
@@ -188,8 +188,8 @@
 
       // --- 3. Property explorer ---
       title_explore: "Property Explorer",
-      desc_explore: "Discover premium investment assets vetted by Bali Bridge's strict DD.",
-      explore_doc_title: "[Bali Bridge] Property Explorer",
+      desc_explore: "Discover premium investment assets vetted by Bali Bridge Partners' strict DD.",
+      explore_doc_title: "[Bali Bridge Partners] Property Explorer",
       filter_all: "All Regions",
       filter_roi: "Expected ROI",
       filter_price: "Investment Range",
@@ -211,7 +211,7 @@
       btn_new_scenario: "Create New Scenario",
 
       // --- Login landing ---
-      login_doc_title: "Bali Bridge · Bali Business Insights",
+      login_doc_title: "Bali Bridge Partners · Bali Business Insights",
       login_hero_line1: "Design with data",
       login_hero_line2: "your own Bali business",
       login_hero_copy_1: "Compare profitability, location, and legal safety at a glance",
@@ -219,11 +219,11 @@
       login_google_btn: "Continue with Google",
       login_google_aria: "Sign in with Google",
       login_tip: "Get started in 3 seconds",
-      login_footer: "© 2026 Bali Bridge. All rights reserved.",
+      login_footer: "© 2026 Bali Bridge Partners. All rights reserved.",
 
       // --- Admin · document verification ---
       nav_admin: "Admin · Document Verification",
-      admin_doc_title: "[Bali Bridge] Admin · Legal Document Verification",
+      admin_doc_title: "[Bali Bridge Partners] Admin · Legal Document Verification",
       admin_title: "Admin · Legal Document Verification",
       admin_hint:
         "Review properties with uploaded documents, then click Approve to activate verification status.",

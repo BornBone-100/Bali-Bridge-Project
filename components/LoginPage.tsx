@@ -83,7 +83,7 @@ const LoginPage = () => {
             margin: '0 0 8px 0',
           }}
         >
-          Bali Bridge
+          Bali Bridge Partners
         </h2>
         <p style={{ fontSize: '15px', color: '#6B7280', margin: '0 0 32px 0' }}>
           발리 부동산 투자의 시작

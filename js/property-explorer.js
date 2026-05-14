@@ -1,7 +1,12 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
-
 let PROPERTY_DATA = [];
 let dataSource = "supabase";
+
+function resolveSupabaseCreateClient() {
+  const mod = window.supabase;
+  if (mod && typeof mod.createClient === "function") return mod.createClient;
+  if (mod && mod.default && typeof mod.default.createClient === "function") return mod.default.createClient;
+  return null;
+}
 function getSavedLang() {
   const saved =
     localStorage.getItem("preferred_language") || localStorage.getItem("bbLang") || "ko";
@@ -356,6 +361,12 @@ async function loadProperties() {
   }
 
   try {
+    const createClient = resolveSupabaseCreateClient();
+    if (!createClient) {
+      PROPERTY_DATA = [];
+      dataSource = "demo";
+      return;
+    }
     const supabase = createClient(cfg.url, cfg.key);
     const { data, error } = await supabase.from("properties").select("*");
     if (error) {

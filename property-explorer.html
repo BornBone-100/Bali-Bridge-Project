@@ -107,7 +107,65 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./js/supabase-browser-env.js"></script>
     <script src="./js/supabaseClient.js"></script>
-    <script type="module" src="./js/property-explorer.js"></script>
+    <script>
+      (function () {
+        function applyExploreLang(lang) {
+          var normalized = lang === "en" ? "en" : "ko";
+          if (window.bbI18n && typeof window.bbI18n.applyLanguage === "function") {
+            window.bbI18n.applyLanguage(normalized);
+            return;
+          }
+          localStorage.setItem("preferred_language", normalized);
+          localStorage.setItem("bbLang", normalized);
+          document.documentElement.lang = normalized;
+          var dict = window.translations && (window.translations[normalized] || window.translations.ko);
+          if (dict) {
+            document.querySelectorAll("[data-i18n]").forEach(function (el) {
+              var key = el.getAttribute("data-i18n");
+              if (key && dict[key]) el.textContent = dict[key];
+            });
+            var titleKey = document.documentElement.getAttribute("data-i18n-title");
+            if (titleKey && dict[titleKey]) document.title = dict[titleKey];
+          }
+          var ko = document.getElementById("btn-kor");
+          var en = document.getElementById("btn-eng");
+          if (ko) {
+            ko.style.backgroundColor = normalized === "ko" ? "#fff" : "transparent";
+            ko.style.color = normalized === "ko" ? "#111827" : "#6B7280";
+            ko.setAttribute("aria-pressed", normalized === "ko" ? "true" : "false");
+          }
+          if (en) {
+            en.style.backgroundColor = normalized === "en" ? "#fff" : "transparent";
+            en.style.color = normalized === "en" ? "#111827" : "#6B7280";
+            en.setAttribute("aria-pressed", normalized === "en" ? "true" : "false");
+          }
+          window.dispatchEvent(new CustomEvent("bb:languagechange", { detail: { lang: normalized } }));
+        }
+        function bindExploreLangButtons() {
+          var ko = document.getElementById("btn-kor");
+          var en = document.getElementById("btn-eng");
+          if (!ko || !en) return;
+          if (ko.dataset.exploreLangBound !== "1") {
+            ko.dataset.exploreLangBound = "1";
+            ko.addEventListener("click", function () {
+              applyExploreLang("ko");
+            });
+          }
+          if (en.dataset.exploreLangBound !== "1") {
+            en.dataset.exploreLangBound = "1";
+            en.addEventListener("click", function () {
+              applyExploreLang("en");
+            });
+          }
+        }
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", bindExploreLangButtons);
+        } else {
+          bindExploreLangButtons();
+        }
+      })();
+    </script>
+    <script defer src="./js/property-explorer.js"></script>
   </body>
 </html>
 

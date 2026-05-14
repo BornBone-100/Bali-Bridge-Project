@@ -2,7 +2,13 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.105.3";
 
 let PROPERTY_DATA = [];
 let dataSource = "supabase";
-let currentLang = "ko";
+function getSavedLang() {
+  const saved =
+    localStorage.getItem("preferred_language") || localStorage.getItem("bbLang") || "ko";
+  return saved === "en" ? "en" : "ko";
+}
+
+let currentLang = getSavedLang();
 
 const i18n = window.translations || {
   ko: {
@@ -17,6 +23,7 @@ const i18n = window.translations || {
       "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
     desc_explore:
       "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
+    explore_doc_title: "[Bali Bridge] 신규 매물 탐색",
     filter_all: "모든 지역",
     filter_roi: "예상 수익률(ROI)",
     filter_price: "투자 금액대",
@@ -47,6 +54,7 @@ const i18n = window.translations || {
       "Explore premium investment assets with strict due diligence by Bali Bridge.",
     desc_explore:
       "Discover premium investment assets vetted by Bali Bridge's strict DD.",
+    explore_doc_title: "[Bali Bridge] Property Explorer",
     filter_all: "All Locations",
     filter_roi: "Expected ROI",
     filter_price: "Investment Range",
@@ -242,6 +250,14 @@ function setTextById(id, value) {
   if (el) el.textContent = value;
 }
 
+function syncLangFromStorage(lang) {
+  currentLang = lang === "en" ? "en" : "ko";
+  document.documentElement.lang = currentLang;
+  applyTranslations();
+  setSourceNote();
+  applyFilters();
+}
+
 function applyTranslations() {
   setTextById("nav-home", t("nav_dashboard"));
   setTextById("nav-assets", t("nav_vault"));
@@ -265,8 +281,8 @@ function applyTranslations() {
   setTextById("dd-progress-label", t("dd_progress"));
   setTextById("dd-scheduled-label", t("dd_scheduled"));
 
-  const koBtn = document.getElementById("lang-ko");
-  const enBtn = document.getElementById("lang-en");
+  const koBtn = document.getElementById("btn-kor");
+  const enBtn = document.getElementById("btn-eng");
   if (koBtn) {
     koBtn.style.backgroundColor = currentLang === "ko" ? "#fff" : "transparent";
     koBtn.style.color = currentLang === "ko" ? "#111827" : "#6B7280";
@@ -277,27 +293,19 @@ function applyTranslations() {
     enBtn.style.color = currentLang === "en" ? "#111827" : "#6B7280";
     enBtn.setAttribute("aria-pressed", currentLang === "en" ? "true" : "false");
   }
+
+  const titleKey = document.documentElement.getAttribute("data-i18n-title");
+  if (titleKey) {
+    const titleText = i18n[currentLang]?.[titleKey] ?? i18n.ko?.[titleKey];
+    if (titleText) document.title = titleText;
+  }
 }
 
-function bindLanguageToggle() {
-  const koBtn = document.getElementById("lang-ko");
-  const enBtn = document.getElementById("lang-en");
-  if (koBtn) {
-    koBtn.addEventListener("click", () => {
-      currentLang = "ko";
-      applyTranslations();
-      setSourceNote();
-      applyFilters();
-    });
-  }
-  if (enBtn) {
-    enBtn.addEventListener("click", () => {
-      currentLang = "en";
-      applyTranslations();
-      setSourceNote();
-      applyFilters();
-    });
-  }
+function bindLanguageSync() {
+  window.addEventListener("bb:languagechange", (event) => {
+    const lang = event.detail?.lang || getSavedLang();
+    syncLangFromStorage(lang);
+  });
 }
 
 async function loadProperties() {
@@ -336,8 +344,10 @@ async function loadProperties() {
 }
 
 async function initPropertyExplorer() {
+  currentLang = getSavedLang();
+  document.documentElement.lang = currentLang;
+  bindLanguageSync();
   applyTranslations();
-  bindLanguageToggle();
   await loadProperties();
   setSourceNote();
   renderProperties(PROPERTY_DATA);

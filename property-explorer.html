@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-i18n-title="explore_doc_title">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -49,17 +49,25 @@
             <div class="bbdash-mini-dot"></div>
             <span>BB</span>
           </div>
-          <a class="bbdash-sideback" href="./index.html">← 홈으로</a>
+          <a class="bbdash-sideback" data-i18n="dash_sideback" href="./index.html">← 홈으로</a>
         </div>
       </aside>
 
       <main class="bbdash-main ppex-main">
         <header class="ppex-header">
-          <h1 id="search-title" data-i18n="title_explore">신규 매물 탐색</h1>
-          <p id="search-desc" data-i18n="desc_explore">
-            Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.
-          </p>
-          <p id="ppex-source-note" class="ppex-source-note" hidden aria-live="polite"></p>
+          <div class="ppex-header-top">
+            <div class="ppex-header-copy">
+              <h1 id="search-title" data-i18n="title_explore">신규 매물 탐색</h1>
+              <p id="search-desc" data-i18n="desc_explore">
+                Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.
+              </p>
+              <p id="ppex-source-note" class="ppex-source-note" hidden aria-live="polite"></p>
+            </div>
+            <div class="ppex-lang-toggle" role="group" aria-label="Language">
+              <button id="btn-kor" type="button" class="ppex-lang-btn" aria-pressed="true">KOR</button>
+              <button id="btn-eng" type="button" class="ppex-lang-btn" aria-pressed="false">ENG</button>
+            </div>
+          </div>
         </header>
 
         <section class="ppex-filters" aria-label="고급 필터">
@@ -71,23 +79,23 @@
           </select>
           <select id="filter-roi">
             <option id="filter-roi-label" value="all" data-i18n="filter_roi">예상 수익률(ROI)</option>
-            <option id="roi-high-label" value="high">14% 이상</option>
-            <option id="roi-mid-label" value="mid">12% ~ 13.9%</option>
-            <option id="roi-low-label" value="low">12% 미만</option>
+            <option id="roi-high-label" value="high" data-i18n="roi_high">14% 이상</option>
+            <option id="roi-mid-label" value="mid" data-i18n="roi_mid">12% ~ 13.9%</option>
+            <option id="roi-low-label" value="low" data-i18n="roi_low">12% 미만</option>
           </select>
           <select id="filter-budget">
             <option id="filter-price-label" value="all" data-i18n="filter_price">투자 금액대</option>
-            <option id="budget-lt700-label" value="lt700">$700k 미만</option>
-            <option id="budget-700to1000-label" value="700to1000">$700k ~ $1M</option>
-            <option id="budget-gt1000-label" value="gt1000">$1M 이상</option>
+            <option id="budget-lt700-label" value="lt700" data-i18n="budget_lt700">$700k 미만</option>
+            <option id="budget-700to1000-label" value="700to1000" data-i18n="budget_700to1000">$700k ~ $1M</option>
+            <option id="budget-gt1000-label" value="gt1000" data-i18n="budget_gt1000">$1M 이상</option>
           </select>
           <select id="filter-dd">
-            <option id="filter-dd-label" value="all">실사 상태</option>
-            <option id="dd-done-label" value="done">실사 완료/법률 검토 완료</option>
-            <option id="dd-progress-label" value="progress">진행 중</option>
-            <option id="dd-scheduled-label" value="scheduled">실사 예정</option>
+            <option id="filter-dd-label" value="all" data-i18n="filter_dd">실사 상태</option>
+            <option id="dd-done-label" value="done" data-i18n="dd_done">실사 완료/법률 검토 완료</option>
+            <option id="dd-progress-label" value="progress" data-i18n="dd_progress">진행 중</option>
+            <option id="dd-scheduled-label" value="scheduled" data-i18n="dd_scheduled">실사 예정</option>
           </select>
-          <button id="apply-filter" type="button">검색 적용</button>
+          <button id="apply-filter" type="button" data-i18n="btn_apply">검색 적용</button>
         </section>
 
         <section id="explore-list" class="ppex-grid" aria-live="polite"></section>

@@ -21,6 +21,7 @@ const translations = {
     title_explore: "신규 매물 탐색",
     desc_explore:
       "Bali Bridge의 엄격한 실사(DD)를 거친 프리미엄 투자 자산을 확인하세요.",
+    explore_doc_title: "[Bali Bridge] 신규 매물 탐색",
     title_vault: "나의 투자 보관함",
     desc_vault: "발리 투자 여정을 한곳에서 확인하세요.",
     total_portfolio: "총 포트폴리오 가치",
@@ -131,6 +132,7 @@ const translations = {
     title_explore: "Property Explorer",
     desc_explore:
       "Discover premium investment assets vetted by Bali Bridge's strict DD.",
+    explore_doc_title: "[Bali Bridge] Property Explorer",
     title_vault: "My Investment Vault",
     desc_vault: "Track your Bali investment journey in one place.",
     total_portfolio: "Total Portfolio Value",

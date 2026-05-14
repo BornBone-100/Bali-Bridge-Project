@@ -429,6 +429,31 @@ function bindDashboardLogout(supabase) {
   });
 }
 
+async function resolveDashboardSession(supabase) {
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
+
+  if (session && !sessionError) {
+    return { session, error: null };
+  }
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (user && !userError) {
+    const {
+      data: { session: refreshed },
+    } = await supabase.auth.getSession();
+    if (refreshed) return { session: refreshed, error: null };
+  }
+
+  return { session: null, error: sessionError || userError };
+}
+
 async function fetchDashboardSummary() {
   const totalAssetEl = document.getElementById("stat-total-asset");
   const avgRoiEl = document.getElementById("stat-avg-roi");
@@ -450,10 +475,7 @@ async function fetchDashboardSummary() {
   }
 
   const supabase = createClient(url, key);
-  const {
-    data: { session },
-    error: authError,
-  } = await supabase.auth.getSession();
+  const { session, error: authError } = await resolveDashboardSession(supabase);
 
   if (authError || !session) {
     const allowGuest = sessionStorage.getItem("bb_guest_dashboard") === "1";
